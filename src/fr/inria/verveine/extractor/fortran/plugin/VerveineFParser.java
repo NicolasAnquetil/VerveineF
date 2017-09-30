@@ -106,20 +106,6 @@ public class VerveineFParser extends VerveineParser {
 	private void computeIndex(ICProject cproject) {
 		System.out.println("Indexing source files");
 
-/*
-        properties = new SearchPathProperties(cproject.getProject());
-		properties.setProperty(cproject.getProject(), SearchPathProperties.ENABLE_VPG_PROPERTY_NAME, "true");
-
-        try
-        {
-            properties.save();
-        }
-        catch (IOException e)
-        {
-            System.err.println("error saving properties");;
-        }
-*/
-        //PhotranVPG.getInstance().queueJobToEnsureVPGIsUpToDate();
         PhotranVPG.getInstance().ensureVPGIsUpToDate(NULL_PROGRESS_MONITOR);      
 	}
 
