@@ -33,6 +33,7 @@ public class InvokVisitor extends AbstractDispatcherVisitor {
 		if (caller == null) {
 			System.err.println("  Function definition not found: "+ node.getName());
 		}
+		super.visitASTFunctionSubprogramNode(node);
 	}
 
 	@Override
@@ -41,6 +42,7 @@ public class InvokVisitor extends AbstractDispatcherVisitor {
 		if (caller == null) {
 			System.err.println("  Procedure definition not found: "+ node.getName());
 		}
+		super.visitASTSubroutineSubprogramNode(node);
 	}
 
 	@Override

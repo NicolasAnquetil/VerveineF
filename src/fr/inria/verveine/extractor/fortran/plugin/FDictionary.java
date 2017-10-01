@@ -1,46 +1,26 @@
 package fr.inria.verveine.extractor.fortran.plugin;
 
-import java.util.Hashtable;
-import java.util.Map;
-
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.photran.internal.core.analysis.binding.Definition;
 
 import ch.akuhn.fame.Repository;
 import eu.synectique.verveine.core.Dictionary;
-import eu.synectique.verveine.core.gen.famix.Association;
 import eu.synectique.verveine.core.gen.famix.Attribute;
 import eu.synectique.verveine.core.gen.famix.BehaviouralEntity;
-import eu.synectique.verveine.core.gen.famix.BehaviouralReference;
-import eu.synectique.verveine.core.gen.famix.CFile;
-import eu.synectique.verveine.core.gen.famix.CompilationUnit;
 import eu.synectique.verveine.core.gen.famix.ContainerEntity;
-import eu.synectique.verveine.core.gen.famix.DereferencedInvocation;
 import eu.synectique.verveine.core.gen.famix.Function;
 import eu.synectique.verveine.core.gen.famix.GlobalVariable;
-import eu.synectique.verveine.core.gen.famix.Header;
-import eu.synectique.verveine.core.gen.famix.ImplicitVariable;
-import eu.synectique.verveine.core.gen.famix.Include;
 import eu.synectique.verveine.core.gen.famix.IndexedFileAnchor;
-import eu.synectique.verveine.core.gen.famix.Method;
 import eu.synectique.verveine.core.gen.famix.Module;
 import eu.synectique.verveine.core.gen.famix.MultipleFileAnchor;
 import eu.synectique.verveine.core.gen.famix.NamedEntity;
 import eu.synectique.verveine.core.gen.famix.Namespace;
 import eu.synectique.verveine.core.gen.famix.Package;
 import eu.synectique.verveine.core.gen.famix.Parameter;
-import eu.synectique.verveine.core.gen.famix.ParameterType;
-import eu.synectique.verveine.core.gen.famix.ParameterizableClass;
-import eu.synectique.verveine.core.gen.famix.ParameterizedType;
-import eu.synectique.verveine.core.gen.famix.PreprocessorIfdef;
 import eu.synectique.verveine.core.gen.famix.ScopingEntity;
 import eu.synectique.verveine.core.gen.famix.SourceAnchor;
 import eu.synectique.verveine.core.gen.famix.SourcedEntity;
-import eu.synectique.verveine.core.gen.famix.StructuralEntity;
 import eu.synectique.verveine.core.gen.famix.Type;
-import eu.synectique.verveine.core.gen.famix.TypeAlias;
 import eu.synectique.verveine.core.gen.famix.UnknownVariable;
 
 
