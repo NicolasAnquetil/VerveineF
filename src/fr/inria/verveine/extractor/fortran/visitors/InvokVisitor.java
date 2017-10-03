@@ -12,6 +12,7 @@ import org.eclipse.photran.internal.core.parser.ASTVarOrFnRefNode;
 import eu.synectique.verveine.core.gen.famix.BehaviouralEntity;
 import eu.synectique.verveine.core.gen.famix.Function;
 import eu.synectique.verveine.core.gen.famix.Invocation;
+import eu.synectique.verveine.core.gen.famix.NamedEntity;
 import fr.inria.verveine.extractor.fortran.plugin.FDictionary;
 
 @SuppressWarnings("restriction")
@@ -65,13 +66,13 @@ public class InvokVisitor extends AbstractDispatcherVisitor {
 		Invocation fmx = null;
 		List<Definition> bindings = nameTok.resolveBinding();
 		for (Definition bnd : bindings) {
-			BehaviouralEntity invoked = (BehaviouralEntity) dico.getEntityByKey(bnd);
-			if (invoked != null) {
+			NamedEntity invoked = dico.getEntityByKey(bnd);
+			if ( (invoked != null) && (invoked instanceof BehaviouralEntity) ) { 
 				if (fmx == null) {
-					fmx = dico.addFamixInvocation( /*sender*/caller,  invoked, /*receiver*/null, /*signature*/nameTok.getText(),  /*prev*/null);
+					fmx = dico.addFamixInvocation( /*sender*/caller,  (BehaviouralEntity) invoked, /*receiver*/null, /*signature*/nameTok.getText(),  /*prev*/null);
 				}
 				else {
-					fmx.addCandidates(invoked);
+					fmx.addCandidates((BehaviouralEntity) invoked);
 				}
 				if (fmx == null) {
 					System.err.println("  could not create invocation: "+ nameTok.getText());

@@ -13,7 +13,6 @@ import org.eclipse.photran.internal.core.lexer.Token;
 import org.eclipse.photran.internal.core.parser.ASTVisitor;
 import org.eclipse.photran.internal.core.vpg.PhotranVPG;
 
-import fr.inria.verveine.extractor.fortran.intermodel.FModel;
 import fr.inria.verveine.extractor.fortran.plugin.FDictionary;
 
 /**
