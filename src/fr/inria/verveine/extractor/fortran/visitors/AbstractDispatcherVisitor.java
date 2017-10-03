@@ -8,6 +8,8 @@ import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.photran.core.IFortranAST;
+import org.eclipse.photran.internal.core.analysis.binding.Definition;
+import org.eclipse.photran.internal.core.lexer.Token;
 import org.eclipse.photran.internal.core.parser.ASTVisitor;
 import org.eclipse.photran.internal.core.vpg.PhotranVPG;
 
@@ -74,13 +76,22 @@ public abstract class AbstractDispatcherVisitor extends ASTVisitor implements IC
 	public void visit(ITranslationUnit elt) {
 		// this is the method merging ICElementVisitor and ASTVisitor
 		filename = elt.getElementName();
-		if (elt.getElementName().endsWith(".f90")) {
+		if (elt.getElementName().toLowerCase().endsWith(".f90") ) {
 			IFortranAST ast =  vpg.acquireTransientAST(elt.getFile());
 			ast.accept(this);
 		}
 	}
 
 	// UTILITIES ======================================================================================================
+
+	protected Definition firstDefinition(Token tk) {
+		if (tk.resolveBinding().size() > 0) {
+			return tk.resolveBinding().get(0);
+		}
+		else {
+			return null;
+		}
+	}
 
 	protected void visitChildren(IParent elt) {
 		try {

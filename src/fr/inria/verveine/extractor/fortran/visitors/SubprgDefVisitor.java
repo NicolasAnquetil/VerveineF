@@ -1,9 +1,12 @@
 package fr.inria.verveine.extractor.fortran.visitors;
 
+import org.eclipse.photran.internal.core.lexer.Token;
 import org.eclipse.photran.internal.core.parser.ASTFunctionSubprogramNode;
+import org.eclipse.photran.internal.core.parser.ASTProgramStmtNode;
 import org.eclipse.photran.internal.core.parser.ASTSubroutineSubprogramNode;
 
 import eu.synectique.verveine.core.gen.famix.Function;
+import eu.synectique.verveine.core.gen.famix.UnknownBehaviouralEntity;
 import fr.inria.verveine.extractor.fortran.plugin.FDictionary;
 
 @SuppressWarnings("restriction")
@@ -19,17 +22,26 @@ public class SubprgDefVisitor extends AbstractDispatcherVisitor {
 	}
 
 	@Override
-	public void visitASTFunctionSubprogramNode(ASTFunctionSubprogramNode node) {
-		Function fmx = dico.ensureFamixFunction(node.getNameToken().resolveBinding().get(0), node.getName(), /*sig*/node.getName(), /*parent*/null);
+	public void visitASTProgramStmtNode(ASTProgramStmtNode node) {
+		Token tk = node.getProgramName().getProgramName();
+		
+		UnknownBehaviouralEntity fmx = dico.ensureFamixEntity( UnknownBehaviouralEntity.class, firstDefinition(tk), tk.getText());
 		fmx.setIsStub(false);
-		dico.addSourceAnchor(fmx, filename, node.findFirstToken().getLine(), node.findLastToken().getLine());
+		dico.addSourceAnchor(fmx, filename, node);
+	}
+
+	@Override
+	public void visitASTFunctionSubprogramNode(ASTFunctionSubprogramNode node) {
+		Function fmx = dico.ensureFamixFunction( firstDefinition(node.getNameToken()), node.getName(), /*sig*/node.getName(), /*parent*/null);
+		fmx.setIsStub(false);	
+		dico.addSourceAnchor(fmx, filename, node);
 	}
 
 	@Override
 	public void visitASTSubroutineSubprogramNode(ASTSubroutineSubprogramNode node) {
-		Function fmx = dico.ensureFamixFunction(node.getNameToken().resolveBinding().get(0), node.getName(), /*sig*/node.getName(), /*parent*/null);
+		Function fmx = dico.ensureFamixFunction( firstDefinition(node.getNameToken()), node.getName(), /*sig*/node.getName(), /*parent*/null);
 		fmx.setIsStub(false);
-		dico.addSourceAnchor(fmx, filename, node.findFirstToken().getLine(), node.findLastToken().getLine());
+		dico.addSourceAnchor(fmx, filename, node);
 	}
 
 }

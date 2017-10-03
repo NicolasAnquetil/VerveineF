@@ -2,6 +2,7 @@ package fr.inria.verveine.extractor.fortran.plugin;
 
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.photran.internal.core.analysis.binding.Definition;
+import org.eclipse.photran.internal.core.parser.ASTNode;
 
 import ch.akuhn.fame.Repository;
 import eu.synectique.verveine.core.Dictionary;
@@ -79,14 +80,14 @@ public class FDictionary extends Dictionary<Definition> {
 	 * @param ast -- ASTNode, where the information are extracted
 	 * @return the Famix SourceAnchor added to fmx. May be null in case of incorrect/null parameter
 	 */
-	public SourceAnchor addSourceAnchor(SourcedEntity fmx, String filename, IASTFileLocation anchor) {
+	public SourceAnchor addSourceAnchor(SourcedEntity fmx, String filename, ASTNode node) {
 
-		if (anchor == null) {
+		if (node == null) {
 			return null;
 		}
 		else {
-			int beg = anchor.getNodeOffset();
-			int end = beg + anchor.getNodeLength();
+			int beg = node.findFirstToken().getFileOffset();
+			int end = node.findLastToken().getFileOffset()+node.findLastToken().getLength();
 
 			return addSourceAnchor( fmx, filename, beg, end);
 		}

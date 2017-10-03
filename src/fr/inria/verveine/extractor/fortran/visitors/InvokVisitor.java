@@ -7,6 +7,7 @@ import org.eclipse.photran.internal.core.lexer.Token;
 import org.eclipse.photran.internal.core.parser.ASTCallStmtNode;
 import org.eclipse.photran.internal.core.parser.ASTFunctionSubprogramNode;
 import org.eclipse.photran.internal.core.parser.ASTSubroutineSubprogramNode;
+import org.eclipse.photran.internal.core.parser.ASTVarOrFnRefNode;
 
 import eu.synectique.verveine.core.gen.famix.BehaviouralEntity;
 import eu.synectique.verveine.core.gen.famix.Function;
@@ -26,10 +27,12 @@ public class InvokVisitor extends AbstractDispatcherVisitor {
 	protected String msgTrace() {
 		return "Creating subprograms calls";
 	}
+	
+	// ================  V I S I T O R  =======================
 
 	@Override
 	public void visitASTFunctionSubprogramNode(ASTFunctionSubprogramNode node) {
-		caller = (Function) dico.getEntityByKey(node.getNameToken().resolveBinding().get(0));
+		caller = (Function) dico.getEntityByKey( firstDefinition(node.getNameToken()) );
 		if (caller == null) {
 			System.err.println("  Function definition not found: "+ node.getName());
 		}
@@ -38,7 +41,7 @@ public class InvokVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	public void visitASTSubroutineSubprogramNode(ASTSubroutineSubprogramNode node) {
-		caller = (Function) dico.getEntityByKey(node.getNameToken().resolveBinding().get(0));
+		caller = (Function) dico.getEntityByKey( firstDefinition(node.getNameToken()) );
 		if (caller == null) {
 			System.err.println("  Procedure definition not found: "+ node.getName());
 		}
@@ -47,24 +50,36 @@ public class InvokVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	public void visitASTCallStmtNode(ASTCallStmtNode node) {
-		Invocation fmx = null;
-		Token tok = node.getSubroutineName();
+		invocationFromNode( node.getSubroutineName());
+	}
 
-		List<Definition> bindings = tok.resolveBinding();
+	@Override
+	public void visitASTVarOrFnRefNode(ASTVarOrFnRefNode node) {
+		invocationFromNode( node.getName().getName());
+	}
+
+	
+	// ================  U T I L I T I E S  =======================
+
+	private Invocation invocationFromNode( Token nameTok) {
+		Invocation fmx = null;
+		List<Definition> bindings = nameTok.resolveBinding();
 		for (Definition bnd : bindings) {
 			BehaviouralEntity invoked = (BehaviouralEntity) dico.getEntityByKey(bnd);
 			if (invoked != null) {
 				if (fmx == null) {
-					fmx = dico.addFamixInvocation( /*sender*/caller,  invoked, /*receiver*/null, /*signature*/node.toString(),  /*prev*/null);
+					fmx = dico.addFamixInvocation( /*sender*/caller,  invoked, /*receiver*/null, /*signature*/nameTok.getText(),  /*prev*/null);
 				}
 				else {
 					fmx.addCandidates(invoked);
 				}
 				if (fmx == null) {
-					System.err.println("  could not create invocation: "+ node.getSubroutineName());
+					System.err.println("  could not create invocation: "+ nameTok.getText());
 				}
 			}
 		}
+		return fmx;
 	}
 
+	
 }
