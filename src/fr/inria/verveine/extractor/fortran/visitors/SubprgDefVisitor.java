@@ -6,7 +6,7 @@ import org.eclipse.photran.internal.core.parser.ASTProgramStmtNode;
 import org.eclipse.photran.internal.core.parser.ASTSubroutineSubprogramNode;
 
 import eu.synectique.verveine.core.gen.famix.Function;
-import eu.synectique.verveine.core.gen.famix.UnknownBehaviouralEntity;
+import eu.synectique.verveine.core.gen.famix.Program;
 import fr.inria.verveine.extractor.fortran.plugin.FDictionary;
 
 @SuppressWarnings("restriction")
@@ -25,7 +25,7 @@ public class SubprgDefVisitor extends AbstractDispatcherVisitor {
 	public void visitASTProgramStmtNode(ASTProgramStmtNode node) {
 		Token tk = node.getProgramName().getProgramName();
 		
-		UnknownBehaviouralEntity fmx = dico.ensureFamixEntity( UnknownBehaviouralEntity.class, firstDefinition(tk), tk.getText());
+		Program fmx = dico.ensureFamixEntity( Program.class, firstDefinition(tk), tk.getText());
 		fmx.setIsStub(false);
 		dico.addSourceAnchor(fmx, filename, node);
 	}
