@@ -10,19 +10,21 @@ import org.eclipse.photran.internal.core.parser.ASTProgramStmtNode;
 import org.eclipse.photran.internal.core.parser.ASTSubroutineSubprogramNode;
 import org.eclipse.photran.internal.core.parser.ASTVarOrFnRefNode;
 
+import eu.synectique.verveine.core.gen.famix.Access;
 import eu.synectique.verveine.core.gen.famix.BehaviouralEntity;
 import eu.synectique.verveine.core.gen.famix.Function;
 import eu.synectique.verveine.core.gen.famix.Invocation;
 import eu.synectique.verveine.core.gen.famix.NamedEntity;
 import eu.synectique.verveine.core.gen.famix.Program;
+import eu.synectique.verveine.core.gen.famix.StructuralEntity;
 import fr.inria.verveine.extractor.fortran.plugin.FDictionary;
 
 @SuppressWarnings("restriction")
-public class InvokVisitor extends AbstractDispatcherVisitor {
+public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 
 	private Function caller;
 
-	public InvokVisitor(FDictionary dico) {
+	public InvokAccessVisitor(FDictionary dico) {
 		super(dico);
 	}
 
@@ -62,35 +64,56 @@ public class InvokVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	public void visitASTCallStmtNode(ASTCallStmtNode node) {
-		invocationFromNode( node.getSubroutineName());
+		// actually, here we know it is an invocatin and not an access
+		invokOrAccessFromNode( node.getSubroutineName());
 	}
 
 	@Override
 	public void visitASTVarOrFnRefNode(ASTVarOrFnRefNode node) {
-		invocationFromNode( node.getName().getName());
+		invokOrAccessFromNode( node.getName().getName());
 	}
 
 	
 	// ================  U T I L I T I E S  =======================
 
-	private Invocation invocationFromNode( Token nameTok) {
-		Invocation fmx = null;
+	private void invokOrAccessFromNode( Token nameTok) {
+		Invocation invok = null;
+		Access acc = null;
+
+		if ( caller==null ) {
+			System.err.println("  "+nameTok.getText()+": no caller, giving up");
+			return;
+		}
+
 		List<Definition> bindings = nameTok.resolveBinding();
+
 		for (Definition bnd : bindings) {
-			NamedEntity invoked = dico.getEntityByKey(bnd);
-			if ( (invoked != null) && (invoked instanceof BehaviouralEntity) ) { 
-				if (fmx == null) {
-					fmx = dico.addFamixInvocation( /*sender*/caller,  (BehaviouralEntity) invoked, /*receiver*/null, /*signature*/nameTok.getText(),  /*prev*/null);
+			NamedEntity target = dico.getEntityByKey(bnd);
+			if (target != null) {
+				if (target instanceof BehaviouralEntity) {
+					if (invok == null) {
+						invok = dico.addFamixInvocation( /*sender*/caller,  (BehaviouralEntity)target, /*receiver*/null, /*signature*/nameTok.getText(),  /*prev*/null);
+					}
+					else {
+						invok.addCandidates((BehaviouralEntity) target);
+					}
+				}
+				else if (target instanceof StructuralEntity) {
+					// what if we have candidate function and variables ...
+					acc = dico.addFamixAccess(/*accessor*/caller, (StructuralEntity)target, /*isWrite*/false, /*prev*/null);					
 				}
 				else {
-					fmx.addCandidates((BehaviouralEntity) invoked);
-				}
-				if (fmx == null) {
-					System.err.println("  could not create invocation: "+ nameTok.getText());
+					// heuuu don' know what it is
+					System.err.println("  "+nameTok.getText()+": varOrFnRef to unknow thing");
 				}
 			}
+			else {
+				System.err.println("  "+nameTok.getText()+": no entity for definition");
+			}
 		}
-		return fmx;
+		if ( (acc==null) && (invok==null) ) {
+			System.err.println("  "+nameTok.getText()+": no access/invocation created");
+		}
 	}
 
 	

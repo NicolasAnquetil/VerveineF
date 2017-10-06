@@ -17,7 +17,7 @@ import eu.synectique.verveine.core.VerveineParser;
 import eu.synectique.verveine.core.gen.famix.CSourceLanguage;
 import eu.synectique.verveine.core.gen.famix.SourceLanguage;
 
-import fr.inria.verveine.extractor.fortran.visitors.InvokVisitor;
+import fr.inria.verveine.extractor.fortran.visitors.InvokAccessVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.ScopeDefVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.SubprgDefVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.VarDefVisitor;
@@ -72,7 +72,7 @@ public class VerveineFParser extends VerveineParser {
 		proj.accept(new ScopeDefVisitor(dico));
 		proj.accept(new SubprgDefVisitor(dico));
 		proj.accept(new VarDefVisitor(dico));
-		proj.accept(new InvokVisitor(dico));
+		proj.accept(new InvokAccessVisitor(dico));
 	}
 
 	private void configWorkspace(IWorkspace workspace) {
