@@ -6,6 +6,7 @@ import org.eclipse.photran.internal.core.analysis.binding.Definition;
 import org.eclipse.photran.internal.core.lexer.Token;
 import org.eclipse.photran.internal.core.parser.ASTCallStmtNode;
 import org.eclipse.photran.internal.core.parser.ASTFunctionSubprogramNode;
+import org.eclipse.photran.internal.core.parser.ASTProgramStmtNode;
 import org.eclipse.photran.internal.core.parser.ASTSubroutineSubprogramNode;
 import org.eclipse.photran.internal.core.parser.ASTVarOrFnRefNode;
 
@@ -13,6 +14,7 @@ import eu.synectique.verveine.core.gen.famix.BehaviouralEntity;
 import eu.synectique.verveine.core.gen.famix.Function;
 import eu.synectique.verveine.core.gen.famix.Invocation;
 import eu.synectique.verveine.core.gen.famix.NamedEntity;
+import eu.synectique.verveine.core.gen.famix.Program;
 import fr.inria.verveine.extractor.fortran.plugin.FDictionary;
 
 @SuppressWarnings("restriction")
@@ -30,6 +32,15 @@ public class InvokVisitor extends AbstractDispatcherVisitor {
 	}
 	
 	// ================  V I S I T O R  =======================
+
+	@Override
+	public void visitASTProgramStmtNode(ASTProgramStmtNode node) {
+		caller = (Program) dico.getEntityByKey( firstDefinition(node.getProgramName().getProgramName()) );
+		if (caller == null) {
+			System.err.println("  Program definition not found: "+ node.getProgramName().getProgramName());
+		}
+		super.visitASTProgramStmtNode(node);
+	}
 
 	@Override
 	public void visitASTFunctionSubprogramNode(ASTFunctionSubprogramNode node) {
