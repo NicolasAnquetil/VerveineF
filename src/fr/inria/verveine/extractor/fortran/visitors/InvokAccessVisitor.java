@@ -3,14 +3,18 @@ package fr.inria.verveine.extractor.fortran.visitors;
 import java.util.List;
 
 import org.eclipse.photran.internal.core.analysis.binding.Definition;
+import org.eclipse.photran.internal.core.analysis.loops.ASTProperLoopConstructNode;
 import org.eclipse.photran.internal.core.lexer.Token;
+import org.eclipse.photran.internal.core.parser.ASTAssignmentStmtNode;
 import org.eclipse.photran.internal.core.parser.ASTCallStmtNode;
 import org.eclipse.photran.internal.core.parser.ASTFunctionSubprogramNode;
+import org.eclipse.photran.internal.core.parser.ASTNameNode;
 import org.eclipse.photran.internal.core.parser.ASTProgramStmtNode;
 import org.eclipse.photran.internal.core.parser.ASTSubroutineSubprogramNode;
 import org.eclipse.photran.internal.core.parser.ASTVarOrFnRefNode;
 
 import eu.synectique.verveine.core.gen.famix.Access;
+import eu.synectique.verveine.core.gen.famix.Association;
 import eu.synectique.verveine.core.gen.famix.BehaviouralEntity;
 import eu.synectique.verveine.core.gen.famix.Function;
 import eu.synectique.verveine.core.gen.famix.Invocation;
@@ -30,7 +34,7 @@ public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	protected String msgTrace() {
-		return "Creating subprograms calls";
+		return "Creating variable accesses and subprograms calls";
 	}
 	
 	// ================  V I S I T O R  =======================
@@ -64,25 +68,53 @@ public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	public void visitASTCallStmtNode(ASTCallStmtNode node) {
-		// actually, here we know it is an invocatin and not an access
+		// actually, here we know it is an invocation and not an access
 		invokOrAccessFromNode( node.getSubroutineName());
+
+		super.visitASTCallStmtNode(node);
 	}
 
 	@Override
 	public void visitASTVarOrFnRefNode(ASTVarOrFnRefNode node) {
+		// actually, here we know it is an access and not an invocation
 		invokOrAccessFromNode( node.getName().getName());
+
+		super.visitASTVarOrFnRefNode(node);
 	}
 
+	@Override
+	public void visitASTAssignmentStmtNode(ASTAssignmentStmtNode node) {
+		ASTNameNode lhs = node.getLhsVariable();
+		if (lhs != null) {
+			Access acc = (Access) invokOrAccessFromNode(lhs.getName());
+			if (acc != null) {
+				acc.setIsWrite(true);
+			}
+		}
+
+		super.visitASTAssignmentStmtNode(node);
+	}
 	
+	@Override
+	public void visitASTProperLoopConstructNode(ASTProperLoopConstructNode node) {
+		Token varI = node.getIndexVariable();
+		if (varI != null) {
+			Access acc = (Access) invokOrAccessFromNode(varI);
+			if (acc != null) {
+				acc.setIsWrite(true);
+			}			
+		}
+	}
+
 	// ================  U T I L I T I E S  =======================
 
-	private void invokOrAccessFromNode( Token nameTok) {
+	private Association invokOrAccessFromNode( Token nameTok) {
 		Invocation invok = null;
 		Access acc = null;
 
 		if ( caller==null ) {
-			System.err.println("  "+nameTok.getText()+": no caller, giving up");
-			return;
+			//System.err.println("  "+nameTok.getText()+": no caller, giving up");
+			return null;
 		}
 
 		List<Definition> bindings = nameTok.resolveBinding();
@@ -103,16 +135,25 @@ public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 					acc = dico.addFamixAccess(/*accessor*/caller, (StructuralEntity)target, /*isWrite*/false, /*prev*/null);					
 				}
 				else {
-					// heuuu don' know what it is
-					System.err.println("  "+nameTok.getText()+": varOrFnRef to unknow thing");
+					// heuuu don't know what it is
+					//System.err.println("  "+nameTok.getText()+": varOrFnRef to unknow thing");
 				}
 			}
 			else {
-				System.err.println("  "+nameTok.getText()+": no entity for definition");
+				//System.err.println("  "+nameTok.getText()+": no entity for definition");
 			}
 		}
-		if ( (acc==null) && (invok==null) ) {
-			System.err.println("  "+nameTok.getText()+": no access/invocation created");
+
+		if (acc != null) {
+			return acc;
+		}
+		else if (invok != null) {
+			return invok;
+		}
+		else {
+			// maybe a local variable (not created)?
+			//System.err.println("  "+nameTok.getText()+": no access/invocation created");
+			return null;
 		}
 	}
 

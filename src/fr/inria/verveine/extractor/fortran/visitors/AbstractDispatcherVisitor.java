@@ -9,19 +9,21 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.photran.core.IFortranAST;
 import org.eclipse.photran.internal.core.analysis.binding.Definition;
+import org.eclipse.photran.internal.core.analysis.loops.ASTVisitorWithLoops;
 import org.eclipse.photran.internal.core.lexer.Token;
-import org.eclipse.photran.internal.core.parser.ASTVisitor;
 import org.eclipse.photran.internal.core.vpg.PhotranVPG;
 
+import eu.synectique.verveine.core.EntityStack;
 import fr.inria.verveine.extractor.fortran.plugin.FDictionary;
 
 /**
  * The superclass of all visitors. These visitors visit an AST to create FAMIX entities.<BR>
- * This abstract class dispatches more finely the visits than what CDT's ASTVisitor normally does. 
- * This visitor also merges two APIs: visit methods on AST (ASTVisitor) and visit methods on ICElements (ICElementVisitor).
+ * This visitor merges two APIs: visit methods on AST (ASTVisitorWithLoops) and visit methods on ICElements (ICElementVisitor).
+ * Extends ASTVisitorWithLoops to reuse default AST navigation implementation (visit children of nodes)
+ * and have access to loop nodes  
  */
 @SuppressWarnings("restriction")
-public abstract class AbstractDispatcherVisitor extends ASTVisitor implements ICElementVisitor {
+public abstract class AbstractDispatcherVisitor extends ASTVisitorWithLoops implements ICElementVisitor {
 
 
 	protected PhotranVPG vpg;
@@ -29,6 +31,8 @@ public abstract class AbstractDispatcherVisitor extends ASTVisitor implements IC
 	protected FDictionary dico;
 	
 	protected String filename;
+	
+	protected EntityStack context;
 
 	// CONSTRUCTOR ==========================================================================================================================
 
@@ -36,6 +40,8 @@ public abstract class AbstractDispatcherVisitor extends ASTVisitor implements IC
 		super();
 		this.dico = dico;
 		this.vpg = PhotranVPG.getInstance();
+
+		this.context = new EntityStack();
 
 		if (msgTrace() != null ) {
 			System.out.println(msgTrace());

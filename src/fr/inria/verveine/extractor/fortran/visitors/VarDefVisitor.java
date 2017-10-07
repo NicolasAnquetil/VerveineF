@@ -3,11 +3,14 @@ package fr.inria.verveine.extractor.fortran.visitors;
 import org.eclipse.photran.internal.core.lexer.Token;
 import org.eclipse.photran.internal.core.parser.ASTEntityDeclNode;
 import org.eclipse.photran.internal.core.parser.ASTFunctionSubprogramNode;
+import org.eclipse.photran.internal.core.parser.ASTModuleNode;
 import org.eclipse.photran.internal.core.parser.ASTProgramStmtNode;
 import org.eclipse.photran.internal.core.parser.ASTSubroutineSubprogramNode;
 import org.eclipse.photran.internal.core.parser.ASTTypeDeclarationStmtNode;
 
 import eu.synectique.verveine.core.gen.famix.GlobalVariable;
+import eu.synectique.verveine.core.gen.famix.Module;
+import eu.synectique.verveine.core.gen.famix.ScopingEntity;
 import fr.inria.verveine.extractor.fortran.plugin.FDictionary;
 
 @SuppressWarnings("restriction")
@@ -20,6 +23,15 @@ public class VarDefVisitor extends AbstractDispatcherVisitor {
 	@Override
 	protected String msgTrace() {
 		return "Creating variables";
+	}
+
+	@Override
+	public void visitASTModuleNode(ASTModuleNode node) {
+		Module mod = (Module) dico.getEntityByKey( firstDefinition(node.getNameToken()) );
+
+		context.push(mod);
+		super.visitASTModuleNode(node);
+		context.pop();
 	}
 
 	@Override
@@ -45,7 +57,7 @@ public class VarDefVisitor extends AbstractDispatcherVisitor {
 		GlobalVariable fmx;
 		for (ASTEntityDeclNode decl : node.getEntityDeclList()) {
 			Token tk = decl.getObjectName().getObjectName();
-			fmx= dico.ensureFamixGlobalVariable( firstDefinition(tk), tk.getText(), /*parent*/null);
+			fmx= dico.ensureFamixGlobalVariable( firstDefinition(tk), tk.getText(), /*parent*/(ScopingEntity)context.top());
 			fmx.setIsStub(false);
 			dico.addSourceAnchor(fmx, filename, node);
 		}
