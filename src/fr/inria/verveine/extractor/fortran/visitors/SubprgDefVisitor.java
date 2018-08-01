@@ -1,14 +1,11 @@
 package fr.inria.verveine.extractor.fortran.visitors;
 
-import org.eclipse.photran.internal.core.lexer.Token;
 import org.eclipse.photran.internal.core.parser.ASTFunctionSubprogramNode;
 import org.eclipse.photran.internal.core.parser.ASTModuleNode;
-import org.eclipse.photran.internal.core.parser.ASTProgramStmtNode;
 import org.eclipse.photran.internal.core.parser.ASTSubroutineSubprogramNode;
 
 import eu.synectique.verveine.core.gen.famix.Function;
 import eu.synectique.verveine.core.gen.famix.Module;
-import eu.synectique.verveine.core.gen.famix.Program;
 import eu.synectique.verveine.core.gen.famix.ScopingEntity;
 import fr.inria.verveine.extractor.fortran.plugin.FDictionary;
 
@@ -31,15 +28,6 @@ public class SubprgDefVisitor extends AbstractDispatcherVisitor {
 		context.push(mod);
 		super.visitASTModuleNode(node);
 		context.pop();
-	}
-
-	@Override
-	public void visitASTProgramStmtNode(ASTProgramStmtNode node) {
-		Token tk = node.getProgramName().getProgramName();
-		
-		Program fmx = dico.ensureFamixEntity( Program.class, firstDefinition(tk), tk.getText());
-		fmx.setIsStub(false);
-		dico.addSourceAnchor(fmx, filename, node);
 	}
 
 	@Override
