@@ -9,10 +9,10 @@ public class PluginApplication implements IApplication {
 	public Object start(IApplicationContext ctxt) throws Exception {
 		System.out.println("Starting VerveineF");
 		
-		// String[] appArgs = (String[])ctxt.getArguments().get(IApplicationContext.APPLICATION_ARGS);
+		String[] appArgs = (String[])ctxt.getArguments().get(IApplicationContext.APPLICATION_ARGS);
 
 		VerveineFParser verveine = new VerveineFParser();
-
+		verveine.setOptions(appArgs);
 		if (verveine.parse()) {
 			verveine.emitMSE();
 		}

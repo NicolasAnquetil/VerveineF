@@ -1,22 +1,31 @@
 package fr.inria.verveine.extractor.fortran.plugin;
 
+import java.io.File;
+
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.photran.internal.core.FProjectNature;
+import org.eclipse.photran.internal.core.properties.SearchPathProperties;
 import org.eclipse.photran.internal.core.vpg.PhotranVPG;
 
 import eu.synectique.verveine.core.VerveineParser;
 import eu.synectique.verveine.core.gen.famix.CSourceLanguage;
 import eu.synectique.verveine.core.gen.famix.SourceLanguage;
-
+import fr.inria.verveine.extractor.fortran.utilities.Constants;
+import fr.inria.verveine.extractor.fortran.utilities.FileUtil;
+import fr.inria.verveine.extractor.fortran.utilities.TextProgressMonitor;
 import fr.inria.verveine.extractor.fortran.visitors.InvokAccessVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.ScopeDefVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.SubprgDefVisitor;
@@ -25,54 +34,62 @@ import fr.inria.verveine.extractor.fortran.visitors.VarDefVisitor;
 
 @SuppressWarnings("restriction")
 public class VerveineFParser extends VerveineParser {
+	public static final String WORKSPACE_NAME = "tempWS";
+
+	public static final String DEFAULT_PROJECT_NAME = "tempProj";
+
+	public static final String SOURCE_ROOT_DIR = "src";
+
+	private static final String VERVEINEF_VERSION = "0.4.0_20180731";
 
 	/**
 	 * Dictionary used to create all entities. Contains a Famix repository
 	 */
-	private FDictionary dico;
+	private FDictionary dico = null;
 
-	private static final IProgressMonitor NULL_PROGRESS_MONITOR = new NullProgressMonitor();
+	/**
+	 * Directory where the project to analyze is located
+	 */
+	private String userProjectDir = null;
 
-    //private SearchPathProperties properties;
 
 	public VerveineFParser() {
 		super();
 		dico = new FDictionary(getFamixRepo());
+		userProjectDir = null;
 	}
 
 	public boolean parse() {
-        ICProject fproject = createEclipseProject("Carmel", "/home/anquetil/Documents/RMod/Tools/Fortran/workspace/");
-        if (fproject == null) {
-        	System.out.println("// could not create the project :-(");
+        IProject project = createEclipseProject(DEFAULT_PROJECT_NAME, userProjectDir );
+        if (project == null) {
+        	System.out.println("// could not create the eclipse project for code indexing, must give up");
         	return false;
         }
-        else {
-        	System.out.println("project successfully created");
-        }
 
-		computeIndex(fproject);
+		computeIndex(project);
 
         try {
     		if (linkToExisting()) {
     			// incremental parsing ...
     		}
 
-    		runAllVisitors( dico, fproject);
-
+    		runAllVisitors( dico, project);
 		} catch (CoreException e) {
 			e.printStackTrace();
 			return false;
 		}
 
+        deleteEclipseProject( project);
+
         return true;
 	}
 
-	private void runAllVisitors(FDictionary dico, ICProject proj) throws CoreException {
-
-		proj.accept(new ScopeDefVisitor(dico));
-		proj.accept(new SubprgDefVisitor(dico));
-		proj.accept(new VarDefVisitor(dico));
-		proj.accept(new InvokAccessVisitor(dico));
+	private void runAllVisitors(FDictionary dico, IProject proj) throws CoreException {
+		ICProject cproj = CoreModel.getDefault().getCModel().getCProject(proj.getName());
+		cproj.accept(new ScopeDefVisitor(dico));
+		cproj.accept(new SubprgDefVisitor(dico));
+		cproj.accept(new VarDefVisitor(dico));
+		cproj.accept(new InvokAccessVisitor(dico));
 	}
 
 	private void configWorkspace(IWorkspace workspace) {
@@ -86,37 +103,138 @@ public class VerveineFParser extends VerveineParser {
 
 	}
 
-	private ICProject createEclipseProject(String projName, String sourcePath) {
+	private void deleteEclipseProject(IProject project) {
+		try {
+			// delete content if the project exists
+			if (project.exists()) {
+				project.delete(/*deleteContent*/true, /*force*/true, Constants.NULL_PROGRESS_MONITOR);
+				project.refreshLocal(IResource.DEPTH_INFINITE, Constants.NULL_PROGRESS_MONITOR);
+			}
+		} catch (Exception exc) {
+			exc.printStackTrace();
+		}
+	}
+
+	private IProject createEclipseProject(String projName , String sourcePath) {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		configWorkspace(workspace);
 		IWorkspaceRoot root = workspace.getRoot();
 
-		final IProject project = root.getProject(projName);
+		// we make a directory at the workspace root to copy source files
+		IPath eclipseProjPath = root.getRawLocation().removeLastSegments(1).append(WORKSPACE_NAME).append(projName);
+		eclipseProjPath.toFile().mkdirs();
 
-		try {
-			if (! project.exists()) {
-				project.create(/*eclipseProjDesc,*/ NULL_PROGRESS_MONITOR);
-			}
-			project.open(NULL_PROGRESS_MONITOR);
-		} catch (CoreException e1) {
-			e1.printStackTrace();
+		final IProject project = root.getProject(projName);
+		if (project.exists()) {
+			// delete to recreate a fresh one
+			deleteEclipseProject( project);
 		}
 
-		ICProjectDescription cProjectDesc = CoreModel.getDefault().getProjectDescription(project, true);
-		cProjectDesc.setCdtProjectCreated();
+		IProjectDescription eclipseProjDesc = workspace.newProjectDescription(project.getName());
+		eclipseProjDesc.setLocation(eclipseProjPath);
 
-        return CoreModel.getDefault().getCModel().getCProject(project.getName());
+		try {
+			project.create(eclipseProjDesc, Constants.NULL_PROGRESS_MONITOR);
+			project.open(Constants.NULL_PROGRESS_MONITOR);
+		} catch (CoreException e1) {
+			e1.printStackTrace();
+			return null;
+		}
+
+		try {
+			// now we make it a C project and a Fortran project
+			CCorePlugin.getDefault().createCProject(eclipseProjDesc, project, Constants.NULL_PROGRESS_MONITOR, project.getName());
+            FProjectNature.addFNature(project, new NullProgressMonitor());
+		} catch (Exception exc) {
+			exc.printStackTrace();
+			return null;
+		}
+		
+		if (! copysourceCodeInProject(sourcePath, project) ) {
+			return null;
+		}
+
+        return project;
 	}
 
-	private void computeIndex(ICProject cproject) {
-		System.out.println("Indexing source files");
+	private boolean copysourceCodeInProject(String sourcePath, final IProject project) {
+		File projSrc = new File(sourcePath);
+		if (! projSrc.exists()) {
+			System.err.println("Project directory "+sourcePath+ " not found !");
+			return false;
+		}
+		FileUtil.copySourceFilesInProject(project, SOURCE_ROOT_DIR, projSrc);
+		ICProjectDescriptionManager descManager = CoreModel.getDefault().getProjectDescriptionManager();
+        try {
+			descManager.updateProjectDescriptions(new IProject[] { project }, Constants.NULL_PROGRESS_MONITOR);
+		} catch (CoreException e) {
+			e.printStackTrace();
+			return false;
+		}
+        
+        return true;
+	}
 
-        PhotranVPG.getInstance().ensureVPGIsUpToDate(NULL_PROGRESS_MONITOR);      
+	private void computeIndex(IProject project) {		
+        TextProgressMonitor monitor = new TextProgressMonitor();
+        monitor.setTaskName("Indexing source files");
+        new SearchPathProperties().setProperty(project, SearchPathProperties.ENABLE_VPG_PROPERTY_NAME, "true");
+		PhotranVPG.getInstance().ensureVPGIsUpToDate( monitor);
 	}
 
 	@Override
 	protected SourceLanguage getMyLgge() {
 		return new CSourceLanguage();
+	}
+
+
+	public void setOptions(String[] args) {
+		int i = 0;
+		while (i < args.length && args[i].trim().startsWith("-")) {
+		    String arg = args[i++].trim();
+
+			if (arg.equals("-h")) {
+				usage();
+			}
+			else if (arg.equals("-v")) {
+				version();
+			}
+			else {
+				int j = super.setOption(i - 1, args);
+				if (j > 0) {     // j is the number of args consumed by super.setOption()
+					i += j;      // advance by that number of args
+					i--;         // 1 will be added at the beginning of the loop ("args[i++]")
+				}
+				else {
+					System.err.println("** Unrecognized option: " + arg);
+					usage();
+				}
+			}
+		}
+
+		for ( ; i < args.length; i++) {
+			userProjectDir = args[i];
+		}
+		
+		if (userProjectDir == null) {
+			System.err.println("Nos project directory set");
+			usage();
+		}
+	}
+
+	protected void usage() {
+		System.err.println("Usage: VerveineF [options] <Fortran project directory>");
+		System.err.println("Recognized options:");
+		System.err.println("      -h: prints this message");
+		System.err.println("      -v: prints the version");
+		System.err.println("      -o <output-file-name>: changes the name of the output file (default: output.mse)");
+		System.err.println("      <Fortran project directory>: directory containing the Fortran project to export in MSE");
+		System.exit(0);
+	}
+
+	protected void version() {
+		System.out.println("VerveineF version:"+VERVEINEF_VERSION);
+		System.exit(0);
 	}
 
 }
