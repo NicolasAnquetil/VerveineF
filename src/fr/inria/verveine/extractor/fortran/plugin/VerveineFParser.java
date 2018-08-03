@@ -21,11 +21,12 @@ import org.eclipse.photran.internal.core.properties.SearchPathProperties;
 import org.eclipse.photran.internal.core.vpg.PhotranVPG;
 
 import eu.synectique.verveine.core.VerveineParser;
-import eu.synectique.verveine.core.gen.famix.CSourceLanguage;
+import eu.synectique.verveine.core.gen.famix.FortranSourceLanguage;
 import eu.synectique.verveine.core.gen.famix.SourceLanguage;
 import fr.inria.verveine.extractor.fortran.utilities.Constants;
 import fr.inria.verveine.extractor.fortran.utilities.FileUtil;
 import fr.inria.verveine.extractor.fortran.utilities.TextProgressMonitor;
+import fr.inria.verveine.extractor.fortran.visitors.CommentVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.InvokAccessVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.ScopeDefVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.SubprgDefVisitor;
@@ -51,6 +52,8 @@ public class VerveineFParser extends VerveineParser {
 	 * Directory where the project to analyze is located
 	 */
 	private String userProjectDir = null;
+
+	private FortranSourceLanguage srcLggeInstance;
 
 
 	public VerveineFParser() {
@@ -86,9 +89,12 @@ public class VerveineFParser extends VerveineParser {
 
 	private void runAllVisitors(FDictionary dico, IProject proj) throws CoreException {
 		ICProject cproj = CoreModel.getDefault().getCModel().getCProject(proj.getName());
+
 		cproj.accept(new ScopeDefVisitor(dico));
 		cproj.accept(new SubprgDefVisitor(dico));
 		cproj.accept(new VarDefVisitor(dico));
+		cproj.accept(new CommentVisitor(dico));
+
 		cproj.accept(new InvokAccessVisitor(dico));
 	}
 
@@ -184,7 +190,10 @@ public class VerveineFParser extends VerveineParser {
 
 	@Override
 	protected SourceLanguage getMyLgge() {
-		return new CSourceLanguage();
+		if (srcLggeInstance == null) {
+			srcLggeInstance = new FortranSourceLanguage();
+		}
+		return srcLggeInstance;
 	}
 
 
