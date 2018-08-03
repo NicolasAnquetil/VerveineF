@@ -1,28 +1,19 @@
 package fr.inria.verveine.extractor.fortran.visitors;
 
 import org.eclipse.photran.internal.core.lexer.Token;
-import org.eclipse.photran.internal.core.parser.ASTDoConstructNode;
-import org.eclipse.photran.internal.core.parser.ASTElseIfConstructNode;
-import org.eclipse.photran.internal.core.parser.ASTElseIfStmtNode;
 import org.eclipse.photran.internal.core.parser.ASTEntityDeclNode;
-import org.eclipse.photran.internal.core.parser.ASTForallConstructNode;
 import org.eclipse.photran.internal.core.parser.ASTFunctionSubprogramNode;
-import org.eclipse.photran.internal.core.parser.ASTIfConstructNode;
-import org.eclipse.photran.internal.core.parser.ASTIfStmtNode;
-import org.eclipse.photran.internal.core.parser.ASTLoopControlNode;
 import org.eclipse.photran.internal.core.parser.ASTMainProgramNode;
 import org.eclipse.photran.internal.core.parser.ASTModuleNode;
 import org.eclipse.photran.internal.core.parser.ASTNode;
 import org.eclipse.photran.internal.core.parser.ASTSubroutineSubprogramNode;
 import org.eclipse.photran.internal.core.parser.ASTTypeDeclarationStmtNode;
 
-import eu.synectique.verveine.core.gen.famix.BehaviouralEntity;
 import eu.synectique.verveine.core.gen.famix.Function;
 import eu.synectique.verveine.core.gen.famix.GlobalVariable;
+import eu.synectique.verveine.core.gen.famix.IndexedFileAnchor;
 import eu.synectique.verveine.core.gen.famix.Module;
-import eu.synectique.verveine.core.gen.famix.NamedEntity;
 import eu.synectique.verveine.core.gen.famix.Program;
-import eu.synectique.verveine.core.gen.famix.ScopingEntity;
 import eu.synectique.verveine.core.gen.famix.SourcedEntity;
 import fr.inria.verveine.extractor.fortran.plugin.FDictionary;
 
@@ -101,6 +92,11 @@ public class CommentVisitor extends AbstractDispatcherVisitor {
 		int start = cmt.indexOf('!');
 		if (start >= 0) {
 			dico.createFamixComment(cmt.substring(start), fmx);
+			if (fmx.getSourceAnchor() != null) {
+				IndexedFileAnchor fmxAnchor = (IndexedFileAnchor) fmx.getSourceAnchor();
+				
+				fmxAnchor.setStartPos( (int)fmxAnchor.getStartPos() - cmt.length()); 
+			}
 		}
 	}
 
