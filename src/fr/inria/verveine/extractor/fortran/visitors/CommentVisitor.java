@@ -88,7 +88,7 @@ public class CommentVisitor extends AbstractDispatcherVisitor {
 	 * 
 	 * TODO Deal with #ifdef / #endif that are also "white"
 	 */
-	private void createCommentIfNonBlank(ASTNode node, SourcedEntity fmx) {
+	private void createCommentIfNonBlank(AbstractASTNode node, SourcedEntity fmx) {
 		String cmt = node.findFirstToken().getWhiteBefore();
 		int start = cmt.indexOf('!');
 		if (start >= 0) {

@@ -1,33 +1,15 @@
 package fr.inria.verveine.extractor.fortran.visitors;
 
-import org.eclipse.cdt.core.model.ICContainer;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICElementVisitor;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IParent;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.photran.core.IFortranAST;
-import org.eclipse.photran.internal.core.analysis.binding.Definition;
-import org.eclipse.photran.internal.core.analysis.loops.ASTVisitorWithLoops;
-import org.eclipse.photran.internal.core.lexer.Token;
-import org.eclipse.photran.internal.core.vpg.PhotranVPG;
-
 import eu.synectique.verveine.core.EntityStack;
-import fr.inria.verveine.extractor.fortran.plugin.FDictionary;
+import fr.inria.verveine.extractor.fortran.FDictionary;
+import fr.inria.verveine.extractor.fortran.ast.AbstractASTNamedNode;
+import fr.inria.verveine.extractor.fortran.parser.ASTVisitor;
 
 /**
- * The superclass of all visitors. These visitors visit an AST to create FAMIX entities.<BR>
- * This visitor merges two APIs: visit methods on AST (ASTVisitorWithLoops) and visit methods on ICElements (ICElementVisitor).
- * Extends ASTVisitorWithLoops to reuse default AST navigation implementation (visit children of nodes)
- * and have access to loop nodes  
+ * The superclass of all visitors. These visitors visit an AST to create FAMIX entities.
  */
-@SuppressWarnings("restriction")
-public abstract class AbstractDispatcherVisitor extends ASTVisitorWithLoops implements ICElementVisitor {
+public abstract class AbstractDispatcherVisitor extends ASTVisitor {
 
-
-	protected PhotranVPG vpg;
-	
 	protected FDictionary dico;
 	
 	protected String filename;
@@ -39,7 +21,6 @@ public abstract class AbstractDispatcherVisitor extends ASTVisitorWithLoops impl
 	public AbstractDispatcherVisitor(FDictionary dico) {
 		super();
 		this.dico = dico;
-		this.vpg = PhotranVPG.getInstance();
 
 		this.context = new EntityStack();
 
@@ -50,34 +31,12 @@ public abstract class AbstractDispatcherVisitor extends ASTVisitorWithLoops impl
 
 	abstract protected String msgTrace();
 
+	protected String mkKey(AbstractASTNamedNode node) {
+		return node.getClass().getName() + "/" + node.fullyQualifiedName();
+	}
+
 	// VISITING METODS ON ICELEMENT HIERARCHY (ICElementVisitor) ===========================================================================
-
-	@Override
-	public boolean visit(ICElement elt) {
-		switch (elt.getElementType()) {
-		case ICElement.C_PROJECT:
-			visit( (ICProject) elt);
-			break;
-		case ICElement.C_CCONTAINER:
-			visit( (ICContainer) elt);
-			break;
-		case ICElement.C_UNIT:
-			visit( (ITranslationUnit) elt);
-			break;
-		default:
-			//  hopefully this should never happen
-		}
-		return false;
-	}
-
-	public void visit(ICProject project) {
-		visitChildren(project);
-	}
-
-	public void visit(ICContainer cont) {
-		visitChildren(cont);
-	}
-
+/*
 	public void visit(ITranslationUnit elt) {
 		// this is the method merging ICElementVisitor and ASTVisitor
 		filename = elt.getElementName();
@@ -86,26 +45,7 @@ public abstract class AbstractDispatcherVisitor extends ASTVisitorWithLoops impl
 			ast.accept(this);
 		}
 	}
-
+*/
 	// UTILITIES ======================================================================================================
-
-	protected Definition firstDefinition(Token tk) {
-		if (tk.resolveBinding().size() > 0) {
-			return tk.resolveBinding().get(0);
-		}
-		else {
-			return null;
-		}
-	}
-
-	protected void visitChildren(IParent elt) {
-		try {
-			for (ICElement child : elt.getChildren()) {
-				child.accept(this);
-			}
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
-	}
 
 }

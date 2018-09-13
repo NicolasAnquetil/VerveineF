@@ -1,25 +1,23 @@
 package fr.inria.verveine.extractor.fortran.visitors;
 
-import org.eclipse.photran.internal.core.analysis.loops.ASTProperLoopConstructNode;
-import org.eclipse.photran.internal.core.parser.ASTCaseConstructNode;
-import org.eclipse.photran.internal.core.parser.ASTCaseStmtNode;
-import org.eclipse.photran.internal.core.parser.ASTElseIfConstructNode;
-import org.eclipse.photran.internal.core.parser.ASTFunctionSubprogramNode;
-import org.eclipse.photran.internal.core.parser.ASTIfConstructNode;
-import org.eclipse.photran.internal.core.parser.ASTIfStmtNode;
-import org.eclipse.photran.internal.core.parser.ASTMainProgramNode;
-import org.eclipse.photran.internal.core.parser.ASTModuleNode;
-import org.eclipse.photran.internal.core.parser.ASTSubroutineSubprogramNode;
-
 import eu.synectique.verveine.core.gen.famix.BehaviouralEntity;
 import eu.synectique.verveine.core.gen.famix.Function;
 import eu.synectique.verveine.core.gen.famix.Module;
 import eu.synectique.verveine.core.gen.famix.NamedEntity;
 import eu.synectique.verveine.core.gen.famix.Program;
 import eu.synectique.verveine.core.gen.famix.ScopingEntity;
-import fr.inria.verveine.extractor.fortran.plugin.FDictionary;
+import fr.inria.verveine.extractor.fortran.FDictionary;
+import fr.inria.verveine.extractor.fortran.ast.ASTCaseConstructNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTCaseStmtNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTElseIfConstructNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTFunctionSubprogramNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTIfConstructNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTIfStmtNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTMainProgramNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTModuleNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTProperLoopConstructNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTSubroutineSubprogramNode;
 
-@SuppressWarnings("restriction")
 public class SubprgDefVisitor extends AbstractDispatcherVisitor {
 
 	public SubprgDefVisitor(FDictionary dico) {
@@ -34,7 +32,7 @@ public class SubprgDefVisitor extends AbstractDispatcherVisitor {
 	@Override
 	public void visitASTMainProgramNode(ASTMainProgramNode node) {
 		
-		Program fmx =  (Program) dico.getEntityByKey( firstDefinition(node.getProgramStmt().getProgramName().getProgramName()) );
+		Program fmx =  (Program) dico.getEntityByKey( mkKey(node) );
 		fmx.setCyclomaticComplexity( 1);
 
 		context.push(fmx);
@@ -44,7 +42,7 @@ public class SubprgDefVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	public void visitASTModuleNode(ASTModuleNode node) {
-		Module mod = (Module) dico.getEntityByKey( firstDefinition(node.getNameToken()) );
+		Module mod = (Module) dico.getEntityByKey( mkKey(node) );
 
 		context.push(mod);
 		super.visitASTModuleNode(node);
@@ -53,7 +51,7 @@ public class SubprgDefVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	public void visitASTFunctionSubprogramNode(ASTFunctionSubprogramNode node) {
-		Function fmx = dico.ensureFamixFunction( firstDefinition(node.getNameToken()), node.getName(), /*sig*/node.getName(), /*parent*/(ScopingEntity)context.top());
+		Function fmx = dico.ensureFamixFunction( mkKey(node), node.getName().getText(), /*sig*/node.getName().getText(), /*parent*/(ScopingEntity)context.top());
 		fmx.setIsStub(false);	
 		dico.addSourceAnchor(fmx, filename, node);
 		fmx.setCyclomaticComplexity( 1);
@@ -64,7 +62,7 @@ public class SubprgDefVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	public void visitASTSubroutineSubprogramNode(ASTSubroutineSubprogramNode node) {
-		Function fmx = dico.ensureFamixFunction( firstDefinition(node.getNameToken()), node.getName(), /*sig*/node.getName(), /*parent*/(ScopingEntity)context.top());
+		Function fmx = dico.ensureFamixFunction( mkKey(node), node.getName().getText(), /*sig*/node.getName().getText(), /*parent*/(ScopingEntity)context.top());
 		fmx.setIsStub(false);
 		dico.addSourceAnchor(fmx, filename, node);
 		fmx.setCyclomaticComplexity( 1);

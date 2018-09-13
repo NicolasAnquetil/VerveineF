@@ -1,8 +1,4 @@
-package fr.inria.verveine.extractor.fortran.plugin;
-
-import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
-import org.eclipse.photran.internal.core.analysis.binding.Definition;
-import org.eclipse.photran.internal.core.parser.ASTNode;
+package fr.inria.verveine.extractor.fortran;
 
 import ch.akuhn.fame.Repository;
 import eu.synectique.verveine.core.Dictionary;
@@ -23,17 +19,18 @@ import eu.synectique.verveine.core.gen.famix.SourceAnchor;
 import eu.synectique.verveine.core.gen.famix.SourcedEntity;
 import eu.synectique.verveine.core.gen.famix.Type;
 import eu.synectique.verveine.core.gen.famix.UnknownVariable;
+import fr.inria.verveine.extractor.fortran.ast.AbstractASTNode;
 
 
 @SuppressWarnings("restriction")
-public class FDictionary extends Dictionary<Definition> {
+public class FDictionary extends Dictionary<String> {
 	
  	public FDictionary(Repository famixRepo) {
 		super(famixRepo);
 	}
 
 	@SuppressWarnings("unchecked")
- 	public <T extends NamedEntity> T getEntityByKey(Class<T> clazz, Definition key) {
+ 	public <T extends NamedEntity> T getEntityByKey(Class<T> clazz, String key) {
  		NamedEntity found = super.getEntityByKey(key); 
 		if ((found != null) && ! clazz.isInstance(found)) {
 			return null;
@@ -44,7 +41,7 @@ public class FDictionary extends Dictionary<Definition> {
  	}
 
 	@SuppressWarnings("unchecked")
-	protected <T extends NamedEntity> T getEntityIfNotNull(Class<T> clazz, Definition key) {
+	protected <T extends NamedEntity> T getEntityIfNotNull(Class<T> clazz, Object key) {
 		if (key == null) {
 			return null;
 		}
@@ -80,14 +77,14 @@ public class FDictionary extends Dictionary<Definition> {
 	 * @param ast -- ASTNode, where the information are extracted
 	 * @return the Famix SourceAnchor added to fmx. May be null in case of incorrect/null parameter
 	 */
-	public SourceAnchor addSourceAnchor(SourcedEntity fmx, String filename, ASTNode node) {
+	public SourceAnchor addSourceAnchor(SourcedEntity fmx, String filename, AbstractASTNode node) {
 
 		if (node == null) {
 			return null;
 		}
 		else {
-			int beg = node.findFirstToken().getFileOffset();
-			int end = node.findLastToken().getFileOffset()+node.findLastToken().getLength();
+			int beg = node.getFirstToken().getStartIndex();
+			int end = node.getLastToken().getStopIndex();
 
 			return addSourceAnchor( fmx, filename, beg, end);
 		}
@@ -155,18 +152,18 @@ public class FDictionary extends Dictionary<Definition> {
 		return mfa;
 	}
 
-	public <T extends NamedEntity> T ensureFamixEntity(Class<T> fmxClass, Definition key, String name) {
+	public <T extends NamedEntity> T ensureFamixEntity(Class<T> fmxClass, String key, String name) {
 		return super.ensureFamixEntity(fmxClass, key, name, /*persistIt*/true);
 	}
 
-	public Module ensureFamixModule(Definition key, String name, Package owner) {
+	public Module ensureFamixModule(String key, String name, Package owner) {
 		Module fmx = ensureFamixEntity(Module.class, key, name, /*persistIt*/true);
 		fmx.setParentPackage(owner);
 
 		return fmx;
 	}
 
-	public UnknownVariable ensureFamixUnknownVariable(Definition key, String name, Package parent) {
+	public UnknownVariable ensureFamixUnknownVariable(String key, String name, Package parent) {
 		UnknownVariable fmx = null;
 		
 		if (key != null) {
@@ -181,7 +178,7 @@ public class FDictionary extends Dictionary<Definition> {
 		return fmx;
 	}
 
-	public GlobalVariable ensureFamixGlobalVariable(Definition key, String name, ScopingEntity parent) {
+	public GlobalVariable ensureFamixGlobalVariable(String key, String name, ScopingEntity parent) {
 		GlobalVariable fmx;
 		fmx = ensureFamixEntity(GlobalVariable.class, key, name, /*persistIt*/true);
 		fmx.setParentScope(parent);
@@ -189,7 +186,7 @@ public class FDictionary extends Dictionary<Definition> {
 		return fmx;
 	}
 
-	public Namespace ensureFamixNamespace(Definition key, String name, ScopingEntity parent) {
+	public Namespace ensureFamixNamespace(String key, String name, ScopingEntity parent) {
 		Namespace fmx = super.ensureFamixNamespace(key, name);
 		if (parent != null) {
 			fmx.setParentScope(parent);
@@ -197,7 +194,7 @@ public class FDictionary extends Dictionary<Definition> {
 		return fmx;
 	}
 
-	public Package ensureFamixPackage(Definition key, String name, Package parent) {
+	public Package ensureFamixPackage(String key, String name, Package parent) {
 		Package fmx = super.ensureFamixEntity(Package.class, key, name, /*persitIt*/true);
 		fmx.setIsStub(false);
 		if (parent != null) {
@@ -206,7 +203,7 @@ public class FDictionary extends Dictionary<Definition> {
 		return fmx;
 	}
 
-	public Type ensureFamixType(Definition key, String name, ContainerEntity owner) {
+	public Type ensureFamixType(String key, String name, ContainerEntity owner) {
 		Type fmx = getEntityIfNotNull(Type.class, key);
 
 		if (fmx == null) {
@@ -225,7 +222,7 @@ public class FDictionary extends Dictionary<Definition> {
 	}
 	 */
 
-	public Function ensureFamixFunction(Definition key, String name, String sig, ContainerEntity parent) {
+	public Function ensureFamixFunction(String key, String name, String sig, ContainerEntity parent) {
 		Function fmx = getEntityIfNotNull(Function.class, key);
 
 		if (fmx == null) {
@@ -236,7 +233,7 @@ public class FDictionary extends Dictionary<Definition> {
 		return fmx;
 	}
 
-	public Attribute ensureFamixAttribute(Definition key, String name, Type parent) {
+	public Attribute ensureFamixAttribute(String key, String name, Type parent) {
 		Attribute fmx = getEntityIfNotNull(Attribute.class, key);
 
 		if (fmx == null) {
@@ -253,17 +250,17 @@ public class FDictionary extends Dictionary<Definition> {
 	 * @param persistIt -- whether to persist or not the entity eventually created
 	 * @return the Famix Entity found or created. May return null if "bnd" is null or in case of a Famix error
 	 */
-	public Parameter ensureFamixParameter(Definition bnd, String name, BehaviouralEntity owner) {
+	public Parameter ensureFamixParameter(String key, String name, BehaviouralEntity owner) {
 		Parameter fmx = null;
 
 		// --------------- to avoid useless computations if we can
-		fmx = getEntityByKey(Parameter.class, bnd);
+		fmx = getEntityByKey(Parameter.class, key);
 		if (fmx != null) {
 			return fmx;
 		}
 
 		if (fmx == null) {
-			fmx = super.createFamixParameter(bnd, name, /*type*/null, owner, /*persistIt*/true);
+			fmx = super.createFamixParameter(key, name, /*type*/null, owner, /*persistIt*/true);
 		}
 
 		return fmx;

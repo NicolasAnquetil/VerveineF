@@ -1,18 +1,17 @@
 package fr.inria.verveine.extractor.fortran.visitors;
 
-import org.eclipse.photran.internal.core.lexer.Token;
-import org.eclipse.photran.internal.core.parser.ASTAttrSpecSeqNode;
-import org.eclipse.photran.internal.core.parser.ASTEntityDeclNode;
-import org.eclipse.photran.internal.core.parser.ASTFunctionSubprogramNode;
-import org.eclipse.photran.internal.core.parser.ASTModuleNode;
-import org.eclipse.photran.internal.core.parser.ASTProgramStmtNode;
-import org.eclipse.photran.internal.core.parser.ASTSubroutineSubprogramNode;
-import org.eclipse.photran.internal.core.parser.ASTTypeDeclarationStmtNode;
-
 import eu.synectique.verveine.core.gen.famix.GlobalVariable;
 import eu.synectique.verveine.core.gen.famix.Module;
 import eu.synectique.verveine.core.gen.famix.ScopingEntity;
-import fr.inria.verveine.extractor.fortran.plugin.FDictionary;
+import fortran.ofp.parser.java.FortranToken;
+import fr.inria.verveine.extractor.fortran.FDictionary;
+import fr.inria.verveine.extractor.fortran.ast.ASTAttrSpecSeqNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTEntityDeclNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTFunctionSubprogramNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTModuleNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTProgramStmtNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTSubroutineSubprogramNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTTypeDeclarationStmtNode;
 
 @SuppressWarnings("restriction")
 public class VarDefVisitor extends AbstractDispatcherVisitor {
@@ -57,7 +56,7 @@ public class VarDefVisitor extends AbstractDispatcherVisitor {
 	public void visitASTTypeDeclarationStmtNode(ASTTypeDeclarationStmtNode node) {
 		GlobalVariable fmx;
 		for (ASTEntityDeclNode decl : node.getEntityDeclList()) {
-			Token tk = decl.getObjectName().getObjectName();
+			FortranToken tk = decl.getObjectName().getObjectName();
 			fmx= dico.ensureFamixGlobalVariable( firstDefinition(tk), tk.getText(), /*parent*/(ScopingEntity)context.top());
 			fmx.setIsStub(false);
 			fmx.setIsDeclaredFortranParameter( varIsDeclaredParameter( node));
