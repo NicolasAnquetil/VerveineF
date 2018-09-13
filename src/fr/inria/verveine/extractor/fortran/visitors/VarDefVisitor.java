@@ -1,6 +1,7 @@
 package fr.inria.verveine.extractor.fortran.visitors;
 
 import org.eclipse.photran.internal.core.lexer.Token;
+import org.eclipse.photran.internal.core.parser.ASTAttrSpecSeqNode;
 import org.eclipse.photran.internal.core.parser.ASTEntityDeclNode;
 import org.eclipse.photran.internal.core.parser.ASTFunctionSubprogramNode;
 import org.eclipse.photran.internal.core.parser.ASTModuleNode;
@@ -59,8 +60,22 @@ public class VarDefVisitor extends AbstractDispatcherVisitor {
 			Token tk = decl.getObjectName().getObjectName();
 			fmx= dico.ensureFamixGlobalVariable( firstDefinition(tk), tk.getText(), /*parent*/(ScopingEntity)context.top());
 			fmx.setIsStub(false);
+			fmx.setIsDeclaredFortranParameter( varIsDeclaredParameter( node));
 			dico.addSourceAnchor(fmx, filename, node);
 		}
+	}
+
+	private boolean varIsDeclaredParameter(ASTTypeDeclarationStmtNode node) {
+		if (node.getAttrSpecSeq() == null) {
+			return false;
+		}
+
+		for ( ASTAttrSpecSeqNode spec : node.getAttrSpecSeq() ) {
+			if ( (spec.getAttrSpec() != null) && (spec.getAttrSpec().isParameter()) ) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

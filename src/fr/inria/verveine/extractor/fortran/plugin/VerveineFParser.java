@@ -1,10 +1,15 @@
 package fr.inria.verveine.extractor.fortran.plugin;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -53,12 +58,18 @@ public class VerveineFParser extends VerveineParser {
 	 */
 	private String userProjectDir = null;
 
+	/**
+	 * Temporary variable to gather macros defined from the command line
+	 */
+	private Map<String,String> argDefined;
+
 	private FortranSourceLanguage srcLggeInstance;
 
 
 	public VerveineFParser() {
 		super();
 		dico = new FDictionary(getFamixRepo());
+		this.argDefined = new HashMap<String,String>();
 		userProjectDir = null;
 	}
 
@@ -69,6 +80,7 @@ public class VerveineFParser extends VerveineParser {
         	return false;
         }
 
+        configIndexer(project);
 		computeIndex(project);
 
         try {
@@ -96,29 +108,6 @@ public class VerveineFParser extends VerveineParser {
 		cproj.accept(new CommentVisitor(dico));
 
 		cproj.accept(new InvokAccessVisitor(dico));
-	}
-
-	private void configWorkspace(IWorkspace workspace) {
-		IWorkspaceDescription workspaceDesc = workspace.getDescription();
-		workspaceDesc.setAutoBuilding(false); // we do not want the workspace to rebuild the project every time a new resource is added
-		try {
-			workspace.setDescription(workspaceDesc);
-		} catch (CoreException exc) {
-			System.err.println("Error trying to set workspace description: " + exc.getMessage());
-		}
-
-	}
-
-	private void deleteEclipseProject(IProject project) {
-		try {
-			// delete content if the project exists
-			if (project.exists()) {
-				project.delete(/*deleteContent*/true, /*force*/true, Constants.NULL_PROGRESS_MONITOR);
-				project.refreshLocal(IResource.DEPTH_INFINITE, Constants.NULL_PROGRESS_MONITOR);
-			}
-		} catch (Exception exc) {
-			exc.printStackTrace();
-		}
 	}
 
 	private IProject createEclipseProject(String projName , String sourcePath) {
@@ -155,12 +144,77 @@ public class VerveineFParser extends VerveineParser {
 			exc.printStackTrace();
 			return null;
 		}
-		
+
+		ICProjectDescription cProjectDesc = CoreModel.getDefault().getProjectDescription(project, true);
+		cProjectDesc.setCdtProjectCreated();
+
 		if (! copysourceCodeInProject(sourcePath, project) ) {
 			return null;
 		}
 
         return project;
+	}
+
+	private void deleteEclipseProject(IProject project) {
+		try {
+			// delete content if the project exists
+			if (project.exists()) {
+				project.delete(/*deleteContent*/true, /*force*/true, Constants.NULL_PROGRESS_MONITOR);
+				project.refreshLocal(IResource.DEPTH_INFINITE, Constants.NULL_PROGRESS_MONITOR);
+			}
+		} catch (Exception exc) {
+			exc.printStackTrace();
+		}
+	}
+
+	private void configWorkspace(IWorkspace workspace) {
+		IWorkspaceDescription workspaceDesc = workspace.getDescription();
+		workspaceDesc.setAutoBuilding(false); // we do not want the workspace to rebuild the project every time a new resource is added
+		try {
+			workspace.setDescription(workspaceDesc);
+		} catch (CoreException exc) {
+			System.err.println("Error trying to set workspace description: " + exc.getMessage());
+		}
+
+	}
+
+	/**
+	 * sets include path (system, given by user) and macros into the project
+	 */
+	private void configIndexer(IProject proj) {
+		ICProject cproj = CoreModel.getDefault().getCModel().getCProject(proj.getName());
+
+		IPath projPath = cproj.getPath();
+		IPathEntry[] oldEntries=null;
+		try {			
+			oldEntries = cproj.getRawPathEntries();
+		} catch (CModelException e) {
+			e.printStackTrace();
+			return;
+		}
+
+		IPathEntry[] newEntries = new IPathEntry[
+		                                         oldEntries.length +
+		                                         argDefined.size()
+		                                         ];
+		int i;
+
+		/* copy old entries */
+		for (i=0; i < oldEntries.length; i++) {
+			newEntries[i] = oldEntries[i];
+		}
+
+		/* macros  defined */
+		for (Map.Entry<String, String> macro : argDefined.entrySet()) {
+			newEntries[i++] = CoreModel.newMacroEntry(projPath, macro.getKey(), macro.getValue());
+		}
+
+		try {			
+			cproj.setRawPathEntries(newEntries, Constants.NULL_PROGRESS_MONITOR);
+
+		} catch (CModelException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private boolean copysourceCodeInProject(String sourcePath, final IProject project) {
@@ -208,6 +262,9 @@ public class VerveineFParser extends VerveineParser {
 			else if (arg.equals("-v")) {
 				version();
 			}
+			else if (arg.startsWith("-D")) {
+				parseMacroDefinition(arg);
+			}
 			else {
 				int j = super.setOption(i - 1, args);
 				if (j > 0) {     // j is the number of args consumed by super.setOption()
@@ -231,12 +288,30 @@ public class VerveineFParser extends VerveineParser {
 		}
 	}
 
+	private void parseMacroDefinition(String arg) {
+		int i;
+		String macro;
+		String value;
+
+		i = arg.indexOf('=');
+		if (i < 0) {
+			macro=arg.substring(2);  // remove '-D' at the beginning
+			value = "";
+		}
+		else {
+			macro = arg.substring(2, i);
+			value = arg.substring(i+1);
+		}
+		argDefined.put(macro, value);
+	}
+
 	protected void usage() {
 		System.err.println("Usage: VerveineF [options] <Fortran project directory>");
 		System.err.println("Recognized options:");
 		System.err.println("      -h: prints this message");
 		System.err.println("      -v: prints the version");
 		System.err.println("      -o <output-file-name>: changes the name of the output file (default: output.mse)");
+		System.err.println("      -D<macro>: defines a C/C++ macro");
 		System.err.println("      <Fortran project directory>: directory containing the Fortran project to export in MSE");
 		System.exit(0);
 	}

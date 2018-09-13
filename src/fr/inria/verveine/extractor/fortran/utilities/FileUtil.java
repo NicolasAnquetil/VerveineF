@@ -106,7 +106,6 @@ public class FileUtil {
 	 * @param orig -- file to copy in the project
 	 * @param dest -- path within the project where to put the file
 	 */
-	@SuppressWarnings("resource")
 	private static void copyFile(IProject project, IFolder destPath, File orig) {
 		if (checkFileType(orig.getName()) != SOURCE_FILE) {
 			return;

@@ -1,14 +1,12 @@
 package fr.inria.verveine.extractor.fortran.visitors;
 
-import org.eclipse.photran.internal.core.lexer.Token;
-import org.eclipse.photran.internal.core.parser.ASTDoConstructNode;
+import org.eclipse.photran.internal.core.analysis.loops.ASTProperLoopConstructNode;
+import org.eclipse.photran.internal.core.parser.ASTCaseConstructNode;
+import org.eclipse.photran.internal.core.parser.ASTCaseStmtNode;
 import org.eclipse.photran.internal.core.parser.ASTElseIfConstructNode;
-import org.eclipse.photran.internal.core.parser.ASTElseIfStmtNode;
-import org.eclipse.photran.internal.core.parser.ASTForallConstructNode;
 import org.eclipse.photran.internal.core.parser.ASTFunctionSubprogramNode;
 import org.eclipse.photran.internal.core.parser.ASTIfConstructNode;
 import org.eclipse.photran.internal.core.parser.ASTIfStmtNode;
-import org.eclipse.photran.internal.core.parser.ASTLoopControlNode;
 import org.eclipse.photran.internal.core.parser.ASTMainProgramNode;
 import org.eclipse.photran.internal.core.parser.ASTModuleNode;
 import org.eclipse.photran.internal.core.parser.ASTSubroutineSubprogramNode;
@@ -77,59 +75,72 @@ public class SubprgDefVisitor extends AbstractDispatcherVisitor {
 	}
 
 	
-	// Handles cyclomatic complexity of subprograms
-	
-	@Override
-	public void visitASTDoConstructNode(ASTDoConstructNode node) {
-		// TODO Auto-generated method stub
-		super.visitASTDoConstructNode(node);
-	}
-
-	@Override
-	public void visitASTElseIfConstructNode(ASTElseIfConstructNode node) {
-		super.visitASTElseIfConstructNode(node);
-	}
-
-	@Override
-	public void visitASTElseIfStmtNode(ASTElseIfStmtNode node) {
-		super.visitASTElseIfStmtNode(node);
-	}
-
-	@Override
-	public void visitASTForallConstructNode(ASTForallConstructNode node) {
-		super.visitASTForallConstructNode(node);
-	}
+	// Handles cyclomatic complexity metric
 
 	@Override
 	public void visitASTIfConstructNode(ASTIfConstructNode node) {
-		incrementSubprogCyclomatic();
+		incrementCyclomatic();
 		super.visitASTIfConstructNode(node);
 	}
 
 	@Override
+	public void visitASTElseIfConstructNode(ASTElseIfConstructNode node) {
+		incrementCyclomatic();
+		super.visitASTElseIfConstructNode(node);
+	}
+
+	@Override
 	public void visitASTIfStmtNode(ASTIfStmtNode node) {
+		incrementCyclomatic();
 		super.visitASTIfStmtNode(node);
 	}
 
 	@Override
-	public void visitASTLoopControlNode(ASTLoopControlNode node) {
-		// TODO Auto-generated method stub
-		super.visitASTLoopControlNode(node);
+	public void visitASTProperLoopConstructNode(ASTProperLoopConstructNode node) {
+		incrementCyclomatic();
+		super.visitASTProperLoopConstructNode(node);
+	}
+
+	@Override
+	public void visitASTCaseConstructNode(ASTCaseConstructNode node) {
+		/* how should we compute CASE statement ?
+		 * for now only add 1 for the entire SELECT statement,
+		 * theoretically should add 1 for each CASE
+		 */
+		incrementCyclomatic();
+		super.visitASTCaseConstructNode(node);
+	}
+
+	@Override
+	public void visitASTCaseStmtNode(ASTCaseStmtNode node) {
+		/* how should we compute CASE statement ?
+		 * for now only add 1 for the entire SELECT statement,
+		 * theoretically should add 1 for each CASE
+		 */
+		//incrementSubprogCyclomatic();
+		super.visitASTCaseStmtNode(node);
 	}
 
 	// UTILITIES
 
-	private void incrementSubprogCyclomatic() {
+	private void incrementCyclomatic() {
 		NamedEntity top = context.topBehaviouralEntity();
 		if (top instanceof BehaviouralEntity) {
 			BehaviouralEntity fmx = (BehaviouralEntity)top;
 
 			fmx.setCyclomaticComplexity( (int)fmx.getCyclomaticComplexity() + 1);
 		}
-		else {
-			System.out.println("oups");
-		}
 	}
 
+	/*
+	private void incrementNbOfStmts() {
+		NamedEntity top = context.topBehaviouralEntity();
+		if (top instanceof BehaviouralEntity) {
+			BehaviouralEntity fmx = (BehaviouralEntity)top;
+
+			fmx.setNumberOfStatements( (int)fmx.getNumberOfStatements() + 1);
+		}
+	}
+	 */
 	
 }

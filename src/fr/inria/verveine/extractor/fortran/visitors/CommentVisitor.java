@@ -26,7 +26,7 @@ public class CommentVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	protected String msgTrace() {
-		return "Creating subprograms";
+		return "Adding comments to entities";
 	}
 
 	@Override
@@ -85,13 +85,14 @@ public class CommentVisitor extends AbstractDispatcherVisitor {
 
 	/**
 	 * Search for a comment  preceding <code>node<code>. If found, associates the comment with the <code>fmx</code> entity. <br>
-	 * A comment should start with a <code>!</code>
+	 * 
+	 * TODO Deal with #ifdef / #endif that are also "white"
 	 */
 	private void createCommentIfNonBlank(ASTNode node, SourcedEntity fmx) {
 		String cmt = node.findFirstToken().getWhiteBefore();
 		int start = cmt.indexOf('!');
 		if (start >= 0) {
-			dico.createFamixComment(cmt.substring(start), fmx);
+			dico.createFamixComment(cmt, fmx);
 			if (fmx.getSourceAnchor() != null) {
 				IndexedFileAnchor fmxAnchor = (IndexedFileAnchor) fmx.getSourceAnchor();
 				
