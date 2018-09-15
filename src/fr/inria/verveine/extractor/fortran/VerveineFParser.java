@@ -9,8 +9,8 @@ import eu.synectique.verveine.core.gen.famix.FortranSourceLanguage;
 import eu.synectique.verveine.core.gen.famix.SourceLanguage;
 import fortran.ofp.FrontEnd;
 import fr.inria.verveine.extractor.fortran.FDictionary;
-import fr.inria.verveine.extractor.fortran.parser.FortranParserActionAST;
-import fr.inria.verveine.extractor.fortran.ast.AbstractASTNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTNode;
+import fr.inria.verveine.extractor.fortran.ast.FortranParserActionAST;
 import fr.inria.verveine.extractor.fortran.visitors.ScopeDefVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.SubprgDefVisitor;
 
@@ -50,14 +50,14 @@ public class VerveineFParser extends VerveineParser {
 
 	public boolean parse() {
 		FrontEnd ofpParser = null;
-		AbstractASTNode ast = null;
+		ASTNode ast = null;
 
 		if (linkToExisting()) {
 			// incremental parsing ...
 		}
 
 		try {
-			ofpParser = new FrontEnd(/*args*/new String[] {}, userProjectDir, "fr.inria.verveine.extractor.fortran.parser.FortranParserActionAST");
+			ofpParser = new FrontEnd(/*args*/new String[] {}, userProjectDir, "fr.inria.verveine.extractor.fortran.ast.FortranParserActionAST");
 			ofpParser.call();
 			
 			ast = ((FortranParserActionAST)ofpParser.getParser().getAction()).getAST();
@@ -71,7 +71,7 @@ public class VerveineFParser extends VerveineParser {
 		return true;
 	}
 
-	private void runAllVisitors(FDictionary dico, AbstractASTNode ast)  {
+	private void runAllVisitors(FDictionary dico, ASTNode ast)  {
 		ast.accept(new ScopeDefVisitor(dico));
 		ast.accept(new SubprgDefVisitor(dico));
 		//ast.accept(new VarDefVisitor(dico));

@@ -1,45 +1,98 @@
 package fr.inria.verveine.extractor.fortran.ast;
 
-import java.util.ArrayList;
-import java.util.List;
+public class ASTModuleNode extends ASTNode implements IProgramUnit // extends ScopingNode
+{
+    ASTModuleStmtNode moduleStmt;
+    IASTListNode<IModuleBodyConstruct> moduleBody;
+    ASTEndModuleStmtNode endModuleStmt;
 
-
-import fr.inria.verveine.extractor.fortran.parser.ASTVisitor;
-
-public class ASTModuleNode extends AbstractASTNamedNode {
-
-	protected List<AbstractASTSubprogramNode> declarations;
-	
-	public ASTModuleNode(AbstractASTNode parent) {
-		super(parent);
-		declarations = new ArrayList<>();
+    public ASTModuleNode() {
+		this.moduleBody = new ASTListNode<>();
+		this.moduleBody.setParent(this);
 	}
 
-	@SuppressWarnings("unchecked")
+	public ASTModuleStmtNode getModuleStmt()
+    {
+        return this.moduleStmt;
+    }
+
+    public void setModuleStmt(ASTModuleStmtNode newValue)
+    {
+        this.moduleStmt = newValue;
+        if (newValue != null) newValue.setParent(this);
+    }
+
+
+    public IASTListNode<IModuleBodyConstruct> getModuleBody()
+    {
+        return this.moduleBody;
+    }
+
+    public void setModuleBody(IASTListNode<IModuleBodyConstruct> newValue)
+    {
+        this.moduleBody = newValue;
+        if (newValue != null) newValue.setParent(this);
+    }
+
+    public void addModuleBody(IModuleBodyConstruct newValue)
+    {
+    	this.moduleBody.add(newValue);
+    }
+
+
+    public ASTEndModuleStmtNode getEndModuleStmt()
+    {
+        return this.endModuleStmt;
+    }
+
+    public void setEndModuleStmt(ASTEndModuleStmtNode newValue)
+    {
+        this.endModuleStmt = newValue;
+        if (newValue != null) newValue.setParent(this);
+    }
+
+
 	@Override
-	public  <T extends AbstractASTNode> List<T> getChildren() {
-		return (List<T>)getDeclarations();
-	}
+    public void accept(IASTVisitor visitor)
+    {
+        visitor.visitASTModuleNode(this);
+        visitor.visitIProgramUnit(this);
+        visitor.visitASTNode(this);
+    }
 
-	public void addDeclaration(AbstractASTSubprogramNode node) {
-		declarations.add(node);
-	}
+    @Override 
+    protected int getNumASTFields()
+    {
+        return 3;
+    }
 
-	public List<AbstractASTSubprogramNode> getDeclarations() {
-		return declarations;
-	}
+    @Override 
+    protected IASTNode getASTField(int index)
+    {
+        switch (index)
+        {
+        case 0:  return this.moduleStmt;
+        case 1:  return this.moduleBody;
+        case 2:  return this.endModuleStmt;
+        default: throw new IllegalArgumentException("Invalid index");
+        }
+    }
 
-	public void clearDeclarations() {
-		declarations.clear();
-	}
-
-	public void removeDeclaration(AbstractASTSubprogramNode node) {
-		declarations.remove(node);
-	}
+    @Override 
+    protected void setASTField(int index, IASTNode value)
+    {
+        switch (index)
+        {
+        case 0:  this.moduleStmt = (ASTModuleStmtNode)value; if (value != null) value.setParent(this); return;
+        case 1:  this.moduleBody = (IASTListNode<IModuleBodyConstruct>)value; if (value != null) value.setParent(this); return;
+        case 2: this.endModuleStmt = (ASTEndModuleStmtNode)value; if (value != null) value.setParent(this); return;
+        default: throw new IllegalArgumentException("Invalid index");
+        }
+    }
 
 	@Override
-	public void accept(ASTVisitor visitor) {
-		visitor.visitASTModuleNode(this);
+	public String basename() {
+		return getModuleStmt().getModuleName().getModuleName().getText();
 	}
-
+    
 }

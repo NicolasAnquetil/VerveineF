@@ -97,7 +97,7 @@ public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 	
 	@Override
 	public void visitASTProperLoopConstructNode(ASTProperLoopConstructNode node) {
-		Token varI = node.getIndexVariable();
+		ASTToken varI = node.getIndexVariable();
 		if (varI != null) {
 			Access acc = (Access) invokOrAccessFromNode(varI);
 			if (acc != null) {
@@ -108,7 +108,7 @@ public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 
 	// ================  U T I L I T I E S  =======================
 
-	private Association invokOrAccessFromNode( Token nameTok) {
+	private Association invokOrAccessFromNode( ASTToken nameTok) {
 		Invocation invok = null;
 		Access acc = null;
 

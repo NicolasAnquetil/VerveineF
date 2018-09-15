@@ -74,7 +74,7 @@ public class CommentVisitor extends AbstractDispatcherVisitor {
 		GlobalVariable fmx;
 		for (ASTEntityDeclNode decl : node.getEntityDeclList()) {
 			// Because of AST visit pruning, here we should only have global variables
-			Token tk = decl.getObjectName().getObjectName();
+			ASTToken tk = decl.getObjectName().getObjectName();
 			fmx= (GlobalVariable) dico.getEntityByKey( firstDefinition(tk));
 			createCommentIfNonBlank(node, fmx);
 		}
@@ -88,7 +88,7 @@ public class CommentVisitor extends AbstractDispatcherVisitor {
 	 * 
 	 * TODO Deal with #ifdef / #endif that are also "white"
 	 */
-	private void createCommentIfNonBlank(AbstractASTNode node, SourcedEntity fmx) {
+	private void createCommentIfNonBlank(ASTNode node, SourcedEntity fmx) {
 		String cmt = node.findFirstToken().getWhiteBefore();
 		int start = cmt.indexOf('!');
 		if (start >= 0) {

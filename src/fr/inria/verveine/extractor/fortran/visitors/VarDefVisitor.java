@@ -13,7 +13,6 @@ import fr.inria.verveine.extractor.fortran.ast.ASTProgramStmtNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTSubroutineSubprogramNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTTypeDeclarationStmtNode;
 
-@SuppressWarnings("restriction")
 public class VarDefVisitor extends AbstractDispatcherVisitor {
 
 	public VarDefVisitor(FDictionary dico) {
@@ -27,7 +26,7 @@ public class VarDefVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	public void visitASTModuleNode(ASTModuleNode node) {
-		Module mod = (Module) dico.getEntityByKey( firstDefinition(node.getNameToken()) );
+		Module mod = (Module) dico.getEntityByKey( mkKey(node) );
 
 		context.push(mod);
 		super.visitASTModuleNode(node);
@@ -57,7 +56,7 @@ public class VarDefVisitor extends AbstractDispatcherVisitor {
 		GlobalVariable fmx;
 		for (ASTEntityDeclNode decl : node.getEntityDeclList()) {
 			FortranToken tk = decl.getObjectName().getObjectName();
-			fmx= dico.ensureFamixGlobalVariable( firstDefinition(tk), tk.getText(), /*parent*/(ScopingEntity)context.top());
+			fmx= dico.ensureFamixGlobalVariable( mkKey(tk), tk.getText(), /*parent*/(ScopingEntity)context.top());
 			fmx.setIsStub(false);
 			fmx.setIsDeclaredFortranParameter( varIsDeclaredParameter( node));
 			dico.addSourceAnchor(fmx, filename, node);

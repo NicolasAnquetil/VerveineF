@@ -19,7 +19,8 @@ import eu.synectique.verveine.core.gen.famix.SourceAnchor;
 import eu.synectique.verveine.core.gen.famix.SourcedEntity;
 import eu.synectique.verveine.core.gen.famix.Type;
 import eu.synectique.verveine.core.gen.famix.UnknownVariable;
-import fr.inria.verveine.extractor.fortran.ast.AbstractASTNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTToken;
 
 
 @SuppressWarnings("restriction")
@@ -77,14 +78,14 @@ public class FDictionary extends Dictionary<String> {
 	 * @param ast -- ASTNode, where the information are extracted
 	 * @return the Famix SourceAnchor added to fmx. May be null in case of incorrect/null parameter
 	 */
-	public SourceAnchor addSourceAnchor(SourcedEntity fmx, String filename, AbstractASTNode node) {
+	public SourceAnchor addSourceAnchor(SourcedEntity fmx, String filename, ASTNode node) {
 
 		if (node == null) {
 			return null;
 		}
 		else {
-			int beg = node.getFirstToken().getStartIndex();
-			int end = node.getLastToken().getStopIndex();
+			int beg = node.findFirstToken().getStartIndex();
+			int end = node.findLastToken().getStopIndex();
 
 			return addSourceAnchor( fmx, filename, beg, end);
 		}

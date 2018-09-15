@@ -51,7 +51,7 @@ public class SubprgDefVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	public void visitASTFunctionSubprogramNode(ASTFunctionSubprogramNode node) {
-		Function fmx = dico.ensureFamixFunction( mkKey(node), node.getName().getText(), /*sig*/node.getName().getText(), /*parent*/(ScopingEntity)context.top());
+		Function fmx = dico.ensureFamixFunction( mkKey(node), node.basename(), /*sig*/node.basename(), /*parent*/(ScopingEntity)context.top());
 		fmx.setIsStub(false);	
 		dico.addSourceAnchor(fmx, filename, node);
 		fmx.setCyclomaticComplexity( 1);
@@ -62,7 +62,7 @@ public class SubprgDefVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	public void visitASTSubroutineSubprogramNode(ASTSubroutineSubprogramNode node) {
-		Function fmx = dico.ensureFamixFunction( mkKey(node), node.getName().getText(), /*sig*/node.getName().getText(), /*parent*/(ScopingEntity)context.top());
+		Function fmx = dico.ensureFamixFunction( mkKey(node), node.basename(), /*sig*/node.basename(), /*parent*/(ScopingEntity)context.top());
 		fmx.setIsStub(false);
 		dico.addSourceAnchor(fmx, filename, node);
 		fmx.setCyclomaticComplexity( 1);

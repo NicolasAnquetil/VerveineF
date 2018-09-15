@@ -1,13 +1,13 @@
 package fr.inria.verveine.extractor.fortran.ast;
 
-public class ASTProgramStmtNode extends ASTNode
-{
+public class ASTModuleStmtNode extends ASTNode {
+	public static final int TMODULE = 1;
 	public static final int TEOS = 3;
-	
-	ASTToken label;
-    ASTToken programToken;
-    ASTProgramNameNode programName;
-    ASTToken hiddenTEos;
+
+    ASTToken label; // in ASTModuleStmtNode
+    ASTToken hiddenTModule; // in ASTModuleStmtNode
+    ASTModuleNameNode moduleName; // in ASTModuleStmtNode
+    ASTToken hiddenTEos; // in ASTModuleStmtNode
 
     public ASTToken getLabel()
     {
@@ -21,26 +21,14 @@ public class ASTProgramStmtNode extends ASTNode
     }
 
 
-    public ASTToken getProgramToken()
+    public ASTModuleNameNode getModuleName()
     {
-        return this.programToken;
+        return this.moduleName;
     }
 
-    public void setProgramToken(ASTToken newValue)
+    public void setModuleName(ASTModuleNameNode newValue)
     {
-        this.programToken = newValue;
-        if (newValue != null) newValue.setParent(this);
-    }
-
-
-    public ASTProgramNameNode getProgramName()
-    {
-        return this.programName;
-    }
-
-    public void setProgramName(ASTProgramNameNode newValue)
-    {
-        this.programName = newValue;
+        this.moduleName = newValue;
         if (newValue != null) newValue.setParent(this);
     }
 
@@ -48,7 +36,7 @@ public class ASTProgramStmtNode extends ASTNode
     @Override
     public void accept(IASTVisitor visitor)
     {
-        visitor.visitASTProgramStmtNode(this);
+        visitor.visitASTModuleStmtNode(this);
         visitor.visitASTNode(this);
     }
 
@@ -62,8 +50,8 @@ public class ASTProgramStmtNode extends ASTNode
         switch (index)
         {
         case 0:  return this.label;
-        case 1:  return this.programToken;
-        case 2:  return this.programName;
+        case TMODULE:  return this.hiddenTModule;
+        case 2:  return this.moduleName;
         case TEOS:  return this.hiddenTEos;
         default: throw new IllegalArgumentException("Invalid index");
         }
@@ -74,11 +62,11 @@ public class ASTProgramStmtNode extends ASTNode
         switch (index)
         {
         case 0:  this.label = (ASTToken)value; if (value != null) value.setParent(this); return;
-        case 1:  this.programToken = (ASTToken)value; if (value != null) value.setParent(this); return;
-        case 2:  this.programName = (ASTProgramNameNode)value; if (value != null) value.setParent(this); return;
+        case TMODULE:  this.hiddenTModule = (ASTToken)value; if (value != null) value.setParent(this); return;
+        case 2:  this.moduleName = (ASTModuleNameNode)value; if (value != null) value.setParent(this); return;
         case TEOS:  this.hiddenTEos = (ASTToken)value; if (value != null) value.setParent(this); return;
         default: throw new IllegalArgumentException("Invalid index");
         }
     }
-}
 
+}

@@ -1,34 +1,66 @@
 package fr.inria.verveine.extractor.fortran.ast;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import fr.inria.verveine.extractor.fortran.parser.ASTVisitor;
-
-public class ASTCompilationUnit extends AbstractASTNode {
+public class ASTCompilationUnit extends ASTNode {
 
 	protected String filename;
 	
-	protected List<AbstractASTNode> definitions;
+	protected IASTNode programUnit;
 
 	public ASTCompilationUnit(String filename) {
-		super(null);
 		this.filename = filename;
-		definitions = new ArrayList<>();
+	}
+
+	public IASTNode getProgramUnit() {
+		return programUnit;
+	}
+
+	public void setProgramUnit(IASTNode node) {
+		programUnit = node;
+		if (programUnit != null) {
+			node.setParent(this);
+		}
 	}
 
 	@Override
-	public List<AbstractASTNode> getChildren() {
-		return definitions;
-	}
-
-	public void addDefinition(AbstractASTNode node) {
-		definitions.add(node);
-	}
-
-	@Override
-	public void accept(ASTVisitor visitor) {
+	public void accept(IASTVisitor visitor) {
 		visitor.visitASTCompilationUnit(this);
+		visitor.visitASTNode(this);
+	}
+
+    @Override 
+    protected int getNumASTFields()
+    {
+        return 1;
+    }
+
+    @Override 
+    protected IASTNode getASTField(int index)
+    {
+        switch (index)
+        {
+        case 0:  return this.programUnit;
+        default: throw new IllegalArgumentException("Invalid index");
+        }
+    }
+
+    @Override 
+    protected void setASTField(int index, IASTNode value)
+    {
+        switch (index)
+        {
+        case 0:  this.programUnit = (IASTNode)value; if (value != null) value.setParent(this); return;
+        default: throw new IllegalArgumentException("Invalid index");
+        }
+    }
+
+	@Override
+	public String fullyQualifiedName() {
+		return "["+basename()+"]";
+	}
+
+	@Override
+	public String basename() {
+		return filename;
 	}
 
 }

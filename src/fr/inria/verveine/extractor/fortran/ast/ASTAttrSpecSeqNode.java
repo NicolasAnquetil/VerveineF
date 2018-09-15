@@ -1,26 +1,50 @@
 package fr.inria.verveine.extractor.fortran.ast;
 
-import java.util.List;
+public class ASTAttrSpecSeqNode extends ASTNode {
 
-import fr.inria.verveine.extractor.fortran.parser.ASTVisitor;
+	ASTAttrSpecNode attrSpec; // in ASTAttrSpecSeqNode
+	
+    public ASTAttrSpecNode getAttrSpec()
+    {
+        return this.attrSpec;
+    }
 
-public class ASTAttrSpecSeqNode extends AbstractASTNode {
+    public void setAttrSpec(ASTAttrSpecNode newValue)
+    {
+        this.attrSpec = newValue;
+        if (newValue != null) newValue.setParent(this);
+    }
 
-	public ASTAttrSpecSeqNode(AbstractASTNode parent) {
-		super(parent);
-		// TODO Auto-generated constructor stub
-	}
 
-	@Override
-	public List<AbstractASTNode> getChildren() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public void accept(IASTVisitor visitor)
+    {
+        visitor.visitASTAttrSpecSeqNode(this);
+        visitor.visitASTNode(this);
+    }
 
-	@Override
-	public void accept(ASTVisitor visitor) {
-		// TODO Auto-generated method stub
+    @Override protected int getNumASTFields()
+    {
+        return 2;
+    }
 
-	}
+    @Override protected ASTNode getASTField(int index)
+    {
+        switch (index)
+        {
+        case 0:  return new ASTNullNode();//this.hiddenTComma;
+        case 1:  return this.attrSpec;
+        default: throw new IllegalArgumentException("Invalid index");
+        }
+    }
 
+    @Override protected void setASTField(int index, IASTNode value)
+    {
+        switch (index)
+        {
+        case 0:  return; //this.hiddenTComma = (org.eclipse.photran.internal.core.lexer.Token)value; if (value != null) value.setParent(this); return;
+        case 1:  this.attrSpec = (ASTAttrSpecNode)value; if (value != null) value.setParent(this); return;
+        default: throw new IllegalArgumentException("Invalid index");
+        }
+    }
 }

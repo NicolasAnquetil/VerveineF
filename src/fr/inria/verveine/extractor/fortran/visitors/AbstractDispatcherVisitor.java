@@ -2,8 +2,9 @@ package fr.inria.verveine.extractor.fortran.visitors;
 
 import eu.synectique.verveine.core.EntityStack;
 import fr.inria.verveine.extractor.fortran.FDictionary;
-import fr.inria.verveine.extractor.fortran.ast.AbstractASTNamedNode;
-import fr.inria.verveine.extractor.fortran.parser.ASTVisitor;
+import fr.inria.verveine.extractor.fortran.ast.ASTToken;
+import fr.inria.verveine.extractor.fortran.ast.ASTVisitor;
+import fr.inria.verveine.extractor.fortran.ast.IASTNode;
 
 /**
  * The superclass of all visitors. These visitors visit an AST to create FAMIX entities.
@@ -31,7 +32,7 @@ public abstract class AbstractDispatcherVisitor extends ASTVisitor {
 
 	abstract protected String msgTrace();
 
-	protected String mkKey(AbstractASTNamedNode node) {
+	protected String mkKey(IASTNode node) {
 		return node.getClass().getName() + "/" + node.fullyQualifiedName();
 	}
 
@@ -46,6 +47,4 @@ public abstract class AbstractDispatcherVisitor extends ASTVisitor {
 		}
 	}
 */
-	// UTILITIES ======================================================================================================
-
 }
