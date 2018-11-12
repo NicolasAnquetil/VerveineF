@@ -1,7 +1,18 @@
 package fr.inria.verveine.extractor.fortran.ast;
 
 public class ASTEntityDeclNode extends ASTNode {
-	//ASTObjectNameNode objectName; // in ASTEntityDeclNode
+	public static final int TASTERISK2 = 1;
+	public static final int TLPAREN2 = 3;
+	public static final int TLPAREN = 4;
+	public static final int TRPAREN = 6;
+	public static final int TLBRACKET = 7;
+	public static final int TRBRACKET = 9;
+	public static final int TASTERISK = 10;
+	public static final int TSLASH = 12;
+	public static final int TSLASH2 = 14;
+	public static final int TRPAREN2 = 15;
+	
+	ASTObjectNameNode objectName; // in ASTEntityDeclNode
     ASTToken hiddenAsterisk2; // in ASTEntityDeclNode
     //ASTCharLengthNode initialCharLength; // in ASTEntityDeclNode
     ASTToken hiddenLparen2; // in ASTEntityDeclNode
@@ -19,11 +30,6 @@ public class ASTEntityDeclNode extends ASTNode {
     ASTToken hiddenRparen2; // in ASTEntityDeclNode
     //ASTInitializationNode initialization; // in ASTEntityDeclNode
 
-/*
-    public ASTEntityDeclNode(IASTNode parent) {
-    	super(parent);
-    }
-    
     public ASTObjectNameNode getObjectName()
     {
         return this.objectName;
@@ -36,6 +42,7 @@ public class ASTEntityDeclNode extends ASTNode {
     }
 
 
+/*    
     public ASTCharLengthNode getInitialCharLength()
     {
         return this.initialCharLength;
@@ -125,21 +132,21 @@ public class ASTEntityDeclNode extends ASTNode {
         switch (index)
         {
         case 0:  return new ASTNullNode(); // this.objectName;
-        case 1:  return this.hiddenAsterisk2;
+        case TASTERISK2:  return this.hiddenAsterisk2;
         case 2:  return new ASTNullNode(); // this.initialCharLength;
-        case 3:  return this.hiddenLparen2;
-        case 4:  return this.hiddenTLparen;
+        case TLPAREN2:  return this.hiddenLparen2;
+        case TLPAREN:  return this.hiddenTLparen;
         case 5:  return new ASTNullNode(); // this.arraySpec;
-        case 6:  return this.hiddenTRparen;
-        case 7:  return this.hiddenTLbracket;
+        case TRPAREN:  return this.hiddenTRparen;
+        case TLBRACKET:  return this.hiddenTLbracket;
         case 8:  return new ASTNullNode(); // this.coarraySpec;
-        case 9:  return this.hiddenTRbracket;
-        case 10: return this.hiddenTAsterisk;
+        case TRBRACKET:  return this.hiddenTRbracket;
+        case TASTERISK: return this.hiddenTAsterisk;
         case 11: return new ASTNullNode(); // this.charLength;
-        case 12: return this.hiddenTSlash;
+        case TSLASH: return this.hiddenTSlash;
         case 13: return new ASTNullNode(); // this.dataStmtValueList;
-        case 14: return this.hiddenTSlash2;
-        case 15: return this.hiddenRparen2;
+        case TSLASH2: return this.hiddenTSlash2;
+        case TRPAREN2: return this.hiddenRparen2;
         case 16: return new ASTNullNode(); // this.initialization;
         default: throw new IllegalArgumentException("Invalid index");
         }
@@ -150,21 +157,21 @@ public class ASTEntityDeclNode extends ASTNode {
         switch (index)
         {
         case 0:  return ; //this.objectName = (ASTObjectNameNode)value; if (value != null) value.setParent(this); return;
-        case 1:  this.hiddenAsterisk2 = (ASTToken)value; if (value != null) value.setParent(this); return;
+        case TASTERISK2:  this.hiddenAsterisk2 = (ASTToken)value; if (value != null) value.setParent(this); return;
         case 2:  return ; //this.initialCharLength = (ASTCharLengthNode)value; if (value != null) value.setParent(this); return;
-        case 3:  this.hiddenLparen2 = (ASTToken)value; if (value != null) value.setParent(this); return;
-        case 4:  this.hiddenTLparen = (ASTToken)value; if (value != null) value.setParent(this); return;
+        case TLPAREN2:  this.hiddenLparen2 = (ASTToken)value; if (value != null) value.setParent(this); return;
+        case TLPAREN:  this.hiddenTLparen = (ASTToken)value; if (value != null) value.setParent(this); return;
         case 5:  return ; //this.arraySpec = (ASTArraySpecNode)value; if (value != null) value.setParent(this); return;
-        case 6:  this.hiddenTRparen = (ASTToken)value; if (value != null) value.setParent(this); return;
-        case 7:  this.hiddenTLbracket = (ASTToken)value; if (value != null) value.setParent(this); return;
+        case TRPAREN:  this.hiddenTRparen = (ASTToken)value; if (value != null) value.setParent(this); return;
+        case TLBRACKET:  this.hiddenTLbracket = (ASTToken)value; if (value != null) value.setParent(this); return;
         case 8:  return ; //this.coarraySpec = (ASTCoarraySpecNode)value; if (value != null) value.setParent(this); return;
-        case 9:  this.hiddenTRbracket = (ASTToken)value; if (value != null) value.setParent(this); return;
-        case 10: this.hiddenTAsterisk = (ASTToken)value; if (value != null) value.setParent(this); return;
+        case TRBRACKET:  this.hiddenTRbracket = (ASTToken)value; if (value != null) value.setParent(this); return;
+        case TASTERISK: this.hiddenTAsterisk = (ASTToken)value; if (value != null) value.setParent(this); return;
         case 11: return ; //this.charLength = (ASTCharLengthNode)value; if (value != null) value.setParent(this); return;
-        case 12: this.hiddenTSlash = (ASTToken)value; if (value != null) value.setParent(this); return;
+        case TSLASH: this.hiddenTSlash = (ASTToken)value; if (value != null) value.setParent(this); return;
         case 13: return ; //this.dataStmtValueList = (IASTListNode<ASTDataStmtValueNode>)value; if (value != null) value.setParent(this); return;
-        case 14: this.hiddenTSlash2 = (ASTToken)value; if (value != null) value.setParent(this); return;
-        case 15: this.hiddenRparen2 = (ASTToken)value; if (value != null) value.setParent(this); return;
+        case TSLASH2: this.hiddenTSlash2 = (ASTToken)value; if (value != null) value.setParent(this); return;
+        case TRPAREN2: this.hiddenRparen2 = (ASTToken)value; if (value != null) value.setParent(this); return;
         case 16: return ; //this.initialization = (ASTInitializationNode)value; if (value != null) value.setParent(this); return;
         default: throw new IllegalArgumentException("Invalid index");
         }

@@ -1,21 +1,12 @@
 package fr.inria.verveine.extractor.fortran.visitors;
 
-import org.eclipse.photran.internal.core.lexer.Token;
-import org.eclipse.photran.internal.core.parser.ASTEntityDeclNode;
-import org.eclipse.photran.internal.core.parser.ASTFunctionSubprogramNode;
-import org.eclipse.photran.internal.core.parser.ASTMainProgramNode;
-import org.eclipse.photran.internal.core.parser.ASTModuleNode;
-import org.eclipse.photran.internal.core.parser.ASTNode;
-import org.eclipse.photran.internal.core.parser.ASTSubroutineSubprogramNode;
-import org.eclipse.photran.internal.core.parser.ASTTypeDeclarationStmtNode;
-
 import eu.synectique.verveine.core.gen.famix.Function;
 import eu.synectique.verveine.core.gen.famix.GlobalVariable;
 import eu.synectique.verveine.core.gen.famix.IndexedFileAnchor;
 import eu.synectique.verveine.core.gen.famix.Module;
 import eu.synectique.verveine.core.gen.famix.Program;
 import eu.synectique.verveine.core.gen.famix.SourcedEntity;
-import fr.inria.verveine.extractor.fortran.plugin.FDictionary;
+import fr.inria.verveine.extractor.fortran.FDictionary;
 
 @SuppressWarnings("restriction")
 public class CommentVisitor extends AbstractDispatcherVisitor {

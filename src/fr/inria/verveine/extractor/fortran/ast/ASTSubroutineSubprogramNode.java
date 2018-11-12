@@ -3,10 +3,14 @@ package fr.inria.verveine.extractor.fortran.ast;
 public class ASTSubroutineSubprogramNode extends ASTNode implements IInternalSubprogram, IModuleBodyConstruct, IModuleSubprogram, IModuleSubprogramPartConstruct, IProgramUnit // extends ScopingNode
 {
 	ASTSubroutineStmtNode subroutineStmt; // in ASTSubroutineSubprogramNode
-    //IASTListNode<IBodyConstruct> body; // in ASTSubroutineSubprogramNode
+    IASTListNode<IBodyConstruct> body; // in ASTSubroutineSubprogramNode
     //ASTContainsStmtNode containsStmt; // in ASTSubroutineSubprogramNode
     //IASTListNode<IInternalSubprogram> internalSubprograms; // in ASTSubroutineSubprogramNode
     ASTEndSubroutineStmtNode endSubroutineStmt; // in ASTSubroutineSubprogramNode
+
+    public ASTSubroutineSubprogramNode() {
+    	setBody( new ASTListNode<>());
+	}
 
     public ASTSubroutineStmtNode getSubroutineStmt()
     {
@@ -20,7 +24,6 @@ public class ASTSubroutineSubprogramNode extends ASTNode implements IInternalSub
     }
 
 
-/*
     public IASTListNode<IBodyConstruct> getBody()
     {
         return this.body;
@@ -33,6 +36,7 @@ public class ASTSubroutineSubprogramNode extends ASTNode implements IInternalSub
     }
 
 
+/*
     public ASTContainsStmtNode getContainsStmt()
     {
         return this.containsStmt;
@@ -96,7 +100,7 @@ public class ASTSubroutineSubprogramNode extends ASTNode implements IInternalSub
         switch (index)
         {
         case 0:  return this.subroutineStmt;
-        case 1:  return new ASTNullNode(); //this.body;
+        case 1:  return this.body;
         case 2:  return new ASTNullNode(); //this.containsStmt;
         case 3:  return new ASTNullNode(); //this.internalSubprograms;
         case 4:  return this.endSubroutineStmt;
@@ -109,7 +113,7 @@ public class ASTSubroutineSubprogramNode extends ASTNode implements IInternalSub
         switch (index)
         {
         case 0:  this.subroutineStmt = (ASTSubroutineStmtNode)value; if (value != null) value.setParent(this); return;
-        case 1:  return; //this.body = (IASTListNode<IBodyConstruct>)value; if (value != null) value.setParent(this); return;
+        case 1:  this.body = (IASTListNode<IBodyConstruct>)value; if (value != null) value.setParent(this); return;
         case 2:  return; //this.containsStmt = (ASTContainsStmtNode)value; if (value != null) value.setParent(this); return;
         case 3:  return; //this.internalSubprograms = (IASTListNode<IInternalSubprogram>)value; if (value != null) value.setParent(this); return;
         case 4:  this.endSubroutineStmt = (ASTEndSubroutineStmtNode)value; if (value != null) value.setParent(this); return;

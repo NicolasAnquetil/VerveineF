@@ -13,6 +13,7 @@ import fr.inria.verveine.extractor.fortran.ast.ASTNode;
 import fr.inria.verveine.extractor.fortran.ast.FortranParserActionAST;
 import fr.inria.verveine.extractor.fortran.visitors.ScopeDefVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.SubprgDefVisitor;
+import fr.inria.verveine.extractor.fortran.visitors.VarDefVisitor;
 
 public class VerveineFParser extends VerveineParser {
 
@@ -72,9 +73,9 @@ public class VerveineFParser extends VerveineParser {
 	}
 
 	private void runAllVisitors(FDictionary dico, ASTNode ast)  {
-		ast.accept(new ScopeDefVisitor(dico));
-		ast.accept(new SubprgDefVisitor(dico));
-		//ast.accept(new VarDefVisitor(dico));
+		//ast.accept(new ScopeDefVisitor(dico));
+		//ast.accept(new SubprgDefVisitor(dico));
+		ast.accept(new VarDefVisitor(dico));
 		//ast.accept(new CommentVisitor(dico));
 
 		//ast.accept(new InvokAccessVisitor(dico));

@@ -32,7 +32,7 @@ public class ASTVisitor implements IASTVisitor {
     @Override public void visitIHPField(IHPField node) {}
     @Override public void visitIDeclarationConstruct(IDeclarationConstruct node) {}
     @Override public void visitIBodyConstruct(IBodyConstruct node) {}
-
+    @Override public void visitIInterfaceSpecification(IInterfaceSpecification node) { }
 	
 	
 	@Override public void visitASTCompilationUnit(ASTCompilationUnit node) {	}
@@ -62,5 +62,7 @@ public class ASTVisitor implements IASTVisitor {
 	@Override public void visitASTSubroutineNameNode(ASTSubroutineNameNode node) {}
 	@Override public void visitASTSubroutineStmtNode(ASTSubroutineStmtNode node) {}
 	@Override public void visitASTEndSubroutineStmtNode(ASTEndSubroutineStmtNode node) {}
+	@Override public void visitASTInterfaceBodyNode(ASTInterfaceBodyNode node) { }
+	@Override public void visitASTObjectNameNode(ASTObjectNameNode node) { }
 
 }

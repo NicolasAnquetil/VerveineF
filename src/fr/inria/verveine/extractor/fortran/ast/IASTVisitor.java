@@ -18,6 +18,7 @@ public interface IASTVisitor {
 	public void visitIHPField(IHPField node);
 	public void visitIDeclarationConstruct(IDeclarationConstruct node);
 	public void visitIBodyConstruct(IBodyConstruct node);
+	public void visitIInterfaceSpecification(IInterfaceSpecification node);
 
 	
 	public void visitASTCompilationUnit(ASTCompilationUnit node);
@@ -47,5 +48,7 @@ public interface IASTVisitor {
 	public void visitASTSubroutineNameNode(ASTSubroutineNameNode node);
 	public void visitASTSubroutineStmtNode(ASTSubroutineStmtNode node);
 	public void visitASTEndSubroutineStmtNode(ASTEndSubroutineStmtNode node);
+	public void visitASTInterfaceBodyNode(ASTInterfaceBodyNode node);
+	public void visitASTObjectNameNode(ASTObjectNameNode node);
 
 }

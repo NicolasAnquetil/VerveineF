@@ -7,8 +7,7 @@ public class ASTModuleNode extends ASTNode implements IProgramUnit // extends Sc
     ASTEndModuleStmtNode endModuleStmt;
 
     public ASTModuleNode() {
-		this.moduleBody = new ASTListNode<>();
-		this.moduleBody.setParent(this);
+		setModuleBody( new ASTListNode<>());
 	}
 
 	public ASTModuleStmtNode getModuleStmt()

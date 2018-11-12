@@ -11,6 +11,7 @@ import fr.inria.verveine.extractor.fortran.ast.ASTFunctionSubprogramNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTModuleNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTProgramStmtNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTSubroutineSubprogramNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTToken;
 import fr.inria.verveine.extractor.fortran.ast.ASTTypeDeclarationStmtNode;
 
 public class VarDefVisitor extends AbstractDispatcherVisitor {
@@ -55,7 +56,7 @@ public class VarDefVisitor extends AbstractDispatcherVisitor {
 	public void visitASTTypeDeclarationStmtNode(ASTTypeDeclarationStmtNode node) {
 		GlobalVariable fmx;
 		for (ASTEntityDeclNode decl : node.getEntityDeclList()) {
-			FortranToken tk = decl.getObjectName().getObjectName();
+			ASTToken tk = decl.getObjectName().getObjectName();
 			fmx= dico.ensureFamixGlobalVariable( mkKey(tk), tk.getText(), /*parent*/(ScopingEntity)context.top());
 			fmx.setIsStub(false);
 			fmx.setIsDeclaredFortranParameter( varIsDeclaredParameter( node));

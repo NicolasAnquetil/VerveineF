@@ -2,12 +2,12 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="lib/OpenFortranParser-0.8.3.jar" sourcepath="/home/anquetil/Documents/RMod/Tools/Fortran/Grammar/ofp-antlr/src"/>
 	<classpathentry kind="lib" path="lib/akuhn-util-r28011.jar"/>
 	<classpathentry kind="lib" path="lib/antlr-3.4-complete.jar"/>
 	<classpathentry kind="lib" path="lib/fame-20170811.jar"/>
 	<classpathentry kind="lib" path="lib/famix.jar"/>
 	<classpathentry kind="lib" path="lib/fast.jar"/>
 	<classpathentry kind="lib" path="lib/verveine.core.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ofp-antlr"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

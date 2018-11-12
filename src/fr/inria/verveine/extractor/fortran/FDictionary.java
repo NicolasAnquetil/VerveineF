@@ -112,7 +112,7 @@ public class FDictionary extends Dictionary<String> {
 	 * @param filename -- name of the file being visited
 	 * @param ast -- ASTNode, where the information are extracted
 	 * @return the Famix SourceAnchor added to fmx. May be null in case of incorrect/null parameter
-	 */
+	 * /
 	public SourceAnchor addSourceAnchorMulti(SourcedEntity fmx, String filename, IASTFileLocation anchor) {
 
 		if (anchor == null) {
@@ -124,7 +124,7 @@ public class FDictionary extends Dictionary<String> {
 
 			return addSourceAnchorMulti( fmx, filename, beg, end);
 		}
-	}
+	}*/
 
 	public SourceAnchor addSourceAnchorMulti(SourcedEntity fmx, String filename, int start, int end) {
 		MultipleFileAnchor mfa;
