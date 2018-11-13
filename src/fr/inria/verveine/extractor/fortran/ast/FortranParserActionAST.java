@@ -1,8 +1,5 @@
 package fr.inria.verveine.extractor.fortran.ast;
 
-import java.util.Deque;
-import java.util.Stack;
-
 import org.antlr.runtime.Token;
 
 import fortran.ofp.parser.java.FortranLexer;
