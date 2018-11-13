@@ -3,7 +3,6 @@ package fr.inria.verveine.extractor.fortran.visitors;
 import eu.synectique.verveine.core.gen.famix.GlobalVariable;
 import eu.synectique.verveine.core.gen.famix.Module;
 import eu.synectique.verveine.core.gen.famix.ScopingEntity;
-import fortran.ofp.parser.java.FortranToken;
 import fr.inria.verveine.extractor.fortran.FDictionary;
 import fr.inria.verveine.extractor.fortran.ast.ASTAttrSpecSeqNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTEntityDeclNode;
