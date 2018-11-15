@@ -7,6 +7,14 @@ import eu.synectique.verveine.core.gen.famix.Module;
 import eu.synectique.verveine.core.gen.famix.Program;
 import eu.synectique.verveine.core.gen.famix.SourcedEntity;
 import fr.inria.verveine.extractor.fortran.FDictionary;
+import fr.inria.verveine.extractor.fortran.ast.ASTEntityDeclNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTFunctionSubprogramNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTMainProgramNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTModuleNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTSubroutineSubprogramNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTToken;
+import fr.inria.verveine.extractor.fortran.ast.ASTTypeDeclarationStmtNode;
 
 @SuppressWarnings("restriction")
 public class CommentVisitor extends AbstractDispatcherVisitor {

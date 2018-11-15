@@ -65,4 +65,31 @@ public class ASTVisitor implements IASTVisitor {
 	@Override public void visitASTInterfaceBodyNode(ASTInterfaceBodyNode node) { }
 	@Override public void visitASTObjectNameNode(ASTObjectNameNode node) { }
 
+	@Override public void visitASTDeferredShapeSpecListNode(ASTDeferredShapeSpecListNode node) {}
+	@Override public void visitASTArrayAllocationNode(ASTArrayAllocationNode node) {}
+	@Override public void visitASTAllocatableStmtNode(ASTAllocatableStmtNode node) { }
+	@Override public void visitISpecificationStmt(ASTAllocatableStmtNode node) {}
+	@Override public void visitASTDeferredShapeSpecNode(ASTDeferredShapeSpecNode node) { }
+	@Override public void visitASTVariableNameNode(ASTVariableNameNode node) { }
+	@Override public void visitIBindEntity(ASTVariableNameNode node) { }
+	@Override public void visitASTSubscriptTripletNode(ASTSubscriptTripletNode node) {}
+	@Override public void visitASTSectionSubscriptNode(ASTSectionSubscriptNode node) { }
+
+	@Override public void visitASTImageSelectorNode(ASTImageSelectorNode node) { }
+	@Override public void visitASTFieldSelectorNode(ASTFieldSelectorNode node) { }
+	@Override public void visitASTAllocationNode(ASTAllocationNode node) { }
+	@Override public void visitASTVariableNode(ASTVariableNode node) { }
+	@Override public void visitIDataStmtObject(ASTVariableNode node) { }
+	@Override public void visitIInputItem(ASTVariableNode node) { }
+
+	@Override public void visitASTSubstringRangeNode(ASTSubstringRangeNode node) { }
+	@Override public void visitASTDataRefNode(ASTDataRefNode node) { }
+	@Override public void visitASTNameNode(ASTNameNode node) { }
+	@Override public void visitASTAllocateStmtNode(ASTAllocateStmtNode node) { }
+	@Override public void visitASTAllocateObjectNode(ASTAllocateObjectNode node) { }
+	@Override public void visitASTAllocateCoarraySpecNode(ASTAllocateCoarraySpecNode node) { }
+
+	@Override public void visitASTAssociateStmtNode(ASTAssociateStmtNode node) { }
+	@Override public void visitASTAssociationNode(ASTAssociationNode node) { }
+
 }

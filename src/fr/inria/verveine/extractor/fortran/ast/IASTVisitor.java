@@ -50,5 +50,28 @@ public interface IASTVisitor {
 	public void visitASTEndSubroutineStmtNode(ASTEndSubroutineStmtNode node);
 	public void visitASTInterfaceBodyNode(ASTInterfaceBodyNode node);
 	public void visitASTObjectNameNode(ASTObjectNameNode node);
+	public void visitASTDeferredShapeSpecListNode(ASTDeferredShapeSpecListNode node);
+	public void visitASTArrayAllocationNode(ASTArrayAllocationNode node);
+	public void visitASTAllocatableStmtNode(ASTAllocatableStmtNode node);
+	public void visitISpecificationStmt(ASTAllocatableStmtNode node);
+	public void visitASTDeferredShapeSpecNode(ASTDeferredShapeSpecNode node);
+	public void visitASTVariableNameNode(ASTVariableNameNode node);
+	public void visitIBindEntity(ASTVariableNameNode node);
+	public void visitASTSubscriptTripletNode(ASTSubscriptTripletNode node);
+	public void visitASTSectionSubscriptNode(ASTSectionSubscriptNode node);
+	public void visitASTImageSelectorNode(ASTImageSelectorNode node);
+	public void visitASTFieldSelectorNode(ASTFieldSelectorNode node);
+	public void visitASTAllocationNode(ASTAllocationNode node);
+	public void visitASTVariableNode(ASTVariableNode node);
+	public void visitIDataStmtObject(ASTVariableNode node);
+	public void visitIInputItem(ASTVariableNode node);
+	public void visitASTSubstringRangeNode(ASTSubstringRangeNode node);
+	public void visitASTDataRefNode(ASTDataRefNode node);
+	public void visitASTNameNode(ASTNameNode node);
+	public void visitASTAllocateStmtNode(ASTAllocateStmtNode node);
+	public void visitASTAllocateObjectNode(ASTAllocateObjectNode node);
+	public void visitASTAllocateCoarraySpecNode(ASTAllocateCoarraySpecNode node);
+	public void visitASTAssociateStmtNode(ASTAssociateStmtNode node);
+	public void visitASTAssociationNode(ASTAssociationNode node);
 
 }

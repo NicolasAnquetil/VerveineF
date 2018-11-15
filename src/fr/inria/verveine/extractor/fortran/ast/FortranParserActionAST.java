@@ -284,6 +284,13 @@ public class FortranParserActionAST extends FortranParserActionNull {
 		listDeclarationConstruct.add( typeDecl);
 	}
 
+	public void allocate_stmt(Token label, Token allocateKeyword, Token eos, boolean hasTypeSpec, boolean hasAllocOptList) {
+		ASTAllocateStmtNode allocate;
+		
+		allocate = (ASTAllocateStmtNode) valueStackPop();
+		allocate.setLabel(asttk(label));
+		allocate.setASTField(ASTTypeDeclarationStmtNode.TEOS, asttk(eos));
+	}
 
 	@Override
 	public void expr() {
