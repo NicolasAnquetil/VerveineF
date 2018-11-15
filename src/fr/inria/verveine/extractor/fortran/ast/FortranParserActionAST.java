@@ -335,7 +335,7 @@ public class FortranParserActionAST extends FortranParserActionNull {
 		
 		ASTToken tk = asttk(attrKeyword);
 		
-		switch (tk.getTokenIndex()) {
+		switch (tk.getType()) {
 		case FortranLexer.T_ALLOCATABLE: attrSpec.setIsAllocatable(tk); break;
 		case FortranLexer.T_ASYNCHRONOUS: attrSpec.setIsAsync(tk); break;
 		case FortranLexer.T_CODIMENSION: attrSpec.setIsCodimension(tk); break;

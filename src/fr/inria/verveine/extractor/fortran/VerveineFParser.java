@@ -11,9 +11,12 @@ import fortran.ofp.FrontEnd;
 import fr.inria.verveine.extractor.fortran.ast.ASTNode;
 import fr.inria.verveine.extractor.fortran.ast.FortranParserActionAST;
 import fr.inria.verveine.extractor.fortran.visitors.ScopeDefVisitor;
+import fr.inria.verveine.extractor.fortran.visitors.SubprgDefVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.VarDefVisitor;
 
 public class VerveineFParser extends VerveineParser {
+
+	public static final String VERVEINE_AST_BUILDER = "fr.inria.verveine.extractor.fortran.ast.FortranParserActionAST";
 
 	private static final String VERVEINEF_VERSION = "0.4.0_20180731";
 
@@ -56,7 +59,7 @@ public class VerveineFParser extends VerveineParser {
 		}
 
 		try {
-			ofpParser = new FrontEnd(/*args*/new String[] {}, userProjectDir, "fr.inria.verveine.extractor.fortran.ast.FortranParserActionAST");
+			ofpParser = new FrontEnd(/*args*/new String[] {}, userProjectDir, VERVEINE_AST_BUILDER);
 			ofpParser.call();
 			
 			ast = ((FortranParserActionAST)ofpParser.getParser().getAction()).getAST();
@@ -72,7 +75,7 @@ public class VerveineFParser extends VerveineParser {
 
 	private void runAllVisitors(FDictionary dico, ASTNode ast)  {
 		ast.accept(new ScopeDefVisitor(dico));
-		//ast.accept(new SubprgDefVisitor(dico));
+		ast.accept(new SubprgDefVisitor(dico));
 		ast.accept(new VarDefVisitor(dico));
 		//ast.accept(new CommentVisitor(dico));
 
