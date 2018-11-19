@@ -17,7 +17,13 @@ import fr.inria.verveine.extractor.fortran.ast.ASTMainProgramNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTModuleNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTProperLoopConstructNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTSubroutineSubprogramNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTToken;
 
+/**
+ * 
+ * Visitor walks through AST and create subprograms inside top level containers
+ *
+ */
 public class SubprgDefVisitor extends AbstractDispatcherVisitor {
 
 	public SubprgDefVisitor(FDictionary dico) {
@@ -29,10 +35,14 @@ public class SubprgDefVisitor extends AbstractDispatcherVisitor {
 		return "Creating subprograms";
 	}
 
+	/**
+	 * Retrieve previously added Program. Done with MainProgram/ProgramStmt/ProgramName
+	 */
 	@Override
 	public void visitASTMainProgramNode(ASTMainProgramNode node) {
+		ASTToken tk = node.getProgramStmt().getProgramName().getProgramName();
 		
-		Program fmx =  (Program) dico.getEntityByKey( mkKey(node) );
+		Program fmx =  (Program) dico.getEntityByKey( mkKey(tk) );//mkKey(node)
 		fmx.setCyclomaticComplexity( 1);
 
 		context.push(fmx);

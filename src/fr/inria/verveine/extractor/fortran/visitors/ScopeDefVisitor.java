@@ -7,7 +7,12 @@ import fr.inria.verveine.extractor.fortran.ast.ASTMainProgramNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTModuleNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTToken;
 
-
+/**
+ * First Pass
+ * 
+ * Visitor walks through the AST and create top level Containers (Program and Modules)
+ *
+ */
 public class ScopeDefVisitor extends AbstractDispatcherVisitor {
 
 	public ScopeDefVisitor(FDictionary dico) {
@@ -23,6 +28,7 @@ public class ScopeDefVisitor extends AbstractDispatcherVisitor {
 	public void visitASTMainProgramNode(ASTMainProgramNode node) {
 		ASTToken tk = node.getProgramStmt().getProgramName().getProgramName();
 		
+		//Create the Famix Program from the ProgramNameNode which contains the name instead of using MAinProgramNode
 		Program fmx = dico.ensureFamixEntity( Program.class, mkKey(tk), tk.getText());
 		fmx.setIsStub(false);
 		dico.addSourceAnchor(fmx, filename, node);
