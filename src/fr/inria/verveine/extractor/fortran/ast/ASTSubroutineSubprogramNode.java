@@ -129,5 +129,25 @@ public class ASTSubroutineSubprogramNode extends ASTNode implements IInternalSub
 	public String basename() {
 		return getSubroutineStmt().getSubroutineName().getSubroutineName().getText();
 	}
+	
+	/**
+	 * Get the Token representing the name of the Node
+	 * 
+	 * @return
+	 */
+	public ASTToken getNameToken() {
+		return this.getSubroutineStmt().getSubroutineName().getSubroutineName();
+	}
+
+	/**
+	 * Get the string name of the node
+	 * 
+	 * @param force
+	 * @return
+	 */
+	public String getName() {
+		ASTToken nameToken = getNameToken();
+		return nameToken == null ? null : nameToken.getText();
+	}
 
 }
