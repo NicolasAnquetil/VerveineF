@@ -2,17 +2,6 @@ package fr.inria.verveine.extractor.fortran.visitors;
 
 import java.util.List;
 
-import org.eclipse.photran.internal.core.analysis.binding.Definition;
-import org.eclipse.photran.internal.core.analysis.loops.ASTProperLoopConstructNode;
-import org.eclipse.photran.internal.core.lexer.Token;
-import org.eclipse.photran.internal.core.parser.ASTAssignmentStmtNode;
-import org.eclipse.photran.internal.core.parser.ASTCallStmtNode;
-import org.eclipse.photran.internal.core.parser.ASTFunctionSubprogramNode;
-import org.eclipse.photran.internal.core.parser.ASTNameNode;
-import org.eclipse.photran.internal.core.parser.ASTProgramStmtNode;
-import org.eclipse.photran.internal.core.parser.ASTSubroutineSubprogramNode;
-import org.eclipse.photran.internal.core.parser.ASTVarOrFnRefNode;
-
 import eu.synectique.verveine.core.gen.famix.Access;
 import eu.synectique.verveine.core.gen.famix.Association;
 import eu.synectique.verveine.core.gen.famix.BehaviouralEntity;
@@ -21,7 +10,12 @@ import eu.synectique.verveine.core.gen.famix.Invocation;
 import eu.synectique.verveine.core.gen.famix.NamedEntity;
 import eu.synectique.verveine.core.gen.famix.Program;
 import eu.synectique.verveine.core.gen.famix.StructuralEntity;
-import fr.inria.verveine.extractor.fortran.plugin.FDictionary;
+import fr.inria.verveine.extractor.fortran.FDictionary;
+import fr.inria.verveine.extractor.fortran.ast.ASTFunctionSubprogramNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTProgramStmtNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTProperLoopConstructNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTSubroutineSubprogramNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTToken;
 
 @SuppressWarnings("restriction")
 public class InvokAccessVisitor extends AbstractDispatcherVisitor {
@@ -47,6 +41,8 @@ public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 		}
 		super.visitASTProgramStmtNode(node);
 	}
+
+	
 
 	@Override
 	public void visitASTFunctionSubprogramNode(ASTFunctionSubprogramNode node) {
