@@ -10,6 +10,8 @@ import eu.synectique.verveine.core.gen.famix.SourceLanguage;
 import fortran.ofp.FrontEnd;
 import fr.inria.verveine.extractor.fortran.ast.ASTNode;
 import fr.inria.verveine.extractor.fortran.ast.FortranParserActionAST;
+import fr.inria.verveine.extractor.fortran.visitors.CommentVisitor;
+import fr.inria.verveine.extractor.fortran.visitors.InvokAccessVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.ScopeDefVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.SubprgDefVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.VarDefVisitor;
@@ -77,7 +79,7 @@ public class VerveineFParser extends VerveineParser {
 		ast.accept(new ScopeDefVisitor(dico));
 		ast.accept(new SubprgDefVisitor(dico));
 		ast.accept(new VarDefVisitor(dico));
-		//ast.accept(new CommentVisitor(dico));
+		ast.accept(new CommentVisitor(dico));
 
 		//ast.accept(new InvokAccessVisitor(dico));
 	}

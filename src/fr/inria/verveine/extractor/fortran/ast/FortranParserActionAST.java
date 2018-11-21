@@ -192,8 +192,7 @@ public class FortranParserActionAST extends FortranParserActionNull {
 		
 		valueStackPush((IASTNode) pcdNode.getBody());  // see specificationPart
 	}
-
-
+	
 	@Override
 	public void end_subroutine_stmt(Token label, Token keyword1, Token keyword2, Token name, Token eos) {
 		ASTModuleNode parentNode;
@@ -284,6 +283,15 @@ public class FortranParserActionAST extends FortranParserActionNull {
 		listDeclarationConstruct.add( typeDecl);
 	}
 
+	/*public void call_stmt(Token label, Token callKeyword, Token eos, boolean hasActualArgSpecList) {
+		
+		ASTNode call;
+	
+		call = (ASTNode) valueStackTop();
+		//call.setLabel(asttk(label));
+		//call.setASTField(ASTCallStmtNode.TEOS, asttk(eos));
+		
+	}*/
 
 	@Override
 	public void expr() {

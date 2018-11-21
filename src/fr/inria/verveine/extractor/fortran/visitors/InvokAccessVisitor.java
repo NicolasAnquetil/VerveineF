@@ -11,6 +11,7 @@ import eu.synectique.verveine.core.gen.famix.NamedEntity;
 import eu.synectique.verveine.core.gen.famix.Program;
 import eu.synectique.verveine.core.gen.famix.StructuralEntity;
 import fr.inria.verveine.extractor.fortran.FDictionary;
+import fr.inria.verveine.extractor.fortran.ast.ASTCallStmtNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTFunctionSubprogramNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTProgramStmtNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTProperLoopConstructNode;

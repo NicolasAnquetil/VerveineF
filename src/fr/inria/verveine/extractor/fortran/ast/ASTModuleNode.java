@@ -93,5 +93,14 @@ public class ASTModuleNode extends ASTNode implements IProgramUnit // extends Sc
 	public String basename() {
 		return getModuleStmt().getModuleName().getModuleName().getText();
 	}
+
+	/**
+	 * Get the Token representing the name of the Node
+	 * 
+	 * @return
+	 */
+	public ASTToken getNameToken() {
+		return this.getModuleStmt().getModuleName().getModuleName();
+	}
     
 }

@@ -9,7 +9,7 @@
 	<classpathentry kind="lib" path="lib/famix.jar"/>
 	<classpathentry kind="lib" path="lib/fast.jar"/>
 	<classpathentry kind="lib" path="lib/verveine.core.jar"/>
-	<classpathentry kind="lib" path="lib/OpenFortranParser-0.8.3.jar" sourcepath="/Users/lionel/git/fortran-parser"/>
+	<classpathentry kind="lib" path="lib/OpenFortranParser-0.8.3.jar" sourcepath="/ofp-antlr"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
