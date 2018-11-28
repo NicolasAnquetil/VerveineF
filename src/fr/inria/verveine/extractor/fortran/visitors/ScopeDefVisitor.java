@@ -21,7 +21,7 @@ public class ScopeDefVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	protected String msgTrace() {
-		return "creating modules";
+		return "Creating modules";
 	}
 
 	@Override
