@@ -3,6 +3,9 @@ package fr.inria.verveine.extractor.fortran.ast;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -11,25 +14,35 @@ import fr.inria.verveine.extractor.fortran.VerveineFAbstractTest;
 
 public class CommentTest extends VerveineFAbstractTest {
 
+	private Set<ASTToken> tokens;
+	private List<String> comments;
+
 	@Before
 	public void setUp() throws Exception {
 		super.setup("test_src/unit-tests/simpleModuleWithComments.f90");
+		
+		tokens = new HashSet<>();		
+		for (IASTNode node: ast.findAll(ASTNode.class) ) {
+			tokens.add(node.findFirstToken());
+		}
+		
+		comments = new ArrayList<>();
+		for (ASTToken tk: tokens ) {
+			String cmt = tk.getWhiteBefore();
+			if (cmt.indexOf('!') >= 0) {
+				comments.add(cmt);
+			}
+		}
 	}
 
 	@Test
 	public void testNumberComments() {
-		
-		ArrayList<String> comments = new ArrayList<>();
+		assertEquals(2, comments.size());
+	}
 
-		for (IASTNode node: ast.findAll(ASTNode.class) ) {
-			String cmt = node.findFirstToken().getWhiteBefore();
-			int start = cmt.indexOf('!');
-			if (start >= 0) {
-				comments.add(cmt);
-			}
-		}
-		
-		assertEquals(4, comments.size());
+	@Test
+	public void testCommentContent() {
+		assertEquals("  ! Comments again\n", comments.iterator().next());
 	}
 
 	
