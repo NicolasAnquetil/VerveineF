@@ -95,6 +95,7 @@ public class FortranParserActionAST extends FortranParserActionNull {
 		ASTModuleNameNode moduleName = new ASTModuleNameNode();
 
 		moduleName.setModuleName(asttk(id));
+		moduleStmt.setASTField(ASTModuleStmtNode.TMODULE, asttk(moduleKeyword));
 		moduleStmt.setASTField(ASTModuleStmtNode.TEOS, asttk(eos));
 		moduleStmt.setLabel(asttk(label));
 
@@ -242,6 +243,7 @@ public class FortranParserActionAST extends FortranParserActionNull {
 
 	@Override
 	public void declaration_type_spec(Token arg0, int arg1) {
+		
 		int i = IActionEnums.DeclarationTypeSpec_INTRINSIC;// used as a marker of the beginning of type_declaration_stmt (see below)
 		ASTListNode<ASTNode> parentList = (ASTListNode<ASTNode>) valueStackTop();
 		ASTTypeDeclarationStmtNode typeDecl = new ASTTypeDeclarationStmtNode();

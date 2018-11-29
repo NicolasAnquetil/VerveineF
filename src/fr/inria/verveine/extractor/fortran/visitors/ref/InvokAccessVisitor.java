@@ -1,4 +1,4 @@
-package fr.inria.verveine.extractor.fortran.visitors;
+package fr.inria.verveine.extractor.fortran.visitors.ref;
 
 import java.util.List;
 
@@ -17,6 +17,7 @@ import fr.inria.verveine.extractor.fortran.ast.ASTProgramStmtNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTProperLoopConstructNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTSubroutineSubprogramNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTToken;
+import fr.inria.verveine.extractor.fortran.visitors.AbstractDispatcherVisitor;
 
 @SuppressWarnings("restriction")
 public class InvokAccessVisitor extends AbstractDispatcherVisitor {

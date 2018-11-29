@@ -1,4 +1,4 @@
-package fr.inria.verveine.extractor.fortran.visitors;
+package fr.inria.verveine.extractor.fortran.visitors.def;
 
 import eu.synectique.verveine.core.gen.famix.Module;
 import eu.synectique.verveine.core.gen.famix.Program;
@@ -6,6 +6,7 @@ import fr.inria.verveine.extractor.fortran.FDictionary;
 import fr.inria.verveine.extractor.fortran.ast.ASTMainProgramNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTModuleNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTToken;
+import fr.inria.verveine.extractor.fortran.visitors.AbstractDispatcherVisitor;
 
 /**
  * First Pass

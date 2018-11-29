@@ -1,24 +1,21 @@
 package fr.inria.verveine.extractor.fortran.visitors;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import ch.akuhn.fame.Repository;
 import eu.synectique.verveine.core.gen.famix.GlobalVariable;
-import fr.inria.verveine.extractor.fortran.VerveineFParser;
+import fr.inria.verveine.extractor.fortran.VerveineFAbstractTest;
 
-public class VarDefVisitorTest  {
-
-	protected Repository repo;
+public class VarDefVisitorTest extends VerveineFAbstractTest {
 		
 	@Before
 	public void setup() throws Exception {
-		VerveineFParser parser = new VerveineFParser();
-		parser.setOptions( new String[] {"test_src/unit-tests/simpleModule.f90"});
-		parser.parse();
-		repo = parser.getFamixRepo();
+		super.setup("test_src/unit-tests/simpleModule.f90");
 	}
 
 	@Test

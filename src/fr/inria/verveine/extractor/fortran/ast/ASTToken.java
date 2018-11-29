@@ -33,8 +33,7 @@ public class ASTToken implements Token, IASTNode
     /**
      * Whitespace and whitetext appearing before this token that should be associated with this token
      */
-    protected String whiteBefore = ""; //$NON-NLS-1$
-
+    protected String whiteBefore = null;
     /**
      * Whitespace and whitetext appearing after this token that should be associated with this token, not the next
      */
@@ -47,7 +46,14 @@ public class ASTToken implements Token, IASTNode
 	/**
      * Returns whitespace and whitetext appearing before this token that should be associated with this token
      */
-    public String getWhiteBefore() { return whiteBefore; }
+    public String getWhiteBefore() {
+    	if  (whiteBefore == null) {
+    		return actualToken.getWhiteText();
+    	}
+    	else {
+    		return whiteBefore;
+    	}
+   	}
 
     /**
      * Sets whitespace and whitetext appearing before this token that should be associated with this token

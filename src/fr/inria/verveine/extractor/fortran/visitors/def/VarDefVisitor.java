@@ -1,4 +1,4 @@
-package fr.inria.verveine.extractor.fortran.visitors;
+package fr.inria.verveine.extractor.fortran.visitors.def;
 
 import eu.synectique.verveine.core.gen.famix.GlobalVariable;
 import eu.synectique.verveine.core.gen.famix.Module;
@@ -12,6 +12,7 @@ import fr.inria.verveine.extractor.fortran.ast.ASTProgramStmtNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTSubroutineSubprogramNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTToken;
 import fr.inria.verveine.extractor.fortran.ast.ASTTypeDeclarationStmtNode;
+import fr.inria.verveine.extractor.fortran.visitors.AbstractDispatcherVisitor;
 
 public class VarDefVisitor extends AbstractDispatcherVisitor {
 
