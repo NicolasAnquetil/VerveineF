@@ -30,7 +30,7 @@ public class CommentVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	public void visitASTMainProgramNode(ASTMainProgramNode node) {
-		Program fmx =  (Program) dico.getEntityByKey( firstDefinition(node.getProgramStmt().getProgramName().getProgramName()) );
+		Program fmx =  (Program) dico.getEntityByKey( mkKey(node.getProgramStmt().getProgramName().getProgramName()) );
 		createCommentIfNonBlank(node, fmx);
 
 		context.push(fmx);
@@ -40,7 +40,7 @@ public class CommentVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	public void visitASTModuleNode(ASTModuleNode node) {
-		Module fmx = (Module) dico.getEntityByKey( firstDefinition(node.getNameToken()) );
+		Module fmx = (Module) dico.getEntityByKey( mkKey(node.getNameToken()) );
 		createCommentIfNonBlank(node, fmx);
 
 		context.push(fmx);
@@ -50,7 +50,7 @@ public class CommentVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	public void visitASTFunctionSubprogramNode(ASTFunctionSubprogramNode node) {
-		Function fmx = (Function) dico.getEntityByKey( firstDefinition(node.getNameToken()));
+		Function fmx = (Function) dico.getEntityByKey( mkKey(node.getNameToken()));
 		createCommentIfNonBlank(node, fmx);
 		
 		/*context.push(fmx);
@@ -60,7 +60,7 @@ public class CommentVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	public void visitASTSubroutineSubprogramNode(ASTSubroutineSubprogramNode node) {
-		Function fmx = (Function) dico.getEntityByKey( firstDefinition(node.getNameToken()));
+		Function fmx = (Function) dico.getEntityByKey( mkKey(node.getNameToken()));
 		createCommentIfNonBlank(node, fmx);
 
 		/*context.push(fmx);
@@ -74,7 +74,7 @@ public class CommentVisitor extends AbstractDispatcherVisitor {
 		for (ASTEntityDeclNode decl : node.getEntityDeclList()) {
 			// Because of AST visit pruning, here we should only have global variables
 			ASTToken tk = decl.getObjectName().getObjectName();
-			fmx= (GlobalVariable) dico.getEntityByKey( firstDefinition(tk));
+			fmx= (GlobalVariable) dico.getEntityByKey( mkKey(tk));
 			createCommentIfNonBlank(node, fmx);
 		}
 	}

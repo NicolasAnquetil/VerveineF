@@ -1,4 +1,4 @@
-package fr.inria.verveine.extractor.fortran.visitors;
+package fr.inria.verveine.extractor.fortran.visitors.ref;
 
 import java.util.List;
 
@@ -11,11 +11,13 @@ import eu.synectique.verveine.core.gen.famix.NamedEntity;
 import eu.synectique.verveine.core.gen.famix.Program;
 import eu.synectique.verveine.core.gen.famix.StructuralEntity;
 import fr.inria.verveine.extractor.fortran.FDictionary;
+import fr.inria.verveine.extractor.fortran.ast.ASTCallStmtNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTFunctionSubprogramNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTProgramStmtNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTProperLoopConstructNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTSubroutineSubprogramNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTToken;
+import fr.inria.verveine.extractor.fortran.visitors.AbstractDispatcherVisitor;
 
 @SuppressWarnings("restriction")
 public class InvokAccessVisitor extends AbstractDispatcherVisitor {

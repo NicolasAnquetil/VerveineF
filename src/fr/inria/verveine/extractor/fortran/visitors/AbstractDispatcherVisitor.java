@@ -35,10 +35,6 @@ public abstract class AbstractDispatcherVisitor extends ASTVisitor {
 	protected String mkKey(IASTNode node) {
 		return node.getClass().getName() + "/" + node.fullyQualifiedName();
 	}
-	
-	protected String firstDefinition(ASTToken token) {
-		return  mkKey(token);
-	}
 
 	// VISITING METODS ON ICELEMENT HIERARCHY (ICElementVisitor) ===========================================================================
 /*

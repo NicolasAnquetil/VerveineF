@@ -50,8 +50,9 @@ public class ASTToken implements Token, IASTNode
      * to the underlying OFP token
      */
     public String getWhiteBefore() {
+
     	return (whiteBefore == null) ? actualToken.getWhiteText() : whiteBefore;
-    }
+   	}
 
     /**
      * Sets whitespace and whitetext appearing before this token that should be associated with this token

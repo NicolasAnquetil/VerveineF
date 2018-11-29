@@ -98,6 +98,7 @@ public class FortranParserActionAST extends FortranParserActionNull {
 		moduleStmt.setLabel(asttk(label));
 		moduleStmt.setASTField(ASTModuleStmtNode.TMODULE, asttk(moduleKeyword));
 		moduleName.setModuleName(asttk(id));
+		moduleStmt.setASTField(ASTModuleStmtNode.TMODULE, asttk(moduleKeyword));
 		moduleStmt.setASTField(ASTModuleStmtNode.TEOS, asttk(eos));
 
 		moduleStmt.setModuleName(moduleName);
@@ -194,8 +195,7 @@ public class FortranParserActionAST extends FortranParserActionNull {
 		
 		valueStackPush((IASTNode) pcdNode.getBody());  // see specificationPart
 	}
-
-
+	
 	@Override
 	public void end_subroutine_stmt(Token label, Token keyword1, Token keyword2, Token name, Token eos) {
 		ASTModuleNode parentNode;
@@ -245,6 +245,7 @@ public class FortranParserActionAST extends FortranParserActionNull {
 
 	@Override
 	public void declaration_type_spec(Token arg0, int arg1) {
+		
 		int i = IActionEnums.DeclarationTypeSpec_INTRINSIC;// used as a marker of the beginning of type_declaration_stmt (see below)
 		ASTListNode<ASTNode> parentList = (ASTListNode<ASTNode>) valueStackTop();
 		ASTTypeDeclarationStmtNode typeDecl = new ASTTypeDeclarationStmtNode();
@@ -286,6 +287,15 @@ public class FortranParserActionAST extends FortranParserActionNull {
 		listDeclarationConstruct.add( typeDecl);
 	}
 
+	/*public void call_stmt(Token label, Token callKeyword, Token eos, boolean hasActualArgSpecList) {
+		
+		ASTNode call;
+	
+		call = (ASTNode) valueStackTop();
+		//call.setLabel(asttk(label));
+		//call.setASTField(ASTCallStmtNode.TEOS, asttk(eos));
+		
+	}*/
 
 	@Override
 	public void expr() {

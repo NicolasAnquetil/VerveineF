@@ -65,4 +65,6 @@ public class ASTVisitor implements IASTVisitor {
 	@Override public void visitASTInterfaceBodyNode(ASTInterfaceBodyNode node) { }
 	@Override public void visitASTObjectNameNode(ASTObjectNameNode node) { }
 
+	@Override public void visitASTCallStmtNode(ASTCallStmtNode node) { }
+
 }

@@ -11,5 +11,6 @@
 	<classpathentry kind="lib" path="lib/verveine.core.jar"/>
 	<classpathentry kind="lib" path="lib/OpenFortranParser-0.8.3.jar" sourcepath="/ofp-antlr"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ofp-antlr"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

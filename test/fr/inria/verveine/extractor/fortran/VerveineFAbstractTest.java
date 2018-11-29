@@ -1,20 +1,21 @@
 package fr.inria.verveine.extractor.fortran;
 
 
-import fortran.ofp.FrontEnd;
-import fr.inria.verveine.extractor.fortran.VerveineFParser;
+import ch.akuhn.fame.Repository;
 import fr.inria.verveine.extractor.fortran.ast.ASTNode;
-import fr.inria.verveine.extractor.fortran.ast.FortranParserActionAST;
 
 public class VerveineFAbstractTest {
 
 	protected ASTNode ast;
+	
+	protected Repository repo;
 
 	public void setup(String filename) throws Exception {
-		FrontEnd ofpParser = new FrontEnd(/*args*/new String[] {}, filename, VerveineFParser.VERVEINE_AST_BUILDER);
-		ofpParser.call();
-			
-		ast = ((FortranParserActionAST)ofpParser.getParser().getAction()).getAST();
+		VerveineFParser parser = new VerveineFParser();
+		parser.setOptions( new String[] {filename});
+		parser.parse();
+		repo = parser.getFamixRepo();
+		ast = parser.getAst();
 	}
 
 }
