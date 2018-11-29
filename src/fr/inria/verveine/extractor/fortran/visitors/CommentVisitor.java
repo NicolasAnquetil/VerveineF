@@ -40,7 +40,7 @@ public class CommentVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	public void visitASTModuleNode(ASTModuleNode node) {
-		Module fmx = (Module) dico.getEntityByKey( mkKey(node.getNameToken()) );
+		Module fmx = (Module) dico.getEntityByKey( mkKey(node) );
 		createCommentIfNonBlank(node, fmx);
 
 		context.push(fmx);
