@@ -2,6 +2,7 @@ package fr.inria.verveine.extractor.fortran.ast;
 
 public class ASTProgramStmtNode extends ASTNode
 {
+	public static final int TPROGRAM = 1;
 	public static final int TEOS = 3;
 	
 	ASTToken label;
@@ -62,7 +63,7 @@ public class ASTProgramStmtNode extends ASTNode
         switch (index)
         {
         case 0:  return this.label;
-        case 1:  return this.programToken;
+        case TPROGRAM:  return this.programToken;
         case 2:  return this.programName;
         case TEOS:  return this.hiddenTEos;
         default: throw new IllegalArgumentException("Invalid index");
@@ -74,7 +75,7 @@ public class ASTProgramStmtNode extends ASTNode
         switch (index)
         {
         case 0:  this.label = (ASTToken)value; if (value != null) value.setParent(this); return;
-        case 1:  this.programToken = (ASTToken)value; if (value != null) value.setParent(this); return;
+        case TPROGRAM:  this.programToken = (ASTToken)value; if (value != null) value.setParent(this); return;
         case 2:  this.programName = (ASTProgramNameNode)value; if (value != null) value.setParent(this); return;
         case TEOS:  this.hiddenTEos = (ASTToken)value; if (value != null) value.setParent(this); return;
         default: throw new IllegalArgumentException("Invalid index");

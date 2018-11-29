@@ -33,7 +33,7 @@ public class ASTToken implements Token, IASTNode
     /**
      * Whitespace and whitetext appearing before this token that should be associated with this token
      */
-    protected String whiteBefore = ""; //$NON-NLS-1$
+    protected String whiteBefore = null;
 
     /**
      * Whitespace and whitetext appearing after this token that should be associated with this token, not the next
@@ -45,14 +45,20 @@ public class ASTToken implements Token, IASTNode
     }
 
 	/**
-     * Returns whitespace and whitetext appearing before this token that should be associated with this token
+     * Returns whitespace and whitetext appearing before this token that should be associated with this token<BR>
+     * Get it, either from value set before {@link #setWhiteBefore(String)} or from the whiteText associated
+     * to the underlying OFP token
      */
-    public String getWhiteBefore() { return whiteBefore; }
+    public String getWhiteBefore() {
+    	return (whiteBefore == null) ? actualToken.getWhiteText() : whiteBefore;
+    }
 
     /**
      * Sets whitespace and whitetext appearing before this token that should be associated with this token
      */
-    public void setWhiteBefore(String value) { whiteBefore = value == null ? "" : value; } //$NON-NLS-1$
+    public void setWhiteBefore(String value) {
+    	whiteBefore = (value == null ? "" : value);
+    }
 
     /**
      * Returns whitespace and whitetext appearing after this token that should be associated with this token, not the next

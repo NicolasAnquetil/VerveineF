@@ -52,9 +52,10 @@ public class FortranParserActionAST extends FortranParserActionNull {
 		ASTProgramStmtNode pgmStmt = new ASTProgramStmtNode();
 		ASTProgramNameNode pgmName = new ASTProgramNameNode();
 		
+		pgmStmt.setLabel( asttk(label));
+		pgmStmt.setASTField(ASTProgramStmtNode.TPROGRAM, asttk(programKeyword));
 		pgmName.setProgramName( asttk(id));
 		pgmStmt.setASTField(ASTProgramStmtNode.TEOS, asttk(eos));
-		pgmStmt.setLabel( asttk(label));
 
 		pgmStmt.setProgramName( pgmName);
 		mainPgm.setProgramStmt(pgmStmt);
@@ -69,11 +70,11 @@ public class FortranParserActionAST extends FortranParserActionNull {
 		ASTMainProgramNode mainPgm;
 		ASTEndProgramStmtNode endPgmStmt = new ASTEndProgramStmtNode();
 		
+		endPgmStmt.setLabel(asttk(label));
 		endPgmStmt.setEndToken(asttk(endKeyword));
 		endPgmStmt.setASTField(ASTEndProgramStmtNode.TPROGRAM, asttk(programKeyword));
 		endPgmStmt.setEndName(asttk(id));
 		endPgmStmt.setASTField(ASTEndProgramStmtNode.TEOS, asttk(eos));
-		endPgmStmt.setLabel(asttk(label));
 
 		mainPgm = (ASTMainProgramNode)valueStackPop();
 		mainPgm.setEndProgramStmt(endPgmStmt);
@@ -94,9 +95,10 @@ public class FortranParserActionAST extends FortranParserActionNull {
 		ASTModuleStmtNode moduleStmt = new ASTModuleStmtNode();
 		ASTModuleNameNode moduleName = new ASTModuleNameNode();
 
+		moduleStmt.setLabel(asttk(label));
+		moduleStmt.setASTField(ASTModuleStmtNode.TMODULE, asttk(moduleKeyword));
 		moduleName.setModuleName(asttk(id));
 		moduleStmt.setASTField(ASTModuleStmtNode.TEOS, asttk(eos));
-		moduleStmt.setLabel(asttk(label));
 
 		moduleStmt.setModuleName(moduleName);
 		moduleNode.setModuleStmt(moduleStmt);
@@ -110,11 +112,11 @@ public class FortranParserActionAST extends FortranParserActionNull {
 		ASTModuleNode moduleNode;
 		ASTEndModuleStmtNode endModule = new ASTEndModuleStmtNode();
 
-		endModule.setEndName(asttk(id));
+		endModule.setLabel(asttk(label));
 		endModule.setASTField(ASTEndModuleStmtNode.TEND, asttk(endKeyword));
 		endModule.setASTField(ASTEndModuleStmtNode.TENDMODULE, asttk(moduleKeyword));
+		endModule.setEndName(asttk(id));
 		endModule.setASTField(ASTEndModuleStmtNode.TEOS, asttk(eos));
-		endModule.setLabel(asttk(label));
 
 		moduleNode = (ASTModuleNode) valueStackPop();
 		moduleNode.setEndModuleStmt(endModule);
