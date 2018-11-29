@@ -9,9 +9,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import eu.synectique.verveine.core.gen.famix.GlobalVariable;
-import fr.inria.verveine.extractor.fortran.VerveineFAbstractTest;
 
-public class VarDefVisitorTest extends VerveineFAbstractTest {
+public class VarDefVisitorTest extends AbstractFunctionalTest {
 		
 	@Before
 	public void setup() throws Exception {

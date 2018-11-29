@@ -4,15 +4,14 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import fr.inria.verveine.extractor.fortran.VerveineFAbstractTest;
-
-public class CommentTest extends VerveineFAbstractTest {
+public class CommentTest extends AbstractASTTest {
 
 	private Set<ASTToken> tokens;
 	private List<String> comments;
@@ -42,8 +41,9 @@ public class CommentTest extends VerveineFAbstractTest {
 
 	@Test
 	public void testCommentContent() {
-		assertEquals("  ! Comments again\n", comments.iterator().next());
+		Iterator<String> cmtsIter = comments.iterator();
+		cmtsIter.next(); // skip 1st comment
+		assertEquals("  ! Comments again\n", cmtsIter.next());
 	}
 
-	
 }

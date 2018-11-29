@@ -1,13 +1,11 @@
-package fr.inria.verveine.extractor.fortran;
+package fr.inria.verveine.extractor.fortran.visitors;
 
 
 import ch.akuhn.fame.Repository;
-import fr.inria.verveine.extractor.fortran.ast.ASTNode;
+import fr.inria.verveine.extractor.fortran.VerveineFParser;
 
-public class VerveineFAbstractTest {
+public class AbstractFunctionalTest {
 
-	protected ASTNode ast;
-	
 	protected Repository repo;
 
 	public void setup(String filename) throws Exception {
@@ -15,7 +13,6 @@ public class VerveineFAbstractTest {
 		parser.setOptions( new String[] {filename});
 		parser.parse();
 		repo = parser.getFamixRepo();
-		ast = parser.getAst();
 	}
 
 }

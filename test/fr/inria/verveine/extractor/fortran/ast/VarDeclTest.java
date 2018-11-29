@@ -7,9 +7,7 @@ import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 
-import fr.inria.verveine.extractor.fortran.VerveineFAbstractTest;
-
-public class VarDeclTest extends VerveineFAbstractTest {
+public class VarDeclTest extends AbstractASTTest {
 
 	@Before
 	public void setup() throws Exception {
