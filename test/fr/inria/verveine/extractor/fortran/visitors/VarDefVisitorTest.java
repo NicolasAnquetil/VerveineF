@@ -18,11 +18,6 @@ public class VarDefVisitorTest extends AbstractFunctionalTest {
 	}
 
 	@Test
-	public void testVariableNumber() {
-		assertEquals(4, repo.count(GlobalVariable.class));
-	}
-
-	@Test
 	public void testVariableNames() {
 		int aString = 0;
 		int aBool = 0;

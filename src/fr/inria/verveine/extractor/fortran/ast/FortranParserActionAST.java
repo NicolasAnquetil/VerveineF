@@ -24,7 +24,7 @@ public class FortranParserActionAST extends FortranParserActionNull {
 
 	protected void valueStackPush(IASTNode node) {
 		// casting ASTListNode to avoid strange type checking error
-		((ASTListNode)valueStack).add( ++valueStackTop, node);
+		((ASTListNode<IASTNode>)valueStack).add( ++valueStackTop, node);
 	}
 
 	protected IASTNode valueStackTop() {
@@ -146,7 +146,7 @@ public class FortranParserActionAST extends FortranParserActionNull {
 		fctStmt.setFunctionName(fctName);
 		fctNode.setFunctionStmt(fctStmt);
 		
-		valueStackPush((ASTNode) fctNode.getBody());  // see specificationPart
+		valueStackPush((IASTNode) fctNode.getBody());  // see specificationPart
 	}
 
 	@Override
@@ -204,7 +204,7 @@ public class FortranParserActionAST extends FortranParserActionNull {
 		ASTEndSubroutineStmtNode endPcd = new ASTEndSubroutineStmtNode();
 		
 		endPcd.setLabel(asttk(label));
-		if ( ((FortranToken)keyword1).getTokenIndex() == FortranLexer.T_ENDFUNCTION) {
+		if ( ((FortranToken)keyword1).getTokenIndex() == FortranLexer.T_ENDSUBROUTINE) {
 			endPcd.setASTField(ASTEndSubroutineStmtNode.TENDSUBROUT, asttk(keyword1));
 		}
 		else {

@@ -9,6 +9,7 @@ import eu.synectique.verveine.core.gen.famix.Function;
 import eu.synectique.verveine.core.gen.famix.Invocation;
 import eu.synectique.verveine.core.gen.famix.NamedEntity;
 import eu.synectique.verveine.core.gen.famix.Program;
+import eu.synectique.verveine.core.gen.famix.ScopingEntity;
 import eu.synectique.verveine.core.gen.famix.StructuralEntity;
 import fr.inria.verveine.extractor.fortran.FDictionary;
 import fr.inria.verveine.extractor.fortran.ast.ASTCallStmtNode;
@@ -37,7 +38,7 @@ public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	public void visitASTProgramStmtNode(ASTProgramStmtNode node) {
-		caller = (Program) dico.getEntityByKey( firstDefinition(node.getProgramName().getProgramName()) );
+		caller = (Program) dico.getEntityByKey( mkKey(node) );
 		if (caller == null) {
 			System.err.println("  Program definition not found: "+ node.getProgramName().getProgramName());
 		}
@@ -48,7 +49,7 @@ public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	public void visitASTFunctionSubprogramNode(ASTFunctionSubprogramNode node) {
-		caller = (Function) dico.getEntityByKey( firstDefinition(node.getNameToken()) );
+		caller = (Function) dico.getEntityByKey( mkKey(node) );
 		if (caller == null) {
 			System.err.println("  Function definition not found: "+ node.getName());
 		}
@@ -57,7 +58,7 @@ public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	public void visitASTSubroutineSubprogramNode(ASTSubroutineSubprogramNode node) {
-		caller = (Function) dico.getEntityByKey( firstDefinition(node.getNameToken()) );
+		caller = (Function) dico.getEntityByKey( mkKey(node) );
 		if (caller == null) {
 			System.err.println("  Procedure definition not found: "+ node.getName());
 		}
@@ -72,7 +73,7 @@ public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 		super.visitASTCallStmtNode(node);
 	}
 
-	@Override
+	/*@Override
 	public void visitASTVarOrFnRefNode(ASTVarOrFnRefNode node) {
 		// actually, here we know it is an access and not an invocation
 		invokOrAccessFromNode( node.getName().getName());
@@ -102,7 +103,7 @@ public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 				acc.setIsWrite(true);
 			}			
 		}
-	}
+	}*/
 
 	// ================  U T I L I T I E S  =======================
 
