@@ -1,18 +1,16 @@
-package fr.inria.verveine.extractor.fortran.visitors;
+package fr.inria.verveine.extractor.fortran.ir;
 
-
-import ch.akuhn.fame.Repository;
 import fr.inria.verveine.extractor.fortran.VerveineFParser;
 
-public class AbstractFunctionalTest {
+public class AbstractIRTest {
 
-	protected Repository repo;
+	protected IRDictionary dico;
 
 	public void setup(String filename) throws Exception {
 		VerveineFParser parser = new VerveineFParser();
 		parser.setOptions( new String[] {filename});
 		parser.parse();
-		repo = parser.getFamixRepo();
+		dico = parser.getDico();
 	}
 
 }

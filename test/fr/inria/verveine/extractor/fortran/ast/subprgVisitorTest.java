@@ -1,17 +1,11 @@
 package fr.inria.verveine.extractor.fortran.ast;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.fail;
 
 import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import eu.synectique.verveine.core.gen.famix.Function;
-import eu.synectique.verveine.core.gen.famix.GlobalVariable;
-import fr.inria.verveine.extractor.fortran.visitors.AbstractFunctionalTest;
 
 public class subprgVisitorTest extends AbstractASTTest {
 		

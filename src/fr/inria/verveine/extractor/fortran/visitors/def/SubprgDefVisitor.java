@@ -18,6 +18,8 @@ import fr.inria.verveine.extractor.fortran.ast.ASTModuleNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTProperLoopConstructNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTSubroutineSubprogramNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTToken;
+import fr.inria.verveine.extractor.fortran.ir.IRDictionary;
+import fr.inria.verveine.extractor.fortran.ir.IREntity;
 import fr.inria.verveine.extractor.fortran.visitors.AbstractDispatcherVisitor;
 
 /**
@@ -27,7 +29,7 @@ import fr.inria.verveine.extractor.fortran.visitors.AbstractDispatcherVisitor;
  */
 public class SubprgDefVisitor extends AbstractDispatcherVisitor {
 
-	public SubprgDefVisitor(FDictionary dico) {
+	public SubprgDefVisitor(IRDictionary dico) {
 		super(dico);
 	}
 

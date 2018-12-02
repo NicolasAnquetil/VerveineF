@@ -1,11 +1,11 @@
 package fr.inria.verveine.extractor.fortran.visitors.def;
 
-import eu.synectique.verveine.core.gen.famix.Module;
-import eu.synectique.verveine.core.gen.famix.Program;
-import fr.inria.verveine.extractor.fortran.FDictionary;
 import fr.inria.verveine.extractor.fortran.ast.ASTMainProgramNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTModuleNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTToken;
+import fr.inria.verveine.extractor.fortran.ir.IRDictionary;
+import fr.inria.verveine.extractor.fortran.ir.IREntity;
+import fr.inria.verveine.extractor.fortran.ir.IRKind;
 import fr.inria.verveine.extractor.fortran.visitors.AbstractDispatcherVisitor;
 
 /**
@@ -16,8 +16,8 @@ import fr.inria.verveine.extractor.fortran.visitors.AbstractDispatcherVisitor;
  */
 public class ScopeDefVisitor extends AbstractDispatcherVisitor {
 
-	public ScopeDefVisitor(FDictionary dico) {
-		super(dico);
+	public ScopeDefVisitor(IRDictionary dico, String filename) {
+		super(dico, filename);
 	}
 
 	@Override
@@ -30,16 +30,17 @@ public class ScopeDefVisitor extends AbstractDispatcherVisitor {
 		ASTToken tk = node.getProgramStmt().getProgramName().getProgramName();
 		
 		//Create the Famix Program from the ProgramNameNode which contains the name instead of using MAinProgramNode
-		Program fmx = dico.ensureFamixEntity( Program.class, mkKey(tk), tk.getText());
-		fmx.setIsStub(false);
-		dico.addSourceAnchor(fmx, filename, node);
+		IREntity entity = dico.addEntity(mkKey(tk), IRKind.PROGRAM, /*parent*/null);
+		entity.stub(false);
+		entity.addSourceAnchor( filename, node);
 	}
 
 	@Override
 	public void visitASTModuleNode(ASTModuleNode node) {
-		Module fmx = dico.ensureFamixModule( mkKey(node), node.basename(), /*owner*/null);
-		fmx.setIsStub(false);
-		dico.addSourceAnchor(fmx, filename, node);
+		IREntity entity = dico.addEntity( mkKey(node), IRKind.MODULE, /*parent*/null);
+		entity.name(node.basename());
+		entity.stub(false);
+		entity.addSourceAnchor( filename, node);
 
 		super.visitASTModuleNode(node);
 	}

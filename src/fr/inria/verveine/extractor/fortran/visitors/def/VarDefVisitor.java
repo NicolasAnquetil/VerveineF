@@ -12,11 +12,13 @@ import fr.inria.verveine.extractor.fortran.ast.ASTProgramStmtNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTSubroutineSubprogramNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTToken;
 import fr.inria.verveine.extractor.fortran.ast.ASTTypeDeclarationStmtNode;
+import fr.inria.verveine.extractor.fortran.ir.IRDictionary;
+import fr.inria.verveine.extractor.fortran.ir.IREntity;
 import fr.inria.verveine.extractor.fortran.visitors.AbstractDispatcherVisitor;
 
 public class VarDefVisitor extends AbstractDispatcherVisitor {
 
-	public VarDefVisitor(FDictionary dico) {
+	public VarDefVisitor(IRDictionary dico) {
 		super(dico);
 	}
 

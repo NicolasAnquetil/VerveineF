@@ -1,26 +1,18 @@
 package fr.inria.verveine.extractor.fortran.visitors;
 
-import eu.synectique.verveine.core.gen.famix.Function;
-import eu.synectique.verveine.core.gen.famix.GlobalVariable;
-import eu.synectique.verveine.core.gen.famix.IndexedFileAnchor;
-import eu.synectique.verveine.core.gen.famix.Module;
-import eu.synectique.verveine.core.gen.famix.Program;
-import eu.synectique.verveine.core.gen.famix.SourcedEntity;
-import fr.inria.verveine.extractor.fortran.FDictionary;
+import fr.inria.verveine.extractor.fortran.EntityNotFoundException;
 import fr.inria.verveine.extractor.fortran.ast.ASTEndModuleStmtNode;
-import fr.inria.verveine.extractor.fortran.ast.ASTEntityDeclNode;
-import fr.inria.verveine.extractor.fortran.ast.ASTFunctionSubprogramNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTMainProgramNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTModuleNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTNode;
-import fr.inria.verveine.extractor.fortran.ast.ASTSubroutineSubprogramNode;
-import fr.inria.verveine.extractor.fortran.ast.ASTToken;
-import fr.inria.verveine.extractor.fortran.ast.ASTTypeDeclarationStmtNode;
+import fr.inria.verveine.extractor.fortran.ir.IRDictionary;
+import fr.inria.verveine.extractor.fortran.ir.IREntity;
+import fr.inria.verveine.extractor.fortran.ir.IRKind;
 
 public class CommentVisitor extends AbstractDispatcherVisitor {
 
-	public CommentVisitor(FDictionary dico) {
-		super(dico);
+	public CommentVisitor(IRDictionary dico, String filename) {
+		super(dico, filename);
 	}
 
 	@Override
@@ -30,32 +22,32 @@ public class CommentVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	public void visitASTMainProgramNode(ASTMainProgramNode node) {
-		Program fmx =  (Program) dico.getEntityByKey( mkKey(node.getProgramStmt().getProgramName().getProgramName()) );
-		createCommentIfNonBlank(node, fmx);
+		IREntity entity =  dico.getEntityByKey( mkKey(node.getProgramStmt().getProgramName().getProgramName()));
+		createCommentIfNonBlank(node,entity);
 
-		context.push(fmx);
+		context.push(entity);
 		super.visitASTMainProgramNode(node);
 		context.pop();
 	}
 
 	@Override
 	public void visitASTModuleNode(ASTModuleNode node) {
-		Module fmx = (Module) dico.getEntityByKey( mkKey(node) );
-		createCommentIfNonBlank(node, fmx);
+		IREntity entity = dico.getEntityByKey( mkKey(node));
+		createCommentIfNonBlank(node, entity);
 
-		context.push(fmx);
+		context.push(entity);
 		super.visitASTModuleNode(node);
 	}
 
 	@Override
 	public void visitASTEndModuleStmtNode(ASTEndModuleStmtNode node) {
-		createCommentIfNonBlank(node, context.top());
+		createCommentIfNonBlank(node, context.peek());
 
 		super.visitASTEndModuleStmtNode(node);
 
 		context.pop();
 	}
-
+/*
 	@Override
 	public void visitASTFunctionSubprogramNode(ASTFunctionSubprogramNode node) {
 		Function fmx = (Function) dico.getEntityByKey( mkKey(node.getNameToken()));
@@ -63,7 +55,7 @@ public class CommentVisitor extends AbstractDispatcherVisitor {
 		
 		/*context.push(fmx);
 		super.visitASTFunctionSubprogramNode(node);
-		context.pop();*/
+		context.pop();* /
 	}
 
 	@Override
@@ -73,7 +65,7 @@ public class CommentVisitor extends AbstractDispatcherVisitor {
 
 		/*context.push(fmx);
 		super.visitASTSubroutineSubprogramNode(node);
-		context.pop();*/
+		context.pop();* /
 	}
 
 	@Override
@@ -91,22 +83,30 @@ public class CommentVisitor extends AbstractDispatcherVisitor {
 	// UTILITIES
 
 	/**
-	 * Search for a comment  preceding <code>node<code>. If found, associates the comment with the <code>fmx</code> entity. <br>
+	 * Search for a comment  preceding <code>node<code>. If found, associates the comment with the <code>entity</code> entity. <br>
 	 * 
 	 * TODO Deal with #ifdef / #endif that are also "white"
 	 */
-	private void createCommentIfNonBlank(ASTNode node, SourcedEntity fmx) {
-		String cmt = node.findFirstToken().getWhiteBefore();
-		int start = cmt.indexOf('!');
-		if (start >= 0) {
-			dico.createFamixComment(cmt, fmx);
-			if (fmx.getSourceAnchor() != null) {
-				IndexedFileAnchor fmxAnchor = (IndexedFileAnchor) fmx.getSourceAnchor();
-				
-				fmxAnchor.setStartPos( (int)fmxAnchor.getStartPos() - cmt.length()); 
+	private void createCommentIfNonBlank(ASTNode node, IREntity entity) {
+		if (entity == null) {
+			new EntityNotFoundException("Entity key not found: "+entity);
+		}
+
+		String cmtString = node.findFirstToken().getWhiteBefore();
+		int cmtStart = cmtString.indexOf('!');
+		if (cmtStart >= 0) {
+			IREntity irCmt;
+
+			irCmt = new IREntity(entity, IRKind.COMMENT);
+			irCmt.data("content", cmtString);
+			dico.addAnonymousEntity( irCmt);
+			
+			// adjusting start of parent entity, removing the comment from it 
+			String entStart = entity.getData("anchorstart");
+			if (entStart != null) {				
+				entity.data("anchorstart", "" + (Integer.parseInt(entStart) - cmtString.length()) ); 
 			}
 		}
 	}
-
 	
 }

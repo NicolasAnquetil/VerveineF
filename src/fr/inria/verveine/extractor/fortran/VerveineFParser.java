@@ -10,22 +10,19 @@ import eu.synectique.verveine.core.gen.famix.SourceLanguage;
 import fortran.ofp.FrontEnd;
 import fr.inria.verveine.extractor.fortran.ast.ASTNode;
 import fr.inria.verveine.extractor.fortran.ast.FortranParserActionAST;
+import fr.inria.verveine.extractor.fortran.ir.IRDictionary;
+import fr.inria.verveine.extractor.fortran.ir.IREntity;
 import fr.inria.verveine.extractor.fortran.visitors.CommentVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.def.ScopeDefVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.def.SubprgDefVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.def.VarDefVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.ref.InvokAccessVisitor;
 
-public class VerveineFParser extends VerveineParser {
+public class VerveineFParser  {
 
 	public static final String VERVEINE_AST_BUILDER = "fr.inria.verveine.extractor.fortran.ast.FortranParserActionAST";
 
-	private static final String VERVEINEF_VERSION = "0.4.0_20180731";
-
-	/**
-	 * Dictionary used to create all entities. Contains a Famix repository
-	 */
-	private FDictionary dico = null;
+	private static final String VERVEINEF_VERSION = "0.1.0_201801201-IR";
 
 	/**
 	 * Directory where the project to analyze is located
@@ -37,6 +34,8 @@ public class VerveineFParser extends VerveineParser {
 	 */
 	private ASTNode ast = null;
 
+	protected IRDictionary dico;
+
 	/**
 	 * Temporary variable to gather macros defined from the command line
 	 */
@@ -44,33 +43,29 @@ public class VerveineFParser extends VerveineParser {
 
 	private FortranSourceLanguage srcLggeInstance;
 
+	private String outputFileName;
+
 	public static void main(String[] args) {
 		VerveineFParser parser = new VerveineFParser();
 		parser.setOptions(args);
 		parser.parse();
-		parser.emitMSE();
 	}
 
 	public VerveineFParser() {
-		dico = new FDictionary(getFamixRepo());
 		this.argDefined = new HashMap<String,String>();
 		userProjectDir = null;
 	}
 
 	public boolean parse() {
 		FrontEnd ofpParser = null;
+		dico = new IRDictionary();
 		
-
-		if (linkToExisting()) {
-			// incremental parsing ...
-		}
-
 		try {
 			ofpParser = new FrontEnd(/*args*/new String[] {}, userProjectDir, VERVEINE_AST_BUILDER);
 			ofpParser.call();
 			
 			ast = ((FortranParserActionAST)ofpParser.getParser().getAction()).getAST();
-			runAllVisitors( dico, ast);
+			runAllVisitors( dico, "theSourceFileName", ast);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
@@ -80,23 +75,35 @@ public class VerveineFParser extends VerveineParser {
 		return true;
 	}
 
-	private void runAllVisitors(FDictionary dico, ASTNode ast)  {
-		ast.accept(new ScopeDefVisitor(dico));
-		ast.accept(new SubprgDefVisitor(dico));
-		ast.accept(new VarDefVisitor(dico));
+	private void runAllVisitors(IRDictionary dico, String filename, ASTNode ast)  {
+		ast.accept(new ScopeDefVisitor(dico, filename));
+		//ast.accept(new SubprgDefVisitor(dico, filename));
+		//ast.accept(new VarDefVisitor(dico, filename));
 
-		ast.accept(new CommentVisitor(dico));
+		ast.accept(new CommentVisitor(dico, filename));
 
-		//ast.accept(new InvokAccessVisitor(dico));
+		//ast.accept(new InvokAccessVisitor(dico, filename));
 	}
 
-	@Override
-	protected SourceLanguage getMyLgge() {
-		if (srcLggeInstance == null) {
-			srcLggeInstance = new FortranSourceLanguage();
+	/** Try to deal with the "current" argument in 'args'
+	 * @param i -- the indice in 'args' of the current argument
+	 * @param args -- an array of the arguments
+	 * @return how many arguments were consumed (accepted)
+	 */
+	protected int setOption(int i, String[] args) {
+		String arg = args[i];
+		if (arg.equals("-o")) {
+			if (i < args.length) {
+				outputFileName = args[i+1];
+				return 2;
+			} else {
+				System.err.println("-o requires a filename");
+			}
 		}
-		return srcLggeInstance;
+
+		return 0;  // no argument consumed
 	}
+
 
 	public void setOptions(String[] args) {
 		int i = 0;
@@ -113,7 +120,7 @@ public class VerveineFParser extends VerveineParser {
 				parseMacroDefinition(arg);
 			}
 			else {
-				int j = super.setOption(i - 1, args);
+				int j = setOption(i - 1, args);
 				if (j > 0) {     // j is the number of args consumed by super.setOption()
 					i += j;      // advance by that number of args
 					i--;         // 1 will be added at the beginning of the loop ("args[i++]")
@@ -168,6 +175,10 @@ public class VerveineFParser extends VerveineParser {
 		System.exit(0);
 	}
 
+	public IRDictionary getDico() {
+		return dico;
+	}
+	
 	public ASTNode getAst() {
 		return ast;
 	}
@@ -175,7 +186,5 @@ public class VerveineFParser extends VerveineParser {
 	public void setAst(ASTNode ast) {
 		this.ast = ast;
 	}
-	
-	
 
 }
