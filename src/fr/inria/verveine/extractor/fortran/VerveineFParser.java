@@ -4,16 +4,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import eu.synectique.verveine.core.VerveineParser;
 import eu.synectique.verveine.core.gen.famix.FortranSourceLanguage;
-import eu.synectique.verveine.core.gen.famix.SourceLanguage;
 import fortran.ofp.FrontEnd;
 import fr.inria.verveine.extractor.fortran.ast.ASTNode;
 import fr.inria.verveine.extractor.fortran.ast.FortranParserActionAST;
 import fr.inria.verveine.extractor.fortran.ir.IRDictionary;
-import fr.inria.verveine.extractor.fortran.ir.IREntity;
 import fr.inria.verveine.extractor.fortran.visitors.CommentVisitor;
-import fr.inria.verveine.extractor.fortran.visitors.InvokAccessVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.ScopeDefVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.SubprgDefVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.VarDefVisitor;

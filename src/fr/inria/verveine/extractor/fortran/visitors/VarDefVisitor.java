@@ -62,8 +62,8 @@ public class VarDefVisitor extends AbstractDispatcherVisitor {
 			ASTToken tk = decl.getObjectName().getObjectName();
 			IREntity entity = dico.addEntity( mkKey(tk), IRKind.GLOBALVAR, /*parent*/context.peek());
 			entity.name( tk.getText());
-			entity.stub(false);
-			entity.data( "declaredParam", varIsDeclaredParameter( node));
+			entity.data(IREntity.IS_STUB, false);
+			entity.data( IREntity.DECLARED_PARAM, varIsDeclaredParameter( node));
 			entity.addSourceAnchor( filename, node);
 		}
 	}

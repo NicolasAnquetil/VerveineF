@@ -98,13 +98,13 @@ public class CommentVisitor extends AbstractDispatcherVisitor {
 			IREntity irCmt;
 
 			irCmt = new IREntity(entity, IRKind.COMMENT);
-			irCmt.data("content", cmtString);
+			irCmt.data(IREntity.COMMENT_CONTENT, cmtString);
 			dico.addAnonymousEntity( irCmt);
 			
 			// adjusting start of parent entity, removing the comment from it 
-			Integer entStart = (Integer) entity.getData("anchorstart");
+			Integer entStart = (Integer) entity.getData(IREntity.ANCHOR_START);
 			if (entStart != null) {				
-				entity.data("anchorstart", entStart - cmtString.length() ); 
+				entity.data(IREntity.ANCHOR_START, entStart - cmtString.length() ); 
 			}
 		}
 	}

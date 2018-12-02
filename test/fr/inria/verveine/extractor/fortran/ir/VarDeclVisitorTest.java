@@ -8,7 +8,7 @@ import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 
-public class VarDeclTest extends AbstractIRTest {
+public class VarDeclVisitorTest extends AbstractIRTest {
 
 	@Before
 	public void setup() throws Exception {

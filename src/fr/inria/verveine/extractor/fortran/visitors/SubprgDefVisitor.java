@@ -43,7 +43,7 @@ public class SubprgDefVisitor extends AbstractDispatcherVisitor {
 		ASTToken tk = node.getProgramStmt().getProgramName().getProgramName();
 		
 		IREntity entity = dico.getEntityByKey( mkKey(tk) );
-		entity.data("cyclomaticComplexity", 1);
+		entity.data(IREntity.CYCLOMATIC_COMPLEXITY, 1);
 
 		context.push(entity);
 		super.visitASTMainProgramNode(node);
@@ -73,9 +73,9 @@ public class SubprgDefVisitor extends AbstractDispatcherVisitor {
 	public void visitASTFunctionSubprogramNode(ASTFunctionSubprogramNode node) {
 		IREntity entity = dico.addEntity( mkKey(node), IRKind.FUNCTION, /*parent*/context.peek());
 		entity.name(node.basename());
-		entity.stub(false);	
+		entity.data(IREntity.IS_STUB, false);	
 		entity.addSourceAnchor( filename, node);
-		entity.data("cyclomaticComplexity", 1);
+		entity.data(IREntity.CYCLOMATIC_COMPLEXITY, 1);
 		
 		context.push(entity);
 		super.visitASTFunctionSubprogramNode(node);
@@ -91,9 +91,9 @@ public class SubprgDefVisitor extends AbstractDispatcherVisitor {
 	public void visitASTSubroutineSubprogramNode(ASTSubroutineSubprogramNode node) {
 		IREntity entity = dico.addEntity( mkKey(node), IRKind.SUBPROGRAM, /*parent*/context.peek());
 		entity.name(node.basename());
-		entity.stub(false);
+		entity.data(IREntity.IS_STUB, false);
 		entity.addSourceAnchor( filename, node);
-		entity.data("cyclomaticComplexity", 1);
+		entity.data(IREntity.CYCLOMATIC_COMPLEXITY, 1);
 
 		context.push(entity);
 		super.visitASTSubroutineSubprogramNode(node);
@@ -156,9 +156,9 @@ public class SubprgDefVisitor extends AbstractDispatcherVisitor {
 
 	private void incrementCyclomatic() {
 		IREntity behavioural = context.peek();
-		int cc = (int) behavioural.getData("cyclomaticComplexity");
+		int cc = (int) behavioural.getData(IREntity.CYCLOMATIC_COMPLEXITY);
 		cc++;
-		behavioural.data("cyclomaticComplexity", cc);
+		behavioural.data(IREntity.CYCLOMATIC_COMPLEXITY, cc);
 	}
 
 	/*

@@ -30,7 +30,7 @@ public class ScopeDefVisitor extends AbstractDispatcherVisitor {
 		
 		//Create the Famix Program from the ProgramNameNode which contains the name instead of using MAinProgramNode
 		IREntity entity = dico.addEntity(mkKey(tk), IRKind.PROGRAM, /*parent*/null);
-		entity.stub(false);
+		entity.data(IREntity.IS_STUB, false);
 		entity.addSourceAnchor( filename, node);
 	}
 
@@ -38,7 +38,7 @@ public class ScopeDefVisitor extends AbstractDispatcherVisitor {
 	public void visitASTModuleNode(ASTModuleNode node) {
 		IREntity entity = dico.addEntity( mkKey(node), IRKind.MODULE, /*parent*/null);
 		entity.name(node.basename());
-		entity.stub(false);
+		entity.data(IREntity.IS_STUB, false);
 		entity.addSourceAnchor( filename, node);
 
 		super.visitASTModuleNode(node);

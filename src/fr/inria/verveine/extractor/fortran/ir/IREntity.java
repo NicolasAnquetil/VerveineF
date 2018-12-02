@@ -8,6 +8,16 @@ import java.util.Hashtable;
 import fr.inria.verveine.extractor.fortran.ast.ASTNode;
 
 public class IREntity {
+	// constants used to store data in the entity
+	public static final String ENTITY_NAME = "name";
+	public static final String DECLARED_PARAM = "declaredParam";
+	public static final String CYCLOMATIC_COMPLEXITY = "cyclomaticComplexity";
+	public static final String COMMENT_CONTENT = "content";
+	public static final String ANCHOR_FILE = "anchorfile";
+	public static final String ANCHOR_START = "anchorstart";
+	public static final String ANCHOR_END = "anchorend";
+	public static final String IS_STUB = "isstub";
+
 	protected IREntity parent;
 	protected IRKind kind;
 	public IREntity getParent() {
@@ -34,11 +44,7 @@ public class IREntity {
 	}
 
 	public void name(String name) {
-		data("name", name);
-	}
-
-	public void stub(boolean stub) {
-		data("isstub", stub ? "true" : "false");
+		data(ENTITY_NAME, name);
 	}
 
 	/**
@@ -53,13 +59,13 @@ public class IREntity {
 			return;
 		}
 		
-		data("anchorfile", filename);
-		data("anchorstart", node.findFirstToken().getStartIndex());
-		data("anchorend", node.findLastToken().getStopIndex());
+		data(ANCHOR_FILE, filename);
+		data(ANCHOR_START, node.findFirstToken().getStartIndex());
+		data(ANCHOR_END, node.findLastToken().getStopIndex());
 	}
 
 	public String getName() {
-		return (String) getData("name");
+		return (String) getData(ENTITY_NAME);
 	}
 
 	public Object getData(String key) {

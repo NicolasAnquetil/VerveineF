@@ -13,19 +13,28 @@ import eu.synectique.verveine.core.gen.famix.ScopingEntity;
 import eu.synectique.verveine.core.gen.famix.StructuralEntity;
 import fr.inria.verveine.extractor.fortran.FDictionary;
 import fr.inria.verveine.extractor.fortran.ast.ASTCallStmtNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTEndFunctionStmtNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTEndModuleStmtNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTEndProgramStmtNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTEndSubroutineStmtNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTFunctionSubprogramNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTMainProgramNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTModuleNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTProgramStmtNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTProperLoopConstructNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTSubroutineSubprogramNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTToken;
+import fr.inria.verveine.extractor.fortran.ir.IRDictionary;
+import fr.inria.verveine.extractor.fortran.ir.IREntity;
+import fr.inria.verveine.extractor.fortran.ir.IRKind;
 
 @SuppressWarnings("restriction")
 public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 
 	private Function caller;
 
-	public InvokAccessVisitor(FDictionary dico) {
-		super(dico);
+	public InvokAccessVisitor(IRDictionary dico, String filename) {
+		super(dico, filename);
 	}
 
 	@Override
@@ -34,40 +43,57 @@ public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 	}
 	
 	// ================  V I S I T O R  =======================
-
 	@Override
-	public void visitASTProgramStmtNode(ASTProgramStmtNode node) {
-		caller = (Program) dico.getEntityByKey( mkKey(node) );
-		if (caller == null) {
-			System.err.println("  Program definition not found: "+ node.getProgramName().getProgramName());
-		}
-		super.visitASTProgramStmtNode(node);
+	public void visitASTMainProgramNode(ASTMainProgramNode node) {
+		ASTToken tk = node.getProgramStmt().getProgramName().getProgramName();
+		
+		IREntity entity = dico.getEntityByKey( mkKey(tk) );
+
+		context.push(entity);
+		super.visitASTMainProgramNode(node);
 	}
 
-	
+	@Override
+	public void visitASTEndProgramStmtNode(ASTEndProgramStmtNode node) {
+		super.visitASTEndProgramStmtNode(node);
+		context.pop();
+	}
 
 	@Override
 	public void visitASTFunctionSubprogramNode(ASTFunctionSubprogramNode node) {
-		caller = (Function) dico.getEntityByKey( mkKey(node) );
-		if (caller == null) {
-			System.err.println("  Function definition not found: "+ node.getName());
-		}
+		IREntity entity = dico.getEntityByKey( mkKey(node) );
+		
+		context.push(entity);
 		super.visitASTFunctionSubprogramNode(node);
 	}
 
 	@Override
+	public void visitASTEndFunctionStmtNode(ASTEndFunctionStmtNode node) {
+		super.visitASTEndFunctionStmtNode(node);
+		context.pop();
+	}
+
+	@Override
 	public void visitASTSubroutineSubprogramNode(ASTSubroutineSubprogramNode node) {
-		caller = (Function) dico.getEntityByKey( mkKey(node) );
-		if (caller == null) {
-			System.err.println("  Procedure definition not found: "+ node.getName());
-		}
+		IREntity entity = dico.getEntityByKey( mkKey(node) );
+
+		context.push(entity);
 		super.visitASTSubroutineSubprogramNode(node);
+	}
+
+	@Override
+	public void visitASTEndSubroutineStmtNode(ASTEndSubroutineStmtNode node) {
+		super.visitASTEndSubroutineStmtNode(node);
+		context.pop();
 	}
 
 	@Override
 	public void visitASTCallStmtNode(ASTCallStmtNode node) {
 		// actually, here we know it is an invocation and not an access
-		invokOrAccessFromNode( node.getSubroutineName());
+		
+		IREntity call = new IREntity(context.peek(), IRKind.SUBPRGCALL);
+		call.name(node.getSubroutineName().getText());
+		dico.addAnonymousEntity(call);
 
 		super.visitASTCallStmtNode(node);
 	}
@@ -104,56 +130,4 @@ public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 		}
 	}*/
 
-	// ================  U T I L I T I E S  =======================
-
-	private Association invokOrAccessFromNode( ASTToken nameTok) {
-		Invocation invok = null;
-		Access acc = null;
-
-		if ( caller==null ) {
-			//System.err.println("  "+nameTok.getText()+": no caller, giving up");
-			return null;
-		}
-
-		List<Definition> bindings = nameTok.resolveBinding();
-
-		for (Definition bnd : bindings) {
-			NamedEntity target = dico.getEntityByKey(bnd);
-			if (target != null) {
-				if (target instanceof BehaviouralEntity) {
-					if (invok == null) {
-						invok = dico.addFamixInvocation( /*sender*/caller,  (BehaviouralEntity)target, /*receiver*/null, /*signature*/nameTok.getText(),  /*prev*/null);
-					}
-					else {
-						invok.addCandidates((BehaviouralEntity) target);
-					}
-				}
-				else if (target instanceof StructuralEntity) {
-					// what if we have candidate function and variables ...
-					acc = dico.addFamixAccess(/*accessor*/caller, (StructuralEntity)target, /*isWrite*/false, /*prev*/null);					
-				}
-				else {
-					// heuuu don't know what it is
-					//System.err.println("  "+nameTok.getText()+": varOrFnRef to unknow thing");
-				}
-			}
-			else {
-				//System.err.println("  "+nameTok.getText()+": no entity for definition");
-			}
-		}
-
-		if (acc != null) {
-			return acc;
-		}
-		else if (invok != null) {
-			return invok;
-		}
-		else {
-			// maybe a local variable (not created)?
-			//System.err.println("  "+nameTok.getText()+": no access/invocation created");
-			return null;
-		}
-	}
-
-	
 }
