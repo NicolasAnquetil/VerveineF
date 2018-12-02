@@ -20,16 +20,16 @@ public class IREntity {
 
 	protected String name;
 	protected Collection<IREntity> children;
-	protected Dictionary<String, String> data;
+	protected Dictionary<String, Object> data;
 
 	public IREntity(IREntity parent, IRKind kind) {
 		this.parent = parent;
 		this.kind = kind;
 		this.children = new ArrayList<IREntity>();
-		this.data = new Hashtable<String, String>();
+		this.data = new Hashtable<String, Object>();
 	}
 
-	public void data(String key, String value) {
+	public void data(String key, Object value) {
 		data.put(key, value);
 	}
 
@@ -54,15 +54,15 @@ public class IREntity {
 		}
 		
 		data("anchorfile", filename);
-		data("anchorstart", ""+ node.findFirstToken().getStartIndex());
-		data("anchorend", ""+ node.findLastToken().getStopIndex());
+		data("anchorstart", node.findFirstToken().getStartIndex());
+		data("anchorend", node.findLastToken().getStopIndex());
 	}
 
 	public String getName() {
-		return getData("name");
+		return (String) getData("name");
 	}
 
-	public String getData(String key) {
+	public Object getData(String key) {
 		return data.get(key);
 	}
 

@@ -1,10 +1,7 @@
-package fr.inria.verveine.extractor.fortran.visitors.def;
+package fr.inria.verveine.extractor.fortran.visitors;
 
-import eu.synectique.verveine.core.gen.famix.GlobalVariable;
-import eu.synectique.verveine.core.gen.famix.Module;
-import eu.synectique.verveine.core.gen.famix.ScopingEntity;
-import fr.inria.verveine.extractor.fortran.FDictionary;
 import fr.inria.verveine.extractor.fortran.ast.ASTAttrSpecSeqNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTEndModuleStmtNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTEntityDeclNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTFunctionSubprogramNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTModuleNode;
@@ -14,12 +11,12 @@ import fr.inria.verveine.extractor.fortran.ast.ASTToken;
 import fr.inria.verveine.extractor.fortran.ast.ASTTypeDeclarationStmtNode;
 import fr.inria.verveine.extractor.fortran.ir.IRDictionary;
 import fr.inria.verveine.extractor.fortran.ir.IREntity;
-import fr.inria.verveine.extractor.fortran.visitors.AbstractDispatcherVisitor;
+import fr.inria.verveine.extractor.fortran.ir.IRKind;
 
 public class VarDefVisitor extends AbstractDispatcherVisitor {
 
-	public VarDefVisitor(IRDictionary dico) {
-		super(dico);
+	public VarDefVisitor(IRDictionary dico, String filename) {
+		super(dico, filename);
 	}
 
 	@Override
@@ -29,10 +26,15 @@ public class VarDefVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	public void visitASTModuleNode(ASTModuleNode node) {
-		Module mod = (Module) dico.getEntityByKey( mkKey(node) );
+		IREntity entity = dico.getEntityByKey( mkKey(node) );
 
-		context.push(mod);
+		context.push(entity);
 		super.visitASTModuleNode(node);
+	}
+
+	@Override
+	public void visitASTEndModuleStmtNode(ASTEndModuleStmtNode node) {
+		super.visitASTEndModuleStmtNode(node);
 		context.pop();
 	}
 
@@ -56,13 +58,13 @@ public class VarDefVisitor extends AbstractDispatcherVisitor {
 	 */
 	@Override
 	public void visitASTTypeDeclarationStmtNode(ASTTypeDeclarationStmtNode node) {
-		GlobalVariable fmx;
 		for (ASTEntityDeclNode decl : node.getEntityDeclList()) {
 			ASTToken tk = decl.getObjectName().getObjectName();
-			fmx= dico.ensureFamixGlobalVariable( mkKey(tk), tk.getText(), /*parent*/(ScopingEntity)context.top());
-			fmx.setIsStub(false);
-			fmx.setIsDeclaredFortranParameter( varIsDeclaredParameter( node));
-			dico.addSourceAnchor(fmx, filename, node);
+			IREntity entity = dico.addEntity( mkKey(tk), IRKind.GLOBALVAR, /*parent*/context.peek());
+			entity.name( tk.getText());
+			entity.stub(false);
+			entity.data( "declaredParam", varIsDeclaredParameter( node));
+			entity.addSourceAnchor( filename, node);
 		}
 	}
 

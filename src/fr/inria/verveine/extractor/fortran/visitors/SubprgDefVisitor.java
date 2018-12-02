@@ -1,15 +1,12 @@
-package fr.inria.verveine.extractor.fortran.visitors.def;
+package fr.inria.verveine.extractor.fortran.visitors;
 
-import eu.synectique.verveine.core.gen.famix.BehaviouralEntity;
-import eu.synectique.verveine.core.gen.famix.Function;
-import eu.synectique.verveine.core.gen.famix.Module;
-import eu.synectique.verveine.core.gen.famix.NamedEntity;
-import eu.synectique.verveine.core.gen.famix.Program;
-import eu.synectique.verveine.core.gen.famix.ScopingEntity;
-import fr.inria.verveine.extractor.fortran.FDictionary;
 import fr.inria.verveine.extractor.fortran.ast.ASTCaseConstructNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTCaseStmtNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTElseIfConstructNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTEndFunctionStmtNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTEndModuleStmtNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTEndProgramStmtNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTEndSubroutineStmtNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTFunctionSubprogramNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTIfConstructNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTIfStmtNode;
@@ -20,7 +17,7 @@ import fr.inria.verveine.extractor.fortran.ast.ASTSubroutineSubprogramNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTToken;
 import fr.inria.verveine.extractor.fortran.ir.IRDictionary;
 import fr.inria.verveine.extractor.fortran.ir.IREntity;
-import fr.inria.verveine.extractor.fortran.visitors.AbstractDispatcherVisitor;
+import fr.inria.verveine.extractor.fortran.ir.IRKind;
 
 /**
  * 
@@ -29,8 +26,8 @@ import fr.inria.verveine.extractor.fortran.visitors.AbstractDispatcherVisitor;
  */
 public class SubprgDefVisitor extends AbstractDispatcherVisitor {
 
-	public SubprgDefVisitor(IRDictionary dico) {
-		super(dico);
+	public SubprgDefVisitor(IRDictionary dico, String filename) {
+		super(dico, filename);
 	}
 
 	@Override
@@ -45,43 +42,66 @@ public class SubprgDefVisitor extends AbstractDispatcherVisitor {
 	public void visitASTMainProgramNode(ASTMainProgramNode node) {
 		ASTToken tk = node.getProgramStmt().getProgramName().getProgramName();
 		
-		Program fmx =  (Program) dico.getEntityByKey( mkKey(tk) );//mkKey(node)
-		fmx.setCyclomaticComplexity( 1);
+		IREntity entity = dico.getEntityByKey( mkKey(tk) );
+		entity.data("cyclomaticComplexity", 1);
 
-		context.push(fmx);
+		context.push(entity);
 		super.visitASTMainProgramNode(node);
+	}
+
+	@Override
+	public void visitASTEndProgramStmtNode(ASTEndProgramStmtNode node) {
+		super.visitASTEndProgramStmtNode(node);
 		context.pop();
 	}
 
 	@Override
 	public void visitASTModuleNode(ASTModuleNode node) {
-		Module mod = (Module) dico.getEntityByKey( mkKey(node) );
+		IREntity entity = dico.getEntityByKey( mkKey(node) );
 
-		context.push(mod);
+		context.push(entity);
 		super.visitASTModuleNode(node);
+	}
+
+	@Override
+	public void visitASTEndModuleStmtNode(ASTEndModuleStmtNode node) {
+		super.visitASTEndModuleStmtNode(node);
 		context.pop();
 	}
 
 	@Override
 	public void visitASTFunctionSubprogramNode(ASTFunctionSubprogramNode node) {
-		Function fmx = dico.ensureFamixFunction( mkKey(node), node.basename(), /*sig*/node.basename(), /*parent*/(ScopingEntity)context.top());
-		fmx.setIsStub(false);	
-		dico.addSourceAnchor(fmx, filename, node);
-		fmx.setCyclomaticComplexity( 1);
+		IREntity entity = dico.addEntity( mkKey(node), IRKind.FUNCTION, /*parent*/context.peek());
+		entity.name(node.basename());
+		entity.stub(false);	
+		entity.addSourceAnchor( filename, node);
+		entity.data("cyclomaticComplexity", 1);
 		
-		context.push(fmx);
+		context.push(entity);
 		super.visitASTFunctionSubprogramNode(node);
-		context.pop();	}
+	}
+
+	@Override
+	public void visitASTEndFunctionStmtNode(ASTEndFunctionStmtNode node) {
+		super.visitASTEndFunctionStmtNode(node);
+		context.pop();
+	}
 
 	@Override
 	public void visitASTSubroutineSubprogramNode(ASTSubroutineSubprogramNode node) {
-		Function fmx = dico.ensureFamixFunction( mkKey(node), node.basename(), /*sig*/node.basename(), /*parent*/(ScopingEntity)context.top());
-		fmx.setIsStub(false);
-		dico.addSourceAnchor(fmx, filename, node);
-		fmx.setCyclomaticComplexity( 1);
+		IREntity entity = dico.addEntity( mkKey(node), IRKind.SUBPROGRAM, /*parent*/context.peek());
+		entity.name(node.basename());
+		entity.stub(false);
+		entity.addSourceAnchor( filename, node);
+		entity.data("cyclomaticComplexity", 1);
 
-		context.push(fmx);
+		context.push(entity);
 		super.visitASTSubroutineSubprogramNode(node);
+	}
+
+	@Override
+	public void visitASTEndSubroutineStmtNode(ASTEndSubroutineStmtNode node) {
+		super.visitASTEndSubroutineStmtNode(node);
 		context.pop();
 	}
 
@@ -135,12 +155,10 @@ public class SubprgDefVisitor extends AbstractDispatcherVisitor {
 	// UTILITIES
 
 	private void incrementCyclomatic() {
-		NamedEntity top = context.topBehaviouralEntity();
-		if (top instanceof BehaviouralEntity) {
-			BehaviouralEntity fmx = (BehaviouralEntity)top;
-
-			fmx.setCyclomaticComplexity( (int)fmx.getCyclomaticComplexity() + 1);
-		}
+		IREntity behavioural = context.peek();
+		int cc = (int) behavioural.getData("cyclomaticComplexity");
+		cc++;
+		behavioural.data("cyclomaticComplexity", cc);
 	}
 
 	/*

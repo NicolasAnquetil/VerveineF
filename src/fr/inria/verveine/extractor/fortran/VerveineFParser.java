@@ -13,10 +13,10 @@ import fr.inria.verveine.extractor.fortran.ast.FortranParserActionAST;
 import fr.inria.verveine.extractor.fortran.ir.IRDictionary;
 import fr.inria.verveine.extractor.fortran.ir.IREntity;
 import fr.inria.verveine.extractor.fortran.visitors.CommentVisitor;
-import fr.inria.verveine.extractor.fortran.visitors.def.ScopeDefVisitor;
-import fr.inria.verveine.extractor.fortran.visitors.def.SubprgDefVisitor;
-import fr.inria.verveine.extractor.fortran.visitors.def.VarDefVisitor;
-import fr.inria.verveine.extractor.fortran.visitors.ref.InvokAccessVisitor;
+import fr.inria.verveine.extractor.fortran.visitors.InvokAccessVisitor;
+import fr.inria.verveine.extractor.fortran.visitors.ScopeDefVisitor;
+import fr.inria.verveine.extractor.fortran.visitors.SubprgDefVisitor;
+import fr.inria.verveine.extractor.fortran.visitors.VarDefVisitor;
 
 public class VerveineFParser  {
 
@@ -77,8 +77,8 @@ public class VerveineFParser  {
 
 	private void runAllVisitors(IRDictionary dico, String filename, ASTNode ast)  {
 		ast.accept(new ScopeDefVisitor(dico, filename));
-		//ast.accept(new SubprgDefVisitor(dico, filename));
-		//ast.accept(new VarDefVisitor(dico, filename));
+		ast.accept(new SubprgDefVisitor(dico, filename));
+		ast.accept(new VarDefVisitor(dico, filename));
 
 		ast.accept(new CommentVisitor(dico, filename));
 

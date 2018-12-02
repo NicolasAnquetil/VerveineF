@@ -1,4 +1,4 @@
-package fr.inria.verveine.extractor.fortran.visitors.def;
+package fr.inria.verveine.extractor.fortran.visitors;
 
 import fr.inria.verveine.extractor.fortran.ast.ASTMainProgramNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTModuleNode;
@@ -6,7 +6,6 @@ import fr.inria.verveine.extractor.fortran.ast.ASTToken;
 import fr.inria.verveine.extractor.fortran.ir.IRDictionary;
 import fr.inria.verveine.extractor.fortran.ir.IREntity;
 import fr.inria.verveine.extractor.fortran.ir.IRKind;
-import fr.inria.verveine.extractor.fortran.visitors.AbstractDispatcherVisitor;
 
 /**
  * First Pass
