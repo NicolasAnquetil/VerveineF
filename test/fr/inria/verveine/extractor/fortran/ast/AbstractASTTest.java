@@ -14,7 +14,7 @@ public class AbstractASTTest {
 		ofpParser = new FrontEnd(/*args*/new String[] {}, filename, VerveineFParser.VERVEINE_AST_BUILDER);
 		ofpParser.call();
 
-		ast = ((FortranParserActionAST)ofpParser.getParser().getAction()).getAST();
+		ast = ((ParserActionAST)ofpParser.getParser().getAction()).getAST();
 
 	}
 
