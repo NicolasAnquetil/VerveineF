@@ -17,7 +17,7 @@ public class VarDeclVisitorTest extends AbstractIRTest {
 
 	@Test
 	public void testNumberVarDecl() {
-		assertEquals(4, dico.allWithKind(IRKind.GLOBALVAR).size());
+		assertEquals(4, dico.allWithKind(IRKind.VARIABLE).size());
 	}
 	
 	@Test
@@ -27,7 +27,7 @@ public class VarDeclVisitorTest extends AbstractIRTest {
 		int anInt =0;
 		int aReal = 0;
 
-		for (IREntity var : dico.allWithKind(IRKind.GLOBALVAR)) {
+		for (IREntity var : dico.allWithKind(IRKind.VARIABLE)) {
 			switch (var.getName()) {
 			case "aString": aString++; break;
 			case "anInt":   anInt++;   break;
@@ -45,7 +45,7 @@ public class VarDeclVisitorTest extends AbstractIRTest {
 
 	@Test
 	public void testAttrSpecParameter() {
-		for (IREntity var : dico.allWithKind(IRKind.GLOBALVAR)) {
+		for (IREntity var : dico.allWithKind(IRKind.VARIABLE)) {
 			switch (var.getName()) {
 			case "aString": 
 			case "aBool":

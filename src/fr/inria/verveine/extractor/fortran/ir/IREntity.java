@@ -1,7 +1,5 @@
 package fr.inria.verveine.extractor.fortran.ir;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
@@ -20,6 +18,9 @@ public class IREntity {
 
 	protected IREntity parent;
 	protected IRKind kind;
+	protected String name;
+	protected Dictionary<String, Object> data;
+
 	public IREntity getParent() {
 		return parent;
 	}
@@ -28,14 +29,9 @@ public class IREntity {
 		return kind;
 	}
 
-	protected String name;
-	protected Collection<IREntity> children;
-	protected Dictionary<String, Object> data;
-
 	public IREntity(IREntity parent, IRKind kind) {
 		this.parent = parent;
 		this.kind = kind;
-		this.children = new ArrayList<IREntity>();
 		this.data = new Hashtable<String, Object>();
 	}
 
