@@ -32,4 +32,13 @@ public class subprgVisitorTest extends AbstractASTTest {
 		assertEquals("blah", sub.basename());
 	}
 
+	@Test
+	public void testCallStmt() {
+		Collection<ASTCallStmtNode> calls = ast.findAll(ASTCallStmtNode.class);
+		assertEquals(1, calls.size());
+
+		ASTCallStmtNode stmt = calls.iterator().next(); 
+		assertEquals("blah", stmt.getSubroutineName().getText());
+	}
+
 }

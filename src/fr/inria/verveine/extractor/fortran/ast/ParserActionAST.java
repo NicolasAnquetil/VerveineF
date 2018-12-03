@@ -8,47 +8,28 @@ import fortran.ofp.parser.java.FortranToken;
 import fortran.ofp.parser.java.IActionEnums;
 import fortran.ofp.parser.java.IFortranParser;
 
-public class FortranParserActionAST extends FortranParserActionNull {
+public class ParserActionAST extends FortranParserActionNull {
 
-	protected ASTListNode<? extends ASTNode> valueStack;
-	protected int valueStackTop;
-
-	public FortranParserActionAST(String[] args, IFortranParser parser, String filename) {
+	protected ParsingContext parsingCtxt = new ParsingContext();
+	
+	public ParserActionAST(String[] args, IFortranParser parser, String filename) {
 		super(args, parser, filename);
 
-		valueStack = new ASTListNode<>();
-		valueStackTop = -1;
-		valueStackPush( new ASTCompilationUnit(filename));
+		parsingCtxt.valueStackPush( new ASTCompilationUnit(filename));
 	}
 
-
-	protected void valueStackPush(IASTNode node) {
-		// casting ASTListNode to avoid strange type checking error
-		((ASTListNode<IASTNode>)valueStack).add( ++valueStackTop, node);
-	}
-
-	protected IASTNode valueStackTop() {
-		return valueStack.get(valueStackTop);
-	}
-
-	protected IASTNode valueStackPop() {
-		return valueStack.get(valueStackTop--);
-	}
-
-	
 	public ASTNode getAST() {
-		return (ASTNode) valueStackTop();
+		return (ASTNode) parsingCtxt.valueStackTop();
 	}
-	
-	
+
 	@Override
 	public void main_program__begin() {
-		valueStackPush( new ASTMainProgramNode());
+		parsingCtxt.valueStackPush( new ASTMainProgramNode());
 	}
 
 	@Override
 	public void	program_stmt(Token label, Token programKeyword, Token id, Token eos) {
-		ASTMainProgramNode mainPgm = (ASTMainProgramNode)valueStackTop();
+		ASTMainProgramNode mainPgm = (ASTMainProgramNode)parsingCtxt.valueStackTop();
 		ASTProgramStmtNode pgmStmt = new ASTProgramStmtNode();
 		ASTProgramNameNode pgmName = new ASTProgramNameNode();
 		
@@ -60,7 +41,7 @@ public class FortranParserActionAST extends FortranParserActionNull {
 		pgmStmt.setProgramName( pgmName);
 		mainPgm.setProgramStmt(pgmStmt);
 
-		valueStackPush((IASTNode) mainPgm.getBody());  // see specificationPart
+		parsingCtxt.valueStackPush((IASTNode) mainPgm.getBody());  // see specificationPart
 	}
 
 
@@ -76,22 +57,24 @@ public class FortranParserActionAST extends FortranParserActionNull {
 		endPgmStmt.setEndName(asttk(id));
 		endPgmStmt.setASTField(ASTEndProgramStmtNode.TEOS, asttk(eos));
 
-		mainPgm = (ASTMainProgramNode)valueStackPop();
+		mainPgm = (ASTMainProgramNode)parsingCtxt.valueStackPop();
 		mainPgm.setEndProgramStmt(endPgmStmt);
 
-		parentNode = (ASTCompilationUnit) valueStackTop();
+		assert( parsingCtxt.valueStackPop() instanceof ASTListNode); 
+		
+		parentNode = (ASTCompilationUnit) parsingCtxt.valueStackTop();
 		parentNode.setProgramUnit(mainPgm);
 	}
 
 
 	@Override
 	public void module_stmt__begin() {
-		valueStackPush( new ASTModuleNode());
+		parsingCtxt.valueStackPush( new ASTModuleNode());
 	}
 
 	@Override
 	public void	module_stmt(Token label, Token moduleKeyword, Token id, Token eos) {
-		ASTModuleNode moduleNode = (ASTModuleNode)valueStackTop();
+		ASTModuleNode moduleNode = (ASTModuleNode)parsingCtxt.valueStackTop();
 		ASTModuleStmtNode moduleStmt = new ASTModuleStmtNode();
 		ASTModuleNameNode moduleName = new ASTModuleNameNode();
 
@@ -104,7 +87,7 @@ public class FortranParserActionAST extends FortranParserActionNull {
 		moduleStmt.setModuleName(moduleName);
 		moduleNode.setModuleStmt(moduleStmt);
 		
-		valueStackPush((IASTNode) moduleNode.getModuleBody());  // see specificationPart
+		parsingCtxt.valueStackPush((IASTNode) moduleNode.getModuleBody());
 	}
 
 	@Override
@@ -119,22 +102,24 @@ public class FortranParserActionAST extends FortranParserActionNull {
 		endModule.setEndName(asttk(id));
 		endModule.setASTField(ASTEndModuleStmtNode.TEOS, asttk(eos));
 
-		moduleNode = (ASTModuleNode) valueStackPop();
+		assert( parsingCtxt.valueStackPop() instanceof ASTListNode); 
+
+		moduleNode = (ASTModuleNode) parsingCtxt.valueStackPop();
 		moduleNode.setEndModuleStmt(endModule);
 		
-		parentNode = (ASTCompilationUnit) valueStackTop();
+		parentNode = (ASTCompilationUnit) parsingCtxt.valueStackTop();
 		parentNode.setProgramUnit(moduleNode);
 	}
 
 
 	@Override
 	public void function_stmt__begin() {
-		valueStackPush( new ASTFunctionSubprogramNode());
+		parsingCtxt.valueStackPush( new ASTFunctionSubprogramNode());
 	}
 
 	@Override
 	public void function_stmt(Token label, Token keyword, Token name, Token eos, boolean hasGenericNameList, boolean hasSuffix) {
-		ASTFunctionSubprogramNode fctNode = (ASTFunctionSubprogramNode) valueStackTop();
+		ASTFunctionSubprogramNode fctNode = (ASTFunctionSubprogramNode) parsingCtxt.valueStackTop();
 		ASTFunctionStmtNode fctStmt = new ASTFunctionStmtNode();
 		ASTFunctionNameNode fctName = new ASTFunctionNameNode();
 		
@@ -146,7 +131,7 @@ public class FortranParserActionAST extends FortranParserActionNull {
 		fctStmt.setFunctionName(fctName);
 		fctNode.setFunctionStmt(fctStmt);
 		
-		valueStackPush((IASTNode) fctNode.getBody());  // see specificationPart
+		parsingCtxt.valueStackPush((IASTNode) fctNode.getBody());  // see specificationPart
 	}
 
 	@Override
@@ -166,22 +151,24 @@ public class FortranParserActionAST extends FortranParserActionNull {
 		endFct.setASTField(ASTEndFunctionStmtNode.TFUNCTION, asttk(keyword2));
 		endFct.setASTField(ASTEndFunctionStmtNode.TEOS, asttk(eos));
 
-		fctNode = (ASTFunctionSubprogramNode) valueStackPop();
+		assert( parsingCtxt.valueStackPop() instanceof ASTListNode); 
+
+		fctNode = (ASTFunctionSubprogramNode) parsingCtxt.valueStackPop();
 		fctNode.setEndFunctionStmt(endFct);
 
-		parentNode = (ASTModuleNode) valueStackTop();
+		parentNode = (ASTModuleNode) parsingCtxt.valueStackTop(-1);
 		parentNode.addModuleBody(fctNode);
 	}
 
 
 	@Override
 	public void subroutine_stmt__begin() {
-		valueStackPush( new ASTSubroutineSubprogramNode());
+		parsingCtxt.valueStackPush( new ASTSubroutineSubprogramNode());
 	}
 
 	@Override
 	public void subroutine_stmt(Token label, Token keyword, Token name, Token eos, boolean hasPrefix, boolean hasDummyArgList, boolean hasBindingSpec, boolean hasArgSpecifier) {
-		ASTSubroutineSubprogramNode pcdNode = (ASTSubroutineSubprogramNode) valueStackTop();
+		ASTSubroutineSubprogramNode pcdNode = (ASTSubroutineSubprogramNode) parsingCtxt.valueStackTop();
 		ASTSubroutineStmtNode pcdStmt = new ASTSubroutineStmtNode();
 		ASTSubroutineNameNode pcdName = new ASTSubroutineNameNode();
 		
@@ -193,7 +180,7 @@ public class FortranParserActionAST extends FortranParserActionNull {
 		pcdStmt.setSubroutineName(pcdName);
 		pcdNode.setSubroutineStmt(pcdStmt);
 		
-		valueStackPush((IASTNode) pcdNode.getBody());  // see specificationPart
+		parsingCtxt.valueStackPush((IASTNode) pcdNode.getBody());
 	}
 	
 	@Override
@@ -212,11 +199,13 @@ public class FortranParserActionAST extends FortranParserActionNull {
 		}
 		endPcd.setASTField(ASTEndSubroutineStmtNode.TSUBROUT, asttk(keyword2));
 		endPcd.setASTField(ASTEndSubroutineStmtNode.TEOS, asttk(eos));
+		
+		assert( parsingCtxt.valueStackPop() instanceof ASTListNode); // subroutine body
 
-		pcdNode = (ASTSubroutineSubprogramNode) valueStackPop();
+		pcdNode = (ASTSubroutineSubprogramNode) parsingCtxt.valueStackPop();
 		pcdNode.setEndSubroutineStmt(endPcd);
-
-		parentNode = (ASTModuleNode) valueStackTop();
+		
+		parentNode = (ASTModuleNode) parsingCtxt.valueStackTop(-1);
 		parentNode.addModuleBody(pcdNode);
 	}
 
@@ -224,16 +213,8 @@ public class FortranParserActionAST extends FortranParserActionNull {
 
 	@Override
 	public void block_data_stmt(Token label, Token blockKeyword, Token dataKeyword, Token id, Token eos) {
-		valueStackPush((IASTNode) new ASTListNode<>());  // see specificationPart
+		parsingCtxt.valueStackPush((IASTNode) new ASTListNode<>());  // see specificationPart
 	}
-
-	@Override
-	public void specification_part(int numUseStmts, int numImportStmts, int numImplStmts, int numDeclConstructs) {
-	    // pops ASTListNode that collected the specificationParts
-		// this list is not lost as it was already within a parentNode
-		valueStackPop();
-	}
-
 
 
 	@Override
@@ -247,10 +228,10 @@ public class FortranParserActionAST extends FortranParserActionNull {
 	public void declaration_type_spec(Token arg0, int arg1) {
 		
 		int i = IActionEnums.DeclarationTypeSpec_INTRINSIC;// used as a marker of the beginning of type_declaration_stmt (see below)
-		ASTListNode<ASTNode> parentList = (ASTListNode<ASTNode>) valueStackTop();
+		ASTListNode<ASTNode> parentList = (ASTListNode<ASTNode>) parsingCtxt.valueStackTop();
 		ASTTypeDeclarationStmtNode typeDecl = new ASTTypeDeclarationStmtNode();
 		parentList.add(typeDecl);
-		valueStackPush(typeDecl);
+		parsingCtxt.valueStackPush(typeDecl);
 	}
 
 	@Override
@@ -266,24 +247,16 @@ public class FortranParserActionAST extends FortranParserActionNull {
 		super.real_literal_constant(arg0, arg1);
 	}
 
-
-	@Override
-	public void part_ref(Token arg0, boolean arg1, boolean arg2) {
-		// TODO Auto-generated method stub
-		super.part_ref(arg0, arg1, arg2);
-	}
-
-
 	@Override
 	public void type_declaration_stmt(Token label, int numAttributes, Token eos) {
 		ASTListNode<ASTNode> listDeclarationConstruct;
 		ASTTypeDeclarationStmtNode typeDecl;
 		
-		typeDecl = (ASTTypeDeclarationStmtNode) valueStackPop();
+		typeDecl = (ASTTypeDeclarationStmtNode) parsingCtxt.valueStackPop();
 		typeDecl.setLabel(asttk(label));
 		typeDecl.setASTField(ASTTypeDeclarationStmtNode.TEOS, asttk(eos));
 
-		listDeclarationConstruct = (ASTListNode<ASTNode>)valueStackTop();
+		listDeclarationConstruct = (ASTListNode<ASTNode>)parsingCtxt.valueStackTop();
 		listDeclarationConstruct.add( typeDecl);
 	}
 
@@ -326,7 +299,7 @@ public class FortranParserActionAST extends FortranParserActionNull {
 	@Override
 	public void entity_decl(Token id, boolean hasArraySpec, boolean hasCoarraySpec, boolean hasCharLength, boolean hasInitialization) {
 		//IASTListNode<ASTEntityDeclNode> declList = (IASTListNode<ASTEntityDeclNode>) valueStackTop();
-		ASTTypeDeclarationStmtNode typeDecl = (ASTTypeDeclarationStmtNode) valueStackTop();
+		ASTTypeDeclarationStmtNode typeDecl = (ASTTypeDeclarationStmtNode) parsingCtxt.valueStackTop();
 		ASTEntityDeclNode entityDecl = new ASTEntityDeclNode();
 		ASTObjectNameNode objName = new ASTObjectNameNode();
 		
@@ -337,7 +310,7 @@ public class FortranParserActionAST extends FortranParserActionNull {
 
 	@Override
 	public void attr_spec(Token attrKeyword, int attr) {
-		ASTTypeDeclarationStmtNode typeDecl = (ASTTypeDeclarationStmtNode) valueStackTop();
+		ASTTypeDeclarationStmtNode typeDecl = (ASTTypeDeclarationStmtNode) parsingCtxt.valueStackTop();
 		ASTAttrSpecNode attrSpec = new ASTAttrSpecNode();
 		ASTAttrSpecSeqNode attrSpecSeq;
 		
@@ -378,9 +351,59 @@ public class FortranParserActionAST extends FortranParserActionNull {
 		typeDecl.getAttrSpecSeq().add( attrSpecSeq);
 	}
 	
-	
+	@Override
+	public void main_program(boolean hasProgramStmt, boolean hasExecutionPart, boolean hasInternalSubprogramPart) {
+		// TODO Auto-generated method stub
+		super.main_program(hasProgramStmt, hasExecutionPart, hasInternalSubprogramPart);
+	}
+
+	@Override
+	public void function_subprogram(boolean hasExePart, boolean hasIntSubProg) {
+		// TODO Auto-generated method stub
+		super.function_subprogram(hasExePart, hasIntSubProg);
+	}
+
+	@Override
+	public void execution_part() {
+		// TODO Auto-generated method stub
+		super.execution_part();
+	}
+
+	@Override
+	public void action_stmt() {
+		// TODO Auto-generated method stub
+		super.action_stmt();
+	}
+
+	@Override
+	public void block() {
+		// TODO Auto-generated method stub
+		super.block();
+	}
+
+	@Override
+	public void call_stmt(Token label, Token callKeyword, Token eos, boolean hasActualArgSpecList) {
+		ASTCallStmtNode call = new ASTCallStmtNode();
+		
+		call.setLabel( asttk(label));
+		call.setASTField( ASTCallStmtNode.TCALL, asttk(callKeyword));
+		call.setSubroutineName( asttk((Token) parsingCtxt.valueGet("part_ref.id")) );
+		call.setASTField( ASTCallStmtNode.TEOS, asttk(eos));
+		
+		IASTNode parentBodyStmt = parsingCtxt.valueStackTop();
+		assert( parentBodyStmt instanceof ASTListNode); 
+		((ASTListNode)parentBodyStmt).add(call);
+	}
+
+	@Override
+	public void part_ref(Token id, boolean hasSectionSubscriptList, boolean hasImageSelector) {
+		parsingCtxt.valueSet("part_ref.id",id);
+	}
+
 	// UTILITIES ---
 	
+
+
 	@Override
 	public void intrinsic_type_spec(Token arg0, Token arg1, int arg2, boolean arg3) {
 		// TODO Auto-generated method stub 

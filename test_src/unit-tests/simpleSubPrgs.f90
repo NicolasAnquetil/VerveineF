@@ -8,7 +8,7 @@ CONTAINS
 
 	function blih()  result(i)
 		INTEGER :: i
-		CALL informationsElement()
+		CALL blah()
 	END function blih
 
 END MODULE

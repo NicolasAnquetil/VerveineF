@@ -7,15 +7,18 @@ package fr.inria.verveine.extractor.fortran.ast;
 @SuppressWarnings("all")
 public class ASTCallStmtNode extends ASTNode implements IActionStmt
 {
-    public static final int TEOS = 7;
+	public static final int NUMBER_FIELD = 4;
+
+	public static final int TCALL = 1;
+    public static final int TEOS = 3;
     
 	ASTToken label; // in ASTCallStmtNode
     ASTToken hiddenTCall; // in ASTCallStmtNode
     ASTToken subroutineName; // in ASTCallStmtNode
     //IASTListNode<ASTDerivedTypeQualifiersNode> derivedTypeQualifiers; // in ASTCallStmtNode
-    ASTToken hiddenTLparen; // in ASTCallStmtNode
+    //ASTToken hiddenTLparen; // in ASTCallStmtNode
     //IASTListNode<ASTSubroutineArgNode> argList; // in ASTCallStmtNode
-    ASTToken hiddenTRparen; // in ASTCallStmtNode
+    //ASTToken hiddenTRparen; // in ASTCallStmtNode
     ASTToken hiddenTEos; // in ASTCallStmtNode
 
     public ASTToken getLabel()
@@ -76,7 +79,7 @@ public class ASTCallStmtNode extends ASTNode implements IActionStmt
 
     @Override protected int getNumASTFields()
     {
-        return 8;
+        return NUMBER_FIELD;
     }
 
     @Override protected IASTNode getASTField(int index)
@@ -84,12 +87,12 @@ public class ASTCallStmtNode extends ASTNode implements IActionStmt
         switch (index)
         {
         case 0:  return this.label;
-        case 1:  return this.hiddenTCall;
+        case TCALL:  return this.hiddenTCall;
         case 2:  return this.subroutineName;
         //case 3:  return this.derivedTypeQualifiers;
-        case 4:  return this.hiddenTLparen;
+        //case 4:  return this.hiddenTLparen;
         //case 5:  return this.argList;
-        case 6:  return this.hiddenTRparen;
+        //case 6:  return this.hiddenTRparen;
         case TEOS:  return this.hiddenTEos;
         default: throw new IllegalArgumentException("Invalid index");
         }
@@ -100,13 +103,13 @@ public class ASTCallStmtNode extends ASTNode implements IActionStmt
         switch (index)
         {
         case 0:  this.label = (ASTToken)value; if (value != null) value.setParent(this); return;
-        case 1:  this.hiddenTCall = (ASTToken)value; if (value != null) value.setParent(this); return;
+        case TCALL:  this.hiddenTCall = (ASTToken)value; if (value != null) value.setParent(this); return;
         case 2:  this.subroutineName = (ASTToken)value; if (value != null) value.setParent(this); return;
         //case 3:  this.derivedTypeQualifiers = (IASTListNode<ASTDerivedTypeQualifiersNode>)value; if (value != null) value.setParent(this); return;
-        case 4:  this.hiddenTLparen = (ASTToken)value; if (value != null) value.setParent(this); return;
+        //case 4:  this.hiddenTLparen = (ASTToken)value; if (value != null) value.setParent(this); return;
         //case 5:  this.argList = (IASTListNode<ASTSubroutineArgNode>)value; if (value != null) value.setParent(this); return;
-        case 6:  this.hiddenTRparen = (ASTToken)value; if (value != null) value.setParent(this); return;
-        case 7:  this.hiddenTEos = (ASTToken)value; if (value != null) value.setParent(this); return;
+        //case 6:  this.hiddenTRparen = (ASTToken)value; if (value != null) value.setParent(this); return;
+        case TEOS:  this.hiddenTEos = (ASTToken)value; if (value != null) value.setParent(this); return;
         default: throw new IllegalArgumentException("Invalid index");
         }
     }

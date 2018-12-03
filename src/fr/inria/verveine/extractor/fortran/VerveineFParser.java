@@ -7,16 +7,18 @@ import java.util.Map;
 import eu.synectique.verveine.core.gen.famix.FortranSourceLanguage;
 import fortran.ofp.FrontEnd;
 import fr.inria.verveine.extractor.fortran.ast.ASTNode;
-import fr.inria.verveine.extractor.fortran.ast.FortranParserActionAST;
+import fr.inria.verveine.extractor.fortran.ast.ParserActionAST;
 import fr.inria.verveine.extractor.fortran.ir.IRDictionary;
+import fr.inria.verveine.extractor.fortran.ir.InvokAccessVisitorTest;
 import fr.inria.verveine.extractor.fortran.visitors.CommentVisitor;
+import fr.inria.verveine.extractor.fortran.visitors.InvokAccessVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.ScopeDefVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.SubprgDefVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.VarDefVisitor;
 
 public class VerveineFParser  {
 
-	public static final String VERVEINE_AST_BUILDER = "fr.inria.verveine.extractor.fortran.ast.FortranParserActionAST";
+	public static final String VERVEINE_AST_BUILDER = "fr.inria.verveine.extractor.fortran.ast.ParserActionAST";
 
 	private static final String VERVEINEF_VERSION = "0.1.0_201801201-IR";
 
@@ -60,7 +62,7 @@ public class VerveineFParser  {
 			ofpParser = new FrontEnd(/*args*/new String[] {}, userProjectDir, VERVEINE_AST_BUILDER);
 			ofpParser.call();
 			
-			ast = ((FortranParserActionAST)ofpParser.getParser().getAction()).getAST();
+			ast = ((ParserActionAST)ofpParser.getParser().getAction()).getAST();
 			runAllVisitors( dico, "theSourceFileName", ast);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -78,7 +80,7 @@ public class VerveineFParser  {
 
 		ast.accept(new CommentVisitor(dico, filename));
 
-		//ast.accept(new InvokAccessVisitor(dico, filename));
+		ast.accept(new InvokAccessVisitor(dico, filename));
 	}
 
 	/** Try to deal with the "current" argument in 'args'
