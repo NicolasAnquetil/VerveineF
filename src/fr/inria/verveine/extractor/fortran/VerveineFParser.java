@@ -1,15 +1,18 @@
 package fr.inria.verveine.extractor.fortran;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import eu.synectique.verveine.core.gen.famix.FortranSourceLanguage;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import fortran.ofp.FrontEnd;
 import fr.inria.verveine.extractor.fortran.ast.ASTNode;
 import fr.inria.verveine.extractor.fortran.ast.ParserActionAST;
 import fr.inria.verveine.extractor.fortran.ir.IRDictionary;
-import fr.inria.verveine.extractor.fortran.ir.InvokAccessVisitorTest;
+import fr.inria.verveine.extractor.fortran.ir.IREntity;
 import fr.inria.verveine.extractor.fortran.visitors.CommentVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.InvokAccessVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.ScopeDefVisitor;
@@ -39,19 +42,45 @@ public class VerveineFParser  {
 	 */
 	private Map<String,String> argDefined;
 
-	private FortranSourceLanguage srcLggeInstance;
-
 	private String outputFileName;
 
 	public static void main(String[] args) {
 		VerveineFParser parser = new VerveineFParser();
 		parser.setOptions(args);
 		parser.parse();
+		parser.outputIR();
 	}
 
 	public VerveineFParser() {
 		this.argDefined = new HashMap<String,String>();
 		userProjectDir = null;
+		outputFileName = "output.ir";
+	}
+
+	protected void outputIR() {
+		GsonBuilder gsonBldr = new GsonBuilder();
+		gsonBldr.registerTypeAdapter(IREntity.class, new GSonIREntitySerializer());
+		Gson gsonSerializer = gsonBldr.create();
+		
+		try {
+			boolean first = true;
+			FileWriter fout = new FileWriter(outputFileName);
+			fout.append("{\n");
+			for (IREntity ent : dico) {
+				if (first) {
+					first = false;
+				}
+				else {
+					fout.append(',');
+				}
+				fout.append(gsonSerializer.toJson(ent));
+				fout.append('\n');
+			}
+			fout.append("}\n");
+			fout.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public boolean parse() {
@@ -83,26 +112,6 @@ public class VerveineFParser  {
 		ast.accept(new InvokAccessVisitor(dico, filename));
 	}
 
-	/** Try to deal with the "current" argument in 'args'
-	 * @param i -- the indice in 'args' of the current argument
-	 * @param args -- an array of the arguments
-	 * @return how many arguments were consumed (accepted)
-	 */
-	protected int setOption(int i, String[] args) {
-		String arg = args[i];
-		if (arg.equals("-o")) {
-			if (i < args.length) {
-				outputFileName = args[i+1];
-				return 2;
-			} else {
-				System.err.println("-o requires a filename");
-			}
-		}
-
-		return 0;  // no argument consumed
-	}
-
-
 	public void setOptions(String[] args) {
 		int i = 0;
 		while (i < args.length && args[i].trim().startsWith("-")) {
@@ -114,19 +123,20 @@ public class VerveineFParser  {
 			else if (arg.equals("-v")) {
 				version();
 			}
+			else if (arg.equals("-o")) {
+				if (i < args.length) {
+					outputFileName = args[i+1];
+					i++;
+				} else {
+					System.err.println("-o requires a filename");
+				}
+			}
 			else if (arg.startsWith("-D")) {
 				parseMacroDefinition(arg);
 			}
 			else {
-				int j = setOption(i - 1, args);
-				if (j > 0) {     // j is the number of args consumed by super.setOption()
-					i += j;      // advance by that number of args
-					i--;         // 1 will be added at the beginning of the loop ("args[i++]")
-				}
-				else {
-					System.err.println("** Unrecognized option: " + arg);
-					usage();
-				}
+				System.err.println("** Unrecognized option: " + arg);
+				usage();
 			}
 		}
 

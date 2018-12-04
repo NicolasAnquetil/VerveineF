@@ -2,12 +2,12 @@ package fr.inria.verveine.extractor.fortran.ir;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Dictionary;
-import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
 
-public class IRDictionary {
-	protected Dictionary<String,IREntity> entities;
+public class IRDictionary implements Iterable<IREntity> {
+	protected Map<String,IREntity> entities;
 	protected IREntity root;
 	protected int anonymousCounter;
 
@@ -33,18 +33,17 @@ public class IRDictionary {
 	}
 
 	public IREntity addEntity(String key, IRKind kind, IREntity parent) {
-		IREntity entity = new IREntity(parent, kind);
+		IREntity entity = new IREntity(parent, kind, key);
 		addEntity(key, entity);
 		return entity;
 	}
 	
 	public Collection<IREntity> allWithKind (IRKind kind) {
 		Collection<IREntity> selected = new ArrayList<IREntity>();
-		Enumeration<IREntity> iter = entities.elements();
-		while (iter.hasMoreElements()) {
-			IREntity e = iter.nextElement();
-			if (e.getKind() == kind) {
-				selected.add(e);
+		
+		for (IREntity ent : entities.values()) {
+			if (ent.getKind() == kind) {
+				selected.add(ent);
 			}
 		}
 		return selected;
@@ -55,5 +54,10 @@ public class IRDictionary {
 	 */
 	public void addAnonymousEntity(IREntity entity) {
 		addEntity( "_anonymous_" + (++anonymousCounter), entity );
+	}
+
+	@Override
+	public Iterator<IREntity> iterator() {
+		return entities.values().iterator();
 	}
 }
