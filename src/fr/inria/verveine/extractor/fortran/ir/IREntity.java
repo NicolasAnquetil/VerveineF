@@ -1,7 +1,7 @@
 package fr.inria.verveine.extractor.fortran.ir;
 
-import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.Map;
 
 import fr.inria.verveine.extractor.fortran.ast.ASTNode;
 
@@ -16,10 +16,29 @@ public class IREntity {
 	public static final String ANCHOR_END = "anchorend";
 	public static final String IS_STUB = "isstub";
 
+	protected String key;
 	protected IREntity parent;
 	protected IRKind kind;
-	protected String name;
-	protected Dictionary<String, Object> data;
+	protected Map<String, Object> data;
+
+	public IREntity(IREntity parent, IRKind kind) {
+		this(parent, kind, /*key*/null);
+	}
+
+	public IREntity(IREntity parent, IRKind kind, String key) {
+		this.key = key;
+		this.parent = parent;
+		this.kind = kind;
+		this.data = new Hashtable<String, Object>();
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
 
 	public IREntity getParent() {
 		return parent;
@@ -29,18 +48,12 @@ public class IREntity {
 		return kind;
 	}
 
-	public IREntity(IREntity parent, IRKind kind) {
-		this.parent = parent;
-		this.kind = kind;
-		this.data = new Hashtable<String, Object>();
-	}
-
-	public void data(String key, Object value) {
-		data.put(key, value);
-	}
-
 	public void name(String name) {
 		data(ENTITY_NAME, name);
+	}
+
+	public String getName() {
+		return (String) getData(ENTITY_NAME);
 	}
 
 	/**
@@ -60,12 +73,16 @@ public class IREntity {
 		data(ANCHOR_END, node.findLastToken().getStopIndex());
 	}
 
-	public String getName() {
-		return (String) getData(ENTITY_NAME);
+	public void data(String key, Object value) {
+		data.put(key, value);
 	}
 
 	public Object getData(String key) {
 		return data.get(key);
+	}
+
+	public Map<String, Object> getData() {
+		return data;
 	}
 
 }

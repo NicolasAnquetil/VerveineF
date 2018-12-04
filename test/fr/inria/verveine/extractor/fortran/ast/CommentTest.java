@@ -1,6 +1,7 @@
 package fr.inria.verveine.extractor.fortran.ast;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -42,8 +43,9 @@ public class CommentTest extends AbstractASTTest {
 	@Test
 	public void testCommentContent() {
 		Iterator<String> cmtsIter = comments.iterator();
-		cmtsIter.next(); // skip 1st comment
-		assertEquals("  ! Comments again\n", cmtsIter.next());
+		// order of comments might be inverted, so we need to test both
+		assertTrue( cmtsIter.next().equals("  ! Comments again\n") ||
+					cmtsIter.next().equals("  ! Comments again\n"));
 	}
 
 }

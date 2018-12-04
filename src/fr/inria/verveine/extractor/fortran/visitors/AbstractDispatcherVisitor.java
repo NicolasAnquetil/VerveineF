@@ -2,7 +2,6 @@ package fr.inria.verveine.extractor.fortran.visitors;
 
 import java.util.Stack;
 
-import eu.synectique.verveine.core.EntityStack;
 import fr.inria.verveine.extractor.fortran.ast.ASTVisitor;
 import fr.inria.verveine.extractor.fortran.ast.IASTNode;
 import fr.inria.verveine.extractor.fortran.ir.IRDictionary;
@@ -36,7 +35,7 @@ public abstract class AbstractDispatcherVisitor extends ASTVisitor {
 	abstract protected String msgTrace();
 
 	protected String mkKey(IASTNode node) {
-		return node.getClass().getName() + "/" + node.fullyQualifiedName();
+		return node.getClass().getSimpleName() + "/" + node.fullyQualifiedName();
 	}
 
 	// VISITING METODS ON ICELEMENT HIERARCHY (ICElementVisitor) ===========================================================================

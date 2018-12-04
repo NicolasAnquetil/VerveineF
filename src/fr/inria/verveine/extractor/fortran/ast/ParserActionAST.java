@@ -102,7 +102,7 @@ public class ParserActionAST extends FortranParserActionNull {
 		endModule.setEndName(asttk(id));
 		endModule.setASTField(ASTEndModuleStmtNode.TEOS, asttk(eos));
 
-		assert( parsingCtxt.valueStackPop() instanceof ASTListNode); 
+		parsingCtxt.valueStackPop(); // module content 
 
 		moduleNode = (ASTModuleNode) parsingCtxt.valueStackPop();
 		moduleNode.setEndModuleStmt(endModule);
@@ -131,7 +131,7 @@ public class ParserActionAST extends FortranParserActionNull {
 		fctStmt.setFunctionName(fctName);
 		fctNode.setFunctionStmt(fctStmt);
 		
-		parsingCtxt.valueStackPush((IASTNode) fctNode.getBody());  // see specificationPart
+		parsingCtxt.valueStackPush((IASTNode) fctNode.getBody());
 	}
 
 	@Override
@@ -151,7 +151,7 @@ public class ParserActionAST extends FortranParserActionNull {
 		endFct.setASTField(ASTEndFunctionStmtNode.TFUNCTION, asttk(keyword2));
 		endFct.setASTField(ASTEndFunctionStmtNode.TEOS, asttk(eos));
 
-		assert( parsingCtxt.valueStackPop() instanceof ASTListNode); 
+		parsingCtxt.valueStackPop();  // function body
 
 		fctNode = (ASTFunctionSubprogramNode) parsingCtxt.valueStackPop();
 		fctNode.setEndFunctionStmt(endFct);
@@ -200,7 +200,7 @@ public class ParserActionAST extends FortranParserActionNull {
 		endPcd.setASTField(ASTEndSubroutineStmtNode.TSUBROUT, asttk(keyword2));
 		endPcd.setASTField(ASTEndSubroutineStmtNode.TEOS, asttk(eos));
 		
-		assert( parsingCtxt.valueStackPop() instanceof ASTListNode); // subroutine body
+		parsingCtxt.valueStackPop(); // subroutine body
 
 		pcdNode = (ASTSubroutineSubprogramNode) parsingCtxt.valueStackPop();
 		pcdNode.setEndSubroutineStmt(endPcd);
@@ -218,13 +218,6 @@ public class ParserActionAST extends FortranParserActionNull {
 
 
 	@Override
-	public void type_spec() {
-		// TODO Auto-generated method stub
-		super.type_spec();
-	}
-
-
-	@Override
 	public void declaration_type_spec(Token arg0, int arg1) {
 		
 		int i = IActionEnums.DeclarationTypeSpec_INTRINSIC;// used as a marker of the beginning of type_declaration_stmt (see below)
@@ -232,19 +225,6 @@ public class ParserActionAST extends FortranParserActionNull {
 		ASTTypeDeclarationStmtNode typeDecl = new ASTTypeDeclarationStmtNode();
 		parentList.add(typeDecl);
 		parsingCtxt.valueStackPush(typeDecl);
-	}
-
-	@Override
-	public void kind_param(Token arg0) {
-		// TODO Auto-generated method stub
-		super.kind_param(arg0);
-	}
-
-
-	@Override
-	public void real_literal_constant(Token arg0, Token arg1) {
-		// TODO Auto-generated method stub
-		super.real_literal_constant(arg0, arg1);
 	}
 
 	@Override
@@ -258,36 +238,6 @@ public class ParserActionAST extends FortranParserActionNull {
 
 		listDeclarationConstruct = (ASTListNode<ASTNode>)parsingCtxt.valueStackTop();
 		listDeclarationConstruct.add( typeDecl);
-	}
-
-	/*public void call_stmt(Token label, Token callKeyword, Token eos, boolean hasActualArgSpecList) {
-		
-		ASTNode call;
-	
-		call = (ASTNode) valueStackTop();
-		//call.setLabel(asttk(label));
-		//call.setASTField(ASTCallStmtNode.TEOS, asttk(eos));
-		
-	}*/
-
-	@Override
-	public void expr() {
-		// TODO Auto-generated method stub
-		super.expr();
-	}
-
-
-	@Override
-	public void level_5_expr(int arg0) {
-		// TODO Auto-generated method stub
-		super.level_5_expr(arg0);
-	}
-
-
-	@Override
-	public void level_5_expr__defined_binary_op(Token arg0) {
-		// TODO Auto-generated method stub
-		super.level_5_expr__defined_binary_op(arg0);
 	}
 
 
@@ -350,36 +300,6 @@ public class ParserActionAST extends FortranParserActionNull {
 		attrSpecSeq.setAttrSpec(attrSpec);
 		typeDecl.getAttrSpecSeq().add( attrSpecSeq);
 	}
-	
-	@Override
-	public void main_program(boolean hasProgramStmt, boolean hasExecutionPart, boolean hasInternalSubprogramPart) {
-		// TODO Auto-generated method stub
-		super.main_program(hasProgramStmt, hasExecutionPart, hasInternalSubprogramPart);
-	}
-
-	@Override
-	public void function_subprogram(boolean hasExePart, boolean hasIntSubProg) {
-		// TODO Auto-generated method stub
-		super.function_subprogram(hasExePart, hasIntSubProg);
-	}
-
-	@Override
-	public void execution_part() {
-		// TODO Auto-generated method stub
-		super.execution_part();
-	}
-
-	@Override
-	public void action_stmt() {
-		// TODO Auto-generated method stub
-		super.action_stmt();
-	}
-
-	@Override
-	public void block() {
-		// TODO Auto-generated method stub
-		super.block();
-	}
 
 	@Override
 	public void call_stmt(Token label, Token callKeyword, Token eos, boolean hasActualArgSpecList) {
@@ -401,42 +321,6 @@ public class ParserActionAST extends FortranParserActionNull {
 	}
 
 	// UTILITIES ---
-	
-
-
-	@Override
-	public void intrinsic_type_spec(Token arg0, Token arg1, int arg2, boolean arg3) {
-		// TODO Auto-generated method stub 
-		super.intrinsic_type_spec(arg0, arg1, arg2, arg3);
-	}
-
-
-	@Override
-	public void kind_selector(Token arg0, Token arg1, boolean arg2) {
-		// TODO Auto-generated method stub
-		super.kind_selector(arg0, arg1, arg2);
-	}
-
-
-	@Override
-	public void level_1_expr(Token arg0) {
-		// TODO Auto-generated method stub
-		super.level_1_expr(arg0);
-	}
-
-
-	@Override
-	public void level_2_expr(int arg0) {
-		// TODO Auto-generated method stub
-		super.level_2_expr(arg0);
-	}
-
-
-	@Override
-	public void level_3_expr(Token arg0) {
-		// TODO Auto-generated method stub
-		super.level_3_expr(arg0);
-	}
 
 
 	protected ASTToken asttk(Token tok) {
