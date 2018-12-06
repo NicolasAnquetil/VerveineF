@@ -2,8 +2,10 @@ package fr.inria.verveine.extractor.fortran.visitors;
 
 import fr.inria.verveine.extractor.fortran.ast.ASTAttrSpecSeqNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTEndModuleStmtNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTEndProgramStmtNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTEntityDeclNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTFunctionSubprogramNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTMainProgramNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTModuleNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTProgramStmtNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTSubroutineSubprogramNode;
@@ -22,6 +24,25 @@ public class VarDefVisitor extends AbstractDispatcherVisitor {
 	@Override
 	protected String msgTrace() {
 		return "Creating variables";
+	}
+
+	/**
+	 * Retrieve previously added Program. Done with MainProgram/ProgramStmt/ProgramName
+	 */
+	@Override
+	public void visitASTMainProgramNode(ASTMainProgramNode node) {
+		ASTToken tk = node.getProgramStmt().getProgramName().getProgramName();
+		
+		IREntity entity = dico.getEntityByKey( mkKey(tk) );
+
+		context.push(entity);
+		super.visitASTMainProgramNode(node);
+	}
+
+	@Override
+	public void visitASTEndProgramStmtNode(ASTEndProgramStmtNode node) {
+		super.visitASTEndProgramStmtNode(node);
+		context.pop();
 	}
 
 	@Override

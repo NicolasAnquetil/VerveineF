@@ -1,18 +1,27 @@
 package fr.inria.verveine.extractor.fortran.ast;
 
+import java.io.IOException;
+
 import fortran.ofp.FrontEnd;
 import fr.inria.verveine.extractor.fortran.VerveineFParser;
-import fr.inria.verveine.extractor.fortran.ast.ASTNode;
 
 public class AbstractASTTest {
 
-	protected ASTNode ast;
+	protected IASTNode ast;
 
-	public void setup(String filename) throws Exception {
+	public void setup(String filename) {
 		FrontEnd ofpParser = null;
 
-		ofpParser = new FrontEnd(/*args*/new String[] {}, filename, VerveineFParser.VERVEINE_AST_BUILDER);
-		ofpParser.call();
+		try {
+			ofpParser = new FrontEnd(/*args*/new String[] {}, filename, VerveineFParser.VERVEINE_AST_BUILDER);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			ofpParser.call();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		ast = ((ParserActionAST)ofpParser.getParser().getAction()).getAST();
 

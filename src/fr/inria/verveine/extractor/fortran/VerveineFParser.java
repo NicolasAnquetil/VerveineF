@@ -92,7 +92,7 @@ public class VerveineFParser  {
 			ofpParser.call();
 			
 			ast = ((ParserActionAST)ofpParser.getParser().getAction()).getAST();
-			runAllVisitors( dico, "theSourceFileName", ast);
+			runAllVisitors( dico, userProjectDir, ast);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
@@ -125,7 +125,7 @@ public class VerveineFParser  {
 			}
 			else if (arg.equals("-o")) {
 				if (i < args.length) {
-					outputFileName = args[i+1];
+					outputFileName = args[i];
 					i++;
 				} else {
 					System.err.println("-o requires a filename");

@@ -7,7 +7,7 @@ import java.util.Collection;
 import org.junit.Before;
 import org.junit.Test;
 
-public class subprgVisitorTest extends AbstractASTTest {
+public class SubprgTest extends AbstractASTTest {
 		
 	@Before
 	public void setup() throws Exception {

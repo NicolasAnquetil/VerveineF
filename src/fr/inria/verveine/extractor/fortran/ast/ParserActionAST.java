@@ -41,7 +41,7 @@ public class ParserActionAST extends FortranParserActionNull {
 		pgmStmt.setProgramName( pgmName);
 		mainPgm.setProgramStmt(pgmStmt);
 
-		parsingCtxt.valueStackPush((IASTNode) mainPgm.getBody());  // see specificationPart
+		parsingCtxt.valueStackPush((IASTNode) mainPgm.getBody());
 	}
 
 
@@ -57,10 +57,10 @@ public class ParserActionAST extends FortranParserActionNull {
 		endPgmStmt.setEndName(asttk(id));
 		endPgmStmt.setASTField(ASTEndProgramStmtNode.TEOS, asttk(eos));
 
+		parsingCtxt.valueStackPop();  // program body 
+		
 		mainPgm = (ASTMainProgramNode)parsingCtxt.valueStackPop();
 		mainPgm.setEndProgramStmt(endPgmStmt);
-
-		assert( parsingCtxt.valueStackPop() instanceof ASTListNode); 
 		
 		parentNode = (ASTCompilationUnit) parsingCtxt.valueStackTop();
 		parentNode.setProgramUnit(mainPgm);
@@ -218,9 +218,8 @@ public class ParserActionAST extends FortranParserActionNull {
 
 
 	@Override
-	public void declaration_type_spec(Token arg0, int arg1) {
+	public void declaration_type_spec(Token declarationKeyword, int declarationTypeEnumValue) {
 		
-		int i = IActionEnums.DeclarationTypeSpec_INTRINSIC;// used as a marker of the beginning of type_declaration_stmt (see below)
 		ASTListNode<ASTNode> parentList = (ASTListNode<ASTNode>) parsingCtxt.valueStackTop();
 		ASTTypeDeclarationStmtNode typeDecl = new ASTTypeDeclarationStmtNode();
 		parentList.add(typeDecl);
