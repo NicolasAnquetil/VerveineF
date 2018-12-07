@@ -7,7 +7,7 @@ public class ASTProgramStmtNode extends ASTNode
 	
 	ASTToken label;
     ASTToken programToken;
-    ASTProgramNameNode programName;
+    ASTToken programName;
     ASTToken hiddenTEos;
 
     public ASTToken getLabel()
@@ -34,15 +34,15 @@ public class ASTProgramStmtNode extends ASTNode
     }
 
 
-    public ASTProgramNameNode getProgramName()
+    public ASTToken getProgramName()
     {
         return this.programName;
     }
 
-    public void setProgramName(ASTProgramNameNode newValue)
+    public void setProgramName(ASTToken astToken)
     {
-        this.programName = newValue;
-        if (newValue != null) newValue.setParent(this);
+        this.programName = astToken;
+        if (astToken != null) astToken.setParent(this);
     }
 
 
@@ -76,7 +76,7 @@ public class ASTProgramStmtNode extends ASTNode
         {
         case 0:  this.label = (ASTToken)value; if (value != null) value.setParent(this); return;
         case TPROGRAM:  this.programToken = (ASTToken)value; if (value != null) value.setParent(this); return;
-        case 2:  this.programName = (ASTProgramNameNode)value; if (value != null) value.setParent(this); return;
+        case 2:  this.programName = (ASTToken)value; if (value != null) value.setParent(this); return;
         case TEOS:  this.hiddenTEos = (ASTToken)value; if (value != null) value.setParent(this); return;
         default: throw new IllegalArgumentException("Invalid index");
         }

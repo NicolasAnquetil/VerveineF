@@ -91,7 +91,7 @@ public class ASTModuleNode extends ASTNode implements IProgramUnit // extends Sc
 
 	@Override
 	public String basename() {
-		return getModuleStmt().getModuleName().getModuleName().getText();
+		return getModuleStmt().getModuleName().getText();
 	}
 
 	/**
@@ -100,7 +100,7 @@ public class ASTModuleNode extends ASTNode implements IProgramUnit // extends Sc
 	 * @return
 	 */
 	public ASTToken getNameToken() {
-		return this.getModuleStmt().getModuleName().getModuleName();
+		return this.getModuleStmt().getModuleName();
 	}
     
 }

@@ -22,7 +22,7 @@ public class CommentVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	public void visitASTMainProgramNode(ASTMainProgramNode node) {
-		IREntity entity =  dico.getEntityByKey( mkKey(node.getProgramStmt().getProgramName().getProgramName()));
+		IREntity entity =  dico.getEntityByKey( mkKey(node.getProgramStmt().getProgramName()));
 		createCommentIfNonBlank(node,entity);
 
 		context.push(entity);

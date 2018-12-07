@@ -40,7 +40,7 @@ public class SubprgDefVisitor extends AbstractDispatcherVisitor {
 	 */
 	@Override
 	public void visitASTMainProgramNode(ASTMainProgramNode node) {
-		ASTToken tk = node.getProgramStmt().getProgramName().getProgramName();
+		ASTToken tk = node.getProgramStmt().getProgramName();
 		
 		IREntity entity = dico.getEntityByKey( mkKey(tk) );
 		entity.data(IREntity.CYCLOMATIC_COMPLEXITY, 1);

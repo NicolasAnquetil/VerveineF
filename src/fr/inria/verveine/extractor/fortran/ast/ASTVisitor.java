@@ -51,20 +51,17 @@ public class ASTVisitor implements IASTVisitor {
 	@Override public void visitASTAttrSpecSeqNode(ASTAttrSpecSeqNode astAttrSpecNode) {}
 	@Override public void visitASTAttrSpecNode(ASTAttrSpecNode astAttrSpecNode) {}
 	@Override public void visitASTEntityDeclNode(ASTEntityDeclNode node) {}
-	@Override public void visitASTProgramNameNode(ASTProgramNameNode node) {}
 	@Override public void visitASTEndProgramStmtNode(ASTEndProgramStmtNode node) {}
 	@Override public void visitASTModuleStmtNode(ASTModuleStmtNode node) {}
-	@Override public void visitASTModuleNameNode(ASTModuleNameNode node) {}
 	@Override public void visitASTEndModuleStmtNode(ASTEndModuleStmtNode node) {}
 	@Override public void visitASTFunctionStmtNode(ASTFunctionStmtNode node) {}
-	@Override public void visitASTFunctionNameNode(ASTFunctionNameNode node) {}
 	@Override public void visitASTEndFunctionStmtNode(ASTEndFunctionStmtNode node) {}
 	@Override public void visitASTSubroutineNameNode(ASTSubroutineNameNode node) {}
 	@Override public void visitASTSubroutineStmtNode(ASTSubroutineStmtNode node) {}
 	@Override public void visitASTEndSubroutineStmtNode(ASTEndSubroutineStmtNode node) {}
 	@Override public void visitASTInterfaceBodyNode(ASTInterfaceBodyNode node) { }
 	@Override public void visitASTObjectNameNode(ASTObjectNameNode node) { }
-
+	@Override public void visitASTVarOrFnRefNode(ASTVarOrFnRefNode node) { }	
 	@Override public void visitASTCallStmtNode(ASTCallStmtNode node) { }
 
 }

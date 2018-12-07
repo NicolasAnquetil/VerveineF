@@ -1,8 +1,10 @@
 package fr.inria.verveine.extractor.fortran.ast;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,8 +21,10 @@ public class SubprgTest extends AbstractASTTest {
 		Collection<ASTFunctionSubprogramNode> subs = ast.findAll(ASTFunctionSubprogramNode.class);
 		assertEquals(1, subs.size());
 
-		ASTFunctionSubprogramNode sub = subs.iterator().next(); 
-		assertEquals("blih", sub.basename());
+		ASTFunctionSubprogramNode sub = subs.iterator().next();
+
+		
+		assertEquals( "blih", sub.basename() );
 	}
 
 	@Test
@@ -39,6 +43,15 @@ public class SubprgTest extends AbstractASTTest {
 
 		ASTCallStmtNode stmt = calls.iterator().next(); 
 		assertEquals("blah", stmt.getSubroutineName().getText());
+	}
+
+	@Test
+	public void testFunctionRef() {
+		Collection<ASTVarOrFnRefNode> calls = ast.findAll(ASTVarOrFnRefNode.class);
+		assertEquals(1, calls.size());
+
+		ASTVarOrFnRefNode invok = calls.iterator().next(); 
+		assertEquals("blih", invok.getName().getText());
 	}
 
 }

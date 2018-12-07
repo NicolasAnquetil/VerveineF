@@ -26,10 +26,11 @@ public class ScopeDefVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	public void visitASTMainProgramNode(ASTMainProgramNode node) {
-		ASTToken tk = node.getProgramStmt().getProgramName().getProgramName();
+		ASTToken tk = node.getProgramStmt().getProgramName();
 		
 		//Create the Famix Program from the ProgramNameNode which contains the name instead of using MAinProgramNode
 		IREntity entity = dico.addEntity(mkKey(tk), IRKind.PROGRAM, /*parent*/null);
+		entity.name(tk.getText());
 		entity.data(IREntity.IS_STUB, false);
 		entity.addSourceAnchor( filename, node);
 	}

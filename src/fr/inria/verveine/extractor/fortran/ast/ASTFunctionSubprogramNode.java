@@ -128,7 +128,7 @@ public class ASTFunctionSubprogramNode extends ASTNode implements IInternalSubpr
 	}
 
 	public String basename() {
-		return getFunctionStmt().getFunctionName().getFunctionName().getText();
+		return getNameToken().getText();
 	}
 
 	/**
@@ -137,7 +137,7 @@ public class ASTFunctionSubprogramNode extends ASTNode implements IInternalSubpr
 	 * @return
 	 */
 	public ASTToken getNameToken() {
-		return this.getFunctionStmt().getFunctionName().getFunctionName();
+		return this.getFunctionStmt().getFunctionName();
 	}
 
 	/**

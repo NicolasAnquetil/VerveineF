@@ -8,6 +8,7 @@ import fr.inria.verveine.extractor.fortran.ast.ASTFunctionSubprogramNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTMainProgramNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTSubroutineSubprogramNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTToken;
+import fr.inria.verveine.extractor.fortran.ast.ASTVarOrFnRefNode;
 import fr.inria.verveine.extractor.fortran.ir.IRDictionary;
 import fr.inria.verveine.extractor.fortran.ir.IREntity;
 import fr.inria.verveine.extractor.fortran.ir.IRKind;
@@ -26,7 +27,7 @@ public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 	// ================  V I S I T O R  =======================
 	@Override
 	public void visitASTMainProgramNode(ASTMainProgramNode node) {
-		ASTToken tk = node.getProgramStmt().getProgramName().getProgramName();
+		ASTToken tk = node.getProgramStmt().getProgramName();
 		
 		IREntity entity = dico.getEntityByKey( mkKey(tk) );
 
@@ -70,8 +71,6 @@ public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	public void visitASTCallStmtNode(ASTCallStmtNode node) {
-		// actually, here we know it is an invocation and not an access
-		
 		IREntity call = new IREntity(context.peek(), IRKind.SUBPRGCALL);
 		call.name(node.getSubroutineName().getText());
 		dico.addAnonymousEntity(call);
@@ -79,16 +78,18 @@ public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 		super.visitASTCallStmtNode(node);
 	}
 
-	/*@Override
+	@Override
 	public void visitASTVarOrFnRefNode(ASTVarOrFnRefNode node) {
-		// actually, here we know it is an access and not an invocation
-		invokOrAccessFromNode( node.getName().getName());
+		IREntity ref = new IREntity(context.peek(), IRKind.NAMEREF);
+		ref.name(node.getName().getText());
+		dico.addAnonymousEntity(ref);
 
 		super.visitASTVarOrFnRefNode(node);
 	}
-
+/*
 	@Override
 	public void visitASTAssignmentStmtNode(ASTAssignmentStmtNode node) {
+		// actually, here we know it is an access and not an invocation
 		ASTNameNode lhs = node.getLhsVariable();
 		if (lhs != null) {
 			Access acc = (Access) invokOrAccessFromNode(lhs.getName());
@@ -99,9 +100,10 @@ public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 
 		super.visitASTAssignmentStmtNode(node);
 	}
-	
+
 	@Override
 	public void visitASTProperLoopConstructNode(ASTProperLoopConstructNode node) {
+		// actually, here we know it is an access and not an invocation
 		ASTToken varI = node.getIndexVariable();
 		if (varI != null) {
 			Access acc = (Access) invokOrAccessFromNode(varI);
@@ -109,6 +111,7 @@ public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 				acc.setIsWrite(true);
 			}			
 		}
-	}*/
+	}
+*/
 
 }

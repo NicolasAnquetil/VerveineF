@@ -63,20 +63,11 @@ public class VerveineFParser  {
 		Gson gsonSerializer = gsonBldr.create();
 		
 		try {
-			boolean first = true;
 			FileWriter fout = new FileWriter(outputFileName);
-			fout.append("{\n");
 			for (IREntity ent : dico) {
-				if (first) {
-					first = false;
-				}
-				else {
-					fout.append(',');
-				}
 				fout.append(gsonSerializer.toJson(ent));
 				fout.append('\n');
 			}
-			fout.append("}\n");
 			fout.close();
 		} catch (IOException e) {
 			e.printStackTrace();

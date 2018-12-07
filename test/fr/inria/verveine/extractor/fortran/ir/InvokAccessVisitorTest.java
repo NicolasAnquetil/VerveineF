@@ -21,4 +21,11 @@ public class InvokAccessVisitorTest extends AbstractIRTest {
 		assertEquals("blah", calls.iterator().next().getName());
 	}
 
+	@Test
+	public void testFunctionInvocations() {
+		Collection<IREntity> calls = dico.allWithKind(IRKind.NAMEREF);
+		assertEquals(1, calls.size());
+		assertEquals("blih", calls.iterator().next().getName());
+	}
+
 }

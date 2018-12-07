@@ -1,31 +1,31 @@
 package fr.inria.verveine.extractor.fortran.ast;
 
 public class ASTAttrSpecNode extends ASTNode {
-	ASTToken isSave; // in ASTAttrSpecNode
-	ASTToken isPointer; // in ASTAttrSpecNode
-	ASTToken isValue; // in ASTAttrSpecNode
-	ASTToken isExternal; // in ASTAttrSpecNode
-	ASTToken isDimension; // in ASTAttrSpecNode
-	ASTToken isVolatile; // in ASTAttrSpecNode
-	ASTToken isAsync; // in ASTAttrSpecNode
-	ASTToken isContiguous; // in ASTAttrSpecNode
-	ASTToken isProtected; // in ASTAttrSpecNode
-	ASTToken isCodimension; // in ASTAttrSpecNode
-	ASTToken hiddenTLbracket; // in ASTAttrSpecNode
-	//ASTCoarraySpecNode coarraySpec; // in ASTAttrSpecNode
-	ASTToken hiddenTRbracket; // in ASTAttrSpecNode
-	//ASTAccessSpecNode accessSpec; // in ASTAttrSpecNode
-	ASTToken isIntrinsic; // in ASTAttrSpecNode
-	//ASTLanguageBindingSpecNode languageBindingSpec; // in ASTAttrSpecNode
-	ASTToken isAllocatable; // in ASTAttrSpecNode
-	ASTToken isOptional; // in ASTAttrSpecNode
-	ASTToken isTarget; // in ASTAttrSpecNode
-	ASTToken isIntent; // in ASTAttrSpecNode
-	ASTToken hiddenTLparen; // in ASTAttrSpecNode
-	//ASTArraySpecNode arraySpec; // in ASTAttrSpecNode
-	//ASTIntentSpecNode intentSpec; // in ASTAttrSpecNode
-	ASTToken hiddenTRparen; // in ASTAttrSpecNode
-	ASTToken isParameter; // in ASTAttrSpecNode
+	ASTToken isSave;
+	ASTToken isPointer;
+	ASTToken isValue;
+	ASTToken isExternal;
+	ASTToken isDimension;
+	ASTToken isVolatile;
+	ASTToken isAsync;
+	ASTToken isContiguous;
+	ASTToken isProtected;
+	ASTToken isCodimension;
+	ASTToken hiddenTLbracket;
+	//ASTCoarraySpecNode coarraySpec;
+	ASTToken hiddenTRbracket;
+	//ASTAccessSpecNode accessSpec;
+	ASTToken isIntrinsic;
+	//ASTLanguageBindingSpecNode languageBindingSpec;
+	ASTToken isAllocatable;
+	ASTToken isOptional;
+	ASTToken isTarget;
+	ASTToken isIntent;
+	ASTToken hiddenTLparen;
+	//ASTArraySpecNode arraySpec;
+	//ASTIntentSpecNode intentSpec;
+	ASTToken hiddenTRparen;
+	ASTToken isParameter;
 
 	public boolean isSave()
 	{

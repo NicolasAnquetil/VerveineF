@@ -19,7 +19,7 @@ public class ASTFunctionStmtNode extends ASTNode implements IActionStmt {  // ex
     ASTToken label; // in ASTFunctionStmtNode
     //IASTListNode<ASTPrefixSpecNode> prefixSpecList; // in ASTFunctionStmtNode
     ASTToken hiddenTFunction; // in ASTFunctionStmtNode
-    ASTFunctionNameNode functionName; // in ASTFunctionStmtNode
+    ASTToken functionName; // in ASTFunctionStmtNode
     ASTToken hiddenTLparen; // in ASTFunctionStmtNode
     //IASTListNode<ASTFunctionParNode> functionPars; // in ASTFunctionStmtNode
     ASTToken hiddenTRparen; // in ASTFunctionStmtNode
@@ -61,12 +61,12 @@ public class ASTFunctionStmtNode extends ASTNode implements IActionStmt {  // ex
     }
 */
 
-    public ASTFunctionNameNode getFunctionName()
+    public ASTToken getFunctionName()
     {
         return this.functionName;
     }
 
-    public void setFunctionName(ASTFunctionNameNode newValue)
+    public void setFunctionName(ASTToken newValue)
     {
         this.functionName = newValue;
         if (newValue != null) newValue.setParent(this);
@@ -158,7 +158,7 @@ public class ASTFunctionStmtNode extends ASTNode implements IActionStmt {  // ex
         case 0:  this.label = (ASTToken)value; if (value != null) value.setParent(this); return;
         case 1:  return; // this.prefixSpecList = (IASTListNode<ASTPrefixSpecNode>)value; if (value != null) value.setParent(this); return;
         case TFUNCTION:  this.hiddenTFunction = (ASTToken)value; if (value != null) value.setParent(this); return;
-        case 3:  this.functionName = (ASTFunctionNameNode)value; if (value != null) value.setParent(this); return;
+        case 3:  this.functionName = (ASTToken)value; if (value != null) value.setParent(this); return;
         case TLPAREN:  this.hiddenTLparen = (ASTToken)value; if (value != null) value.setParent(this); return;
         case 5:  return; // this.functionPars = (IASTListNode<ASTFunctionParNode>)value; if (value != null) value.setParent(this); return;
         case TRPAREN:  this.hiddenTRparen = (ASTToken)value; if (value != null) value.setParent(this); return;

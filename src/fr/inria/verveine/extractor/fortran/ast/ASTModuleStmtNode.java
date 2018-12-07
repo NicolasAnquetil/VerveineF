@@ -6,7 +6,7 @@ public class ASTModuleStmtNode extends ASTNode {
 
     ASTToken label; // in ASTModuleStmtNode
     ASTToken hiddenTModule; // in ASTModuleStmtNode
-    ASTModuleNameNode moduleName; // in ASTModuleStmtNode
+    ASTToken moduleName; // in ASTModuleStmtNode
     ASTToken hiddenTEos; // in ASTModuleStmtNode
 
     public ASTToken getLabel()
@@ -21,15 +21,14 @@ public class ASTModuleStmtNode extends ASTNode {
     }
 
 
-    public ASTModuleNameNode getModuleName()
+    public ASTToken getModuleName()
     {
         return this.moduleName;
     }
 
-    public void setModuleName(ASTModuleNameNode newValue)
+    public void setModuleName(ASTToken astToken)
     {
-        this.moduleName = newValue;
-        if (newValue != null) newValue.setParent(this);
+        this.moduleName = astToken;
     }
 
 
@@ -63,7 +62,7 @@ public class ASTModuleStmtNode extends ASTNode {
         {
         case 0:  this.label = (ASTToken)value; if (value != null) value.setParent(this); return;
         case TMODULE:  this.hiddenTModule = (ASTToken)value; if (value != null) value.setParent(this); return;
-        case 2:  this.moduleName = (ASTModuleNameNode)value; if (value != null) value.setParent(this); return;
+        case 2:  this.moduleName = (ASTToken)value; if (value != null) value.setParent(this); return;
         case TEOS:  this.hiddenTEos = (ASTToken)value; if (value != null) value.setParent(this); return;
         default: throw new IllegalArgumentException("Invalid index");
         }

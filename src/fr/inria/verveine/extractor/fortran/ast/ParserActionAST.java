@@ -5,7 +5,6 @@ import org.antlr.runtime.Token;
 import fortran.ofp.parser.java.FortranLexer;
 import fortran.ofp.parser.java.FortranParserActionNull;
 import fortran.ofp.parser.java.FortranToken;
-import fortran.ofp.parser.java.IActionEnums;
 import fortran.ofp.parser.java.IFortranParser;
 
 public class ParserActionAST extends FortranParserActionNull {
@@ -31,14 +30,12 @@ public class ParserActionAST extends FortranParserActionNull {
 	public void	program_stmt(Token label, Token programKeyword, Token id, Token eos) {
 		ASTMainProgramNode mainPgm = (ASTMainProgramNode)parsingCtxt.valueStackTop();
 		ASTProgramStmtNode pgmStmt = new ASTProgramStmtNode();
-		ASTProgramNameNode pgmName = new ASTProgramNameNode();
 		
 		pgmStmt.setLabel( asttk(label));
 		pgmStmt.setASTField(ASTProgramStmtNode.TPROGRAM, asttk(programKeyword));
-		pgmName.setProgramName( asttk(id));
 		pgmStmt.setASTField(ASTProgramStmtNode.TEOS, asttk(eos));
 
-		pgmStmt.setProgramName( pgmName);
+		pgmStmt.setProgramName( asttk(id));
 		mainPgm.setProgramStmt(pgmStmt);
 
 		parsingCtxt.valueStackPush((IASTNode) mainPgm.getBody());
@@ -76,15 +73,13 @@ public class ParserActionAST extends FortranParserActionNull {
 	public void	module_stmt(Token label, Token moduleKeyword, Token id, Token eos) {
 		ASTModuleNode moduleNode = (ASTModuleNode)parsingCtxt.valueStackTop();
 		ASTModuleStmtNode moduleStmt = new ASTModuleStmtNode();
-		ASTModuleNameNode moduleName = new ASTModuleNameNode();
 
 		moduleStmt.setLabel(asttk(label));
 		moduleStmt.setASTField(ASTModuleStmtNode.TMODULE, asttk(moduleKeyword));
-		moduleName.setModuleName(asttk(id));
 		moduleStmt.setASTField(ASTModuleStmtNode.TMODULE, asttk(moduleKeyword));
 		moduleStmt.setASTField(ASTModuleStmtNode.TEOS, asttk(eos));
 
-		moduleStmt.setModuleName(moduleName);
+		moduleStmt.setModuleName(asttk(id));
 		moduleNode.setModuleStmt(moduleStmt);
 		
 		parsingCtxt.valueStackPush((IASTNode) moduleNode.getModuleBody());
@@ -121,14 +116,12 @@ public class ParserActionAST extends FortranParserActionNull {
 	public void function_stmt(Token label, Token keyword, Token name, Token eos, boolean hasGenericNameList, boolean hasSuffix) {
 		ASTFunctionSubprogramNode fctNode = (ASTFunctionSubprogramNode) parsingCtxt.valueStackTop();
 		ASTFunctionStmtNode fctStmt = new ASTFunctionStmtNode();
-		ASTFunctionNameNode fctName = new ASTFunctionNameNode();
 		
-		fctName.setFunctionName(asttk(name));
 		fctStmt.setLabel(asttk(label));
 		fctStmt.setASTField(ASTFunctionStmtNode.TFUNCTION, asttk(keyword));
 		fctStmt.setASTField(ASTFunctionStmtNode.TEOS, asttk(eos));
 		
-		fctStmt.setFunctionName(fctName);
+		fctStmt.setFunctionName(asttk(name));
 		fctNode.setFunctionStmt(fctStmt);
 		
 		parsingCtxt.valueStackPush((IASTNode) fctNode.getBody());
@@ -315,12 +308,23 @@ public class ParserActionAST extends FortranParserActionNull {
 	}
 
 	@Override
+	public void designator_or_func_ref() {
+		ASTVarOrFnRefNode invok = new ASTVarOrFnRefNode();
+		
+		invok.setName(asttk((Token) parsingCtxt.valueGet("part_ref.id")));
+
+		IASTNode parentBodyStmt = parsingCtxt.valueStackTop();
+		assert( parentBodyStmt instanceof ASTListNode); 
+		((ASTListNode)parentBodyStmt).add(invok);
+	}
+	
+	@Override
 	public void part_ref(Token id, boolean hasSectionSubscriptList, boolean hasImageSelector) {
 		parsingCtxt.valueSet("part_ref.id",id);
 	}
-
+	
 	// UTILITIES ---
-
+	
 
 	protected ASTToken asttk(Token tok) {
 		if (tok != null) {

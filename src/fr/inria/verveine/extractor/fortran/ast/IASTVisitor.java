@@ -19,8 +19,6 @@ public interface IASTVisitor {
 	public void visitIDeclarationConstruct(IDeclarationConstruct node);
 	public void visitIBodyConstruct(IBodyConstruct node);
 	public void visitIInterfaceSpecification(IInterfaceSpecification node);
-
-	
 	public void visitASTCompilationUnit(ASTCompilationUnit node);
 	public void visitASTMainProgramNode(ASTMainProgramNode node);
 	public void visitASTModuleNode(ASTModuleNode node);
@@ -37,13 +35,10 @@ public interface IASTVisitor {
 	public void visitASTEntityDeclNode(ASTEntityDeclNode node);
 	public void visitASTAttrSpecSeqNode(ASTAttrSpecSeqNode node);
 	public void visitASTAttrSpecNode(ASTAttrSpecNode node);
-	public void visitASTProgramNameNode(ASTProgramNameNode node);
 	public void visitASTEndProgramStmtNode(ASTEndProgramStmtNode node);
 	public void visitASTModuleStmtNode(ASTModuleStmtNode node);
-	public void visitASTModuleNameNode(ASTModuleNameNode node);
 	public void visitASTEndModuleStmtNode(ASTEndModuleStmtNode node);
 	public void visitASTFunctionStmtNode(ASTFunctionStmtNode node);
-	public void visitASTFunctionNameNode(ASTFunctionNameNode node);
 	public void visitASTEndFunctionStmtNode(ASTEndFunctionStmtNode node);
 	public void visitASTSubroutineNameNode(ASTSubroutineNameNode node);
 	public void visitASTSubroutineStmtNode(ASTSubroutineStmtNode node);
@@ -51,5 +46,6 @@ public interface IASTVisitor {
 	public void visitASTInterfaceBodyNode(ASTInterfaceBodyNode node);
 	public void visitASTObjectNameNode(ASTObjectNameNode node);
 	public void visitASTCallStmtNode(ASTCallStmtNode node);
+	public void visitASTVarOrFnRefNode(ASTVarOrFnRefNode node);
 
 }
