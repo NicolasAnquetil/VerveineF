@@ -82,15 +82,16 @@ public class ParserActionAST extends FortranParserActionNull {
 		moduleStmt.setModuleName(asttk(id));
 		
 		parsingCtxt.valueStackPush(moduleStmt);
-		parsingCtxt.valueStackPush(new ASTListNode<IBodyConstruct>());
+		parsingCtxt.valueStackPush(new ASTListNode<IModuleBodyConstruct>());
 	}
 
 	@Override
 	public void module_subprogram_part(int count) {
 		if (count > 0) {
-			IASTListNode<IBodyConstruct> moduleBody = (IASTListNode<IBodyConstruct>) parsingCtxt.valueStackTop(-1 * (count-1));
+			// we skip count elements to fetch the count-1 element on top of the valueStack
+			IASTListNode<IModuleBodyConstruct> moduleBody = (IASTListNode<IModuleBodyConstruct>) parsingCtxt.valueStackTop(-1 * (count+1));
 			for (int i=0; i<count; i++) {
-				moduleBody.add((IBodyConstruct) parsingCtxt.valueStackPop());
+				moduleBody.add((IModuleBodyConstruct) parsingCtxt.valueStackPop());
 			}
 		}
 	}

@@ -4,7 +4,7 @@ CONTAINS
     SUBROUTINE blah()
 		INTEGER i
 		i = blih()
-    END SUBROUTINE creerGrilleVTK
+    END SUBROUTINE blah
 
 	function blih()  result(i)
 		INTEGER :: i
