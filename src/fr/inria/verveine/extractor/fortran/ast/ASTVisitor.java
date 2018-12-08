@@ -56,7 +56,6 @@ public class ASTVisitor implements IASTVisitor {
 	@Override public void visitASTEndModuleStmtNode(ASTEndModuleStmtNode node) {}
 	@Override public void visitASTFunctionStmtNode(ASTFunctionStmtNode node) {}
 	@Override public void visitASTEndFunctionStmtNode(ASTEndFunctionStmtNode node) {}
-	@Override public void visitASTSubroutineNameNode(ASTSubroutineNameNode node) {}
 	@Override public void visitASTSubroutineStmtNode(ASTSubroutineStmtNode node) {}
 	@Override public void visitASTEndSubroutineStmtNode(ASTEndSubroutineStmtNode node) {}
 	@Override public void visitASTInterfaceBodyNode(ASTInterfaceBodyNode node) { }

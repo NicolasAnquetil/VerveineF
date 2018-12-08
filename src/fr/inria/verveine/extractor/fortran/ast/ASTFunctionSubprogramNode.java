@@ -3,12 +3,11 @@ package fr.inria.verveine.extractor.fortran.ast;
 public class ASTFunctionSubprogramNode extends ASTNode implements IInternalSubprogram, IModuleBodyConstruct,
 		IModuleSubprogram, IModuleSubprogramPartConstruct, IProgramUnit // extends ScopingNode
 {
-	ASTFunctionStmtNode functionStmt; // in ASTFunctionSubprogramNode
-	IASTListNode<IBodyConstruct> body; // in ASTFunctionSubprogramNode
-	// ASTContainsStmtNode containsStmt; // in ASTFunctionSubprogramNode
-	// IASTListNode<IInternalSubprogram> internalSubprograms; // in
-	// ASTFunctionSubprogramNode
-	ASTEndFunctionStmtNode endFunctionStmt; // in ASTFunctionSubprogramNode
+	ASTFunctionStmtNode functionStmt;
+	IASTListNode<IBodyConstruct> body;
+	// ASTContainsStmtNode containsStmt;
+	// IASTListNode<IInternalSubprogram> internalSubprograms;
+	ASTEndFunctionStmtNode endFunctionStmt;
 
 	public ASTFunctionSubprogramNode() {
 		setBody(new ASTListNode<>());

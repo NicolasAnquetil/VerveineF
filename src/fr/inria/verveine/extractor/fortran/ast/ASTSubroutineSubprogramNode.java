@@ -127,7 +127,7 @@ public class ASTSubroutineSubprogramNode extends ASTNode implements IInternalSub
 	}
 
 	public String basename() {
-		return getSubroutineStmt().getSubroutineName().getSubroutineName().getText();
+		return getSubroutineStmt().getSubroutineName().getText();
 	}
 	
 	/**
@@ -136,7 +136,7 @@ public class ASTSubroutineSubprogramNode extends ASTNode implements IInternalSub
 	 * @return
 	 */
 	public ASTToken getNameToken() {
-		return this.getSubroutineStmt().getSubroutineName().getSubroutineName();
+		return this.getSubroutineStmt().getSubroutineName();
 	}
 
 	/**

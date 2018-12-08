@@ -13,7 +13,7 @@ public class ASTSubroutineStmtNode extends ASTNode implements IActionStmt /* ext
 	ASTToken label; // in ASTSubroutineStmtNode
     //IASTListNode<ASTPrefixSpecNode> prefixSpecList; // in ASTSubroutineStmtNode
     ASTToken hiddenTSubroutine; // in ASTSubroutineStmtNode
-    ASTSubroutineNameNode subroutineName; // in ASTSubroutineStmtNode
+    ASTToken subroutineName; // in ASTSubroutineStmtNode
     ASTToken hiddenTLparen; // in ASTSubroutineStmtNode
     //IASTListNode<ASTSubroutineParNode> subroutinePars; // in ASTSubroutineStmtNode
     ASTToken hiddenTRparen; // in ASTSubroutineStmtNode
@@ -47,12 +47,12 @@ public class ASTSubroutineStmtNode extends ASTNode implements IActionStmt /* ext
     }
 */
 
-    public ASTSubroutineNameNode getSubroutineName()
+    public ASTToken getSubroutineName()
     {
         return this.subroutineName;
     }
 
-    public void setSubroutineName(ASTSubroutineNameNode newValue)
+    public void setSubroutineName(ASTToken newValue)
     {
         this.subroutineName = newValue;
         if (newValue != null) newValue.setParent(this);
@@ -112,7 +112,7 @@ public class ASTSubroutineStmtNode extends ASTNode implements IActionStmt /* ext
         case 0:  this.label = (ASTToken)value; if (value != null) value.setParent(this); return;
         case 1:  return; // this.prefixSpecList = (IASTListNode<ASTPrefixSpecNode>)value; if (value != null) value.setParent(this); return;
         case TSUBROUT:  this.hiddenTSubroutine = (ASTToken)value; if (value != null) value.setParent(this); return;
-        case 3:  this.subroutineName = (ASTSubroutineNameNode)value; if (value != null) value.setParent(this); return;
+        case 3:  this.subroutineName = (ASTToken)value; if (value != null) value.setParent(this); return;
         case TLPAREN:  this.hiddenTLparen = (ASTToken)value; if (value != null) value.setParent(this); return;
         case 5:  return; // this.subroutinePars = (IASTListNode<ASTSubroutineParNode>)value; if (value != null) value.setParent(this); return;
         case TRPAREN:  this.hiddenTRparen = (ASTToken)value; if (value != null) value.setParent(this); return;

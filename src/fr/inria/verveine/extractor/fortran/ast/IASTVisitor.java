@@ -40,7 +40,6 @@ public interface IASTVisitor {
 	public void visitASTEndModuleStmtNode(ASTEndModuleStmtNode node);
 	public void visitASTFunctionStmtNode(ASTFunctionStmtNode node);
 	public void visitASTEndFunctionStmtNode(ASTEndFunctionStmtNode node);
-	public void visitASTSubroutineNameNode(ASTSubroutineNameNode node);
 	public void visitASTSubroutineStmtNode(ASTSubroutineStmtNode node);
 	public void visitASTEndSubroutineStmtNode(ASTEndSubroutineStmtNode node);
 	public void visitASTInterfaceBodyNode(ASTInterfaceBodyNode node);
