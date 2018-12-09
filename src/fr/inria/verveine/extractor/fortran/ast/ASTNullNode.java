@@ -53,4 +53,8 @@ public class ASTNullNode extends ASTNode {
 	protected void setASTField(int index, IASTNode value) {
 	}
 
+    public boolean isNullNode() {
+    	return true;
+    }
+
 }

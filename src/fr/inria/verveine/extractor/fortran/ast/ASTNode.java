@@ -97,4 +97,8 @@ public abstract class ASTNode implements IASTNode {
         return ASTNodeUtil.isFirstChildInList(this);
     }
 
+    public boolean isNullNode() {
+    	return false;
+    }
+
 }

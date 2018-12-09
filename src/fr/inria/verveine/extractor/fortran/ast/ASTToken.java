@@ -258,4 +258,9 @@ public class ASTToken implements Token, IASTNode
 	public String toString() {
 		return actualToken.toString();
 	}
+
+	@Override
+	public boolean isNullNode() {
+		return false;
+	}
 }

@@ -28,4 +28,6 @@ public interface IASTNode {
 
 	boolean isFirstChildInList();
 
+    public boolean isNullNode();
+
 }

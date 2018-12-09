@@ -157,4 +157,9 @@ public class ASTListNode<T extends IASTNode> extends ArrayList<T> implements IAS
 		return null;
 	}
 
+	@Override
+	public boolean isNullNode() {
+		return false;
+	}
+
 }

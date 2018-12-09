@@ -1,6 +1,7 @@
 package fr.inria.verveine.extractor.fortran.ast;
 
 public class ASTEntityDeclNode extends ASTNode {
+	public static final int TNAME = 0;
 	public static final int TASTERISK2 = 1;
 	public static final int TLPAREN2 = 3;
 	public static final int TLPAREN = 4;
@@ -12,7 +13,7 @@ public class ASTEntityDeclNode extends ASTNode {
 	public static final int TSLASH2 = 14;
 	public static final int TRPAREN2 = 15;
 	
-	ASTObjectNameNode objectName; // in ASTEntityDeclNode
+	ASTToken objectName; // in ASTEntityDeclNode
     ASTToken hiddenAsterisk2; // in ASTEntityDeclNode
     //ASTCharLengthNode initialCharLength; // in ASTEntityDeclNode
     ASTToken hiddenLparen2; // in ASTEntityDeclNode
@@ -30,15 +31,14 @@ public class ASTEntityDeclNode extends ASTNode {
     ASTToken hiddenRparen2; // in ASTEntityDeclNode
     //ASTInitializationNode initialization; // in ASTEntityDeclNode
 
-    public ASTObjectNameNode getObjectName()
+    public ASTToken getObjectName()
     {
-        return this.objectName;
+        return (ASTToken) getASTField(TNAME);
     }
 
-    public void setObjectName(ASTObjectNameNode newValue)
+    public void setObjectName(ASTToken newValue)
     {
-        this.objectName = newValue;
-        if (newValue != null) newValue.setParent(this);
+        setASTField(TNAME, newValue);
     }
 
 
@@ -131,7 +131,7 @@ public class ASTEntityDeclNode extends ASTNode {
     {
         switch (index)
         {
-        case 0:  return new ASTNullNode(); // this.objectName;
+        case TNAME:  return this.objectName;
         case TASTERISK2:  return this.hiddenAsterisk2;
         case 2:  return new ASTNullNode(); // this.initialCharLength;
         case TLPAREN2:  return this.hiddenLparen2;
@@ -156,7 +156,7 @@ public class ASTEntityDeclNode extends ASTNode {
     {
         switch (index)
         {
-        case 0:  return ; //this.objectName = (ASTObjectNameNode)value; if (value != null) value.setParent(this); return;
+        case TNAME: this.objectName = (ASTToken)value; if (value != null) value.setParent(this); return;
         case TASTERISK2:  this.hiddenAsterisk2 = (ASTToken)value; if (value != null) value.setParent(this); return;
         case 2:  return ; //this.initialCharLength = (ASTCharLengthNode)value; if (value != null) value.setParent(this); return;
         case TLPAREN2:  this.hiddenLparen2 = (ASTToken)value; if (value != null) value.setParent(this); return;

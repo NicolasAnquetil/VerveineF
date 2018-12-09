@@ -8,14 +8,14 @@ public class ASTTypeDeclarationStmtNode extends ASTNode  implements IBlockDataBo
 	public static final int TCOMMA = 5;
 	public static final int TEOS = 7;
 
-	ASTToken label; // in ASTTypeDeclarationStmtNode
-    //ASTTypeSpecNode typeSpec; // in ASTTypeDeclarationStmtNode
-    IASTListNode<ASTAttrSpecSeqNode> attrSpecSeq; // in ASTTypeDeclarationStmtNode
-    ASTToken hiddenTColon; // in ASTTypeDeclarationStmtNode
-    ASTToken hiddenTColon2; // in ASTTypeDeclarationStmtNode
-    ASTToken hiddenTComma; // in ASTTypeDeclarationStmtNode
-    IASTListNode<ASTEntityDeclNode> entityDeclList; // in ASTTypeDeclarationStmtNode
-    ASTToken hiddenTEos; // in ASTTypeDeclarationStmtNode
+	ASTToken label;
+    //ASTTypeSpecNode typeSpec;
+    IASTListNode<ASTAttrSpecSeqNode> attrSpecSeq;
+    ASTToken hiddenTColon;
+    ASTToken hiddenTColon2;
+    ASTToken hiddenTComma;
+    IASTListNode<ASTEntityDeclNode> entityDeclList;
+    ASTToken hiddenTEos;
 
     public ASTTypeDeclarationStmtNode() {
     	setEntityDeclList(new ASTListNode<>());
@@ -24,13 +24,12 @@ public class ASTTypeDeclarationStmtNode extends ASTNode  implements IBlockDataBo
     
     public ASTToken getLabel()
     {
-        return this.label;
+        return (ASTToken) getASTField(0);
     }
 
     public void setLabel(ASTToken newValue)
     {
-        this.label = newValue;
-        if (newValue != null) newValue.setParent(this);
+        setASTField(0, newValue);
     }
 
 /*

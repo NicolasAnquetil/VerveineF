@@ -80,7 +80,7 @@ public class VarDefVisitor extends AbstractDispatcherVisitor {
 	@Override
 	public void visitASTTypeDeclarationStmtNode(ASTTypeDeclarationStmtNode node) {
 		for (ASTEntityDeclNode decl : node.getEntityDeclList()) {
-			ASTToken tk = decl.getObjectName().getObjectName();
+			ASTToken tk = decl.getObjectName();
 			IREntity entity = dico.addEntity( mkKey(tk), IRKind.VARIABLE, /*parent*/context.peek());
 			entity.name( tk.getText());
 			entity.data(IREntity.IS_STUB, false);
