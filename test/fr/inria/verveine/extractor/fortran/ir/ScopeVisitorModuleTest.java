@@ -20,7 +20,7 @@ public class ScopeVisitorModuleTest extends AbstractIRTest {
 		assertNotNull(root);
 		assertEquals("simpleModule", root.getName());
 		assertEquals(0, root.getData("anchorstart"));
-		assertEquals(178, root.getData("anchorend"));
+		assertEquals(177, root.getData("anchorend"));
 	}
 
 }

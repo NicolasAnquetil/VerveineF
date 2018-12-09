@@ -16,7 +16,7 @@ public class VarDeclTest extends AbstractASTTest {
 
 	@Test
 	public void testNumberVarDecl() {
-		assertEquals(3, ast.findAll(ASTTypeDeclarationStmtNode.class).size());
+		assertEquals(4, ast.findAll(ASTTypeDeclarationStmtNode.class).size());
 	}
 	
 	@Test
@@ -40,7 +40,7 @@ public class VarDeclTest extends AbstractASTTest {
 		assertEquals(1, aString);
 		assertEquals(1, anInt);
 		assertEquals(1, aBool);
-		//assertEquals(1, aReal);
+		assertEquals(1, aReal);
 	}
 
 

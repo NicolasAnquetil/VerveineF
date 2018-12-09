@@ -305,7 +305,7 @@ public class ParserActionAST extends FortranParserActionNull {
 		}
 	}
 
-	@Override
+/*	@Override
 	public void intrinsic_type_spec(Token keyword1, Token keyword2, int type, boolean hasKindSelector) {
 		// for now pruning expressions
 		if ( (type == IActionEnums.IntrinsicTypeSpec_CHARACTER) ||
@@ -363,13 +363,6 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 
 	
 	@Override
-	public void entity_decl(Token id, boolean hasArraySpec, boolean hasCoarraySpec, boolean hasCharLength, boolean hasInitialization) {
-		ASTEntityDeclNode entityDecl = new ASTEntityDeclNode();
-		entityDecl.setObjectName(asttk(id));
-		parsingCtxt.valueStackPush( entityDecl);
-	}
-
-	@Override
 	public void executable_construct() {
 		if (parsingCtxt.valueStackTop() instanceof ASTVarOrFnRefNode) {
 		}
@@ -382,13 +375,13 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 
 
 	@Override
-	public void execution_part(int exec_part_count) {
+	public void execution_part(int execution_part_count) {
 		IASTListNode<IASTNode> exec_parts = new ASTListNode<>();
 		IASTNode executable = parsingCtxt.valueStackPop();
 		if (! executable.isNullNode()) {
 			exec_parts.add( executable);
 		}
-		for (int i=0; i< exec_part_count; i++) {
+		for (int i=0; i< execution_part_count; i++) {
 			executable = parsingCtxt.valueStackPop();
 			if (! executable.isNullNode()) {
 				exec_parts.add( executable);
@@ -404,6 +397,13 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 		}
 	}
 
+
+	@Override
+	public void entity_decl(Token id, boolean hasArraySpec, boolean hasCoarraySpec, boolean hasCharLength, boolean hasInitialization) {
+		ASTEntityDeclNode entityDecl = new ASTEntityDeclNode();
+		entityDecl.setObjectName(asttk(id));
+		parsingCtxt.valueStackPush( entityDecl);
+	}
 
 	@Override
 	public void entity_decl_list(int count) {
