@@ -138,7 +138,6 @@ public class ParserActionAST extends FortranParserActionNull {
 		fctStmt.setLabel(asttk(label));
 		fctStmt.setASTField(ASTFunctionStmtNode.TFUNCTION, asttk(keyword));
 		fctStmt.setASTField(ASTFunctionStmtNode.TEOS, asttk(eos));
-		
 		fctStmt.setFunctionName(asttk(name));
 
 		parsingCtxt.valueStackPush(fctStmt);
@@ -211,7 +210,7 @@ public class ParserActionAST extends FortranParserActionNull {
 		}
 		endPcd.setASTField(ASTEndSubroutineStmtNode.TSUBROUT, asttk(keyword2));
 		endPcd.setASTField(ASTEndSubroutineStmtNode.TEOS, asttk(eos));
-		
+
 		parsingCtxt.valueStackPush(endPcd);
 	}
 
@@ -361,7 +360,6 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 	}
 */
 
-	
 	@Override
 	public void entity_decl(Token id, boolean hasArraySpec, boolean hasCoarraySpec, boolean hasCharLength, boolean hasInitialization) {
 		ASTEntityDeclNode entityDecl = new ASTEntityDeclNode();
@@ -396,7 +394,6 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 		}
 		parsingCtxt.valueStackPush(exec_parts);
 	}
-
 
 	@Override
 	public void execution_part_construct(boolean is_executable_construct) {
@@ -479,7 +476,6 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 	}
 	
 	// UTILITIES ---
-	
 
 	protected ASTToken asttk(Token tok) {
 		if (tok != null) {
