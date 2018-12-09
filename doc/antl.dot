@@ -1,0 +1,298 @@
+digraph G {
+
+COMPILATION_UNIT -> main_program
+COMPILATION_UNIT -> external_subprogram
+COMPILATION_UNIT -> module
+COMPILATION_UNIT -> submodule
+COMPILATION_UNIT -> block_data
+
+
+ac_spec -> type_spec [color=red]
+
+array_constructor -> ac_spec [color=red]
+
+array_spec -> array_spec_element [label="+",color="red"]
+array_spec_element -> expr [color=red]
+
+block -> execution_part_construct [label="*"]
+
+block_data -> block_data_stmt [label="1"]
+block_data -> specification_part [label="2"]
+block_data -> end_block_data_stmt [label="3"]
+
+char_selector -> char_length
+char_selector -> type_param_value
+char_selector -> expr [color=red]
+
+component_attr_spec_list -> component_attr_spec [label="*"]
+component_attr_spec -> access_spec
+component_attr_spec -> coarray_spec
+component_attr_spec -> component_array_spec
+component_attr_spec -> component_attr_spec_extension
+
+component_decl_list -> component_decl [label="+"]
+component_decl -> component_array_spec [label="1"]
+component_decl -> coarray_spec [label="2"]
+component_decl -> char_length [label="3"]
+component_decl -> component_initialization [label="4"]
+
+component_def_stmt -> data_component_def_stmt
+component_def_stmt -> proc_component_def_stmt
+
+data_component_def_stmt -> declaration_type_spec [label="1",color="red"]
+data_component_def_stmt -> component_attr_spec_list [label="2 ?"]
+data_component_def_stmt -> component_decl_list [label="3"]
+
+declaration_construct -> derived_type_def [label="1"]
+declaration_construct -> entry_stmt [label="2"]
+declaration_construct -> enum_def [label="3"]
+declaration_construct -> format_stmt [label="4"]
+declaration_construct -> interface_block [label="5"]
+declaration_construct -> parameter_stmt [label="6"]
+declaration_construct -> procedure_declaration_stmt [label="7"]
+declaration_construct -> other_specification_stmt [label="8"]
+declaration_construct -> type_declaration_stmt [label="9",color="red"]
+declaration_construct -> stmt_function_stmt [label="10"]
+
+declaration_type_spec -> intrinsic_type_spec [color="red"]
+declaration_type_spec -> derived_type_spec
+
+derived_type_def -> derived_type_stmt [label="1"]
+derived_type_def -> type_param_or_comp_def_stmt_list [label="2"]
+derived_type_def -> private_or_sequence [label="3"]
+derived_type_def -> component_def_stmt [label="4"]
+derived_type_def -> type_bound_procedure_part [label="5"]
+
+designator-> data_ref [color="red"]
+designator-> substring_range [label="2",color="red"]
+designator-> char_literal_constant [color="red"]
+
+entity_decl_list -> entity_decl [label="*",color="red"]
+entity_decl -> array_spec [label="1",color="red"]
+entity_decl -> coarray_spec [label="2"]
+entity_decl -> char_length [label="3"]
+entity_decl -> initialization [label="4",color="red"]
+
+execution_part -> executable_construct [label="1"]
+execution_part -> execution_part_construct [label="2 *"]
+execution_part_construct -> executable_construct
+execution_part_construct -> format_stmt
+execution_part_construct -> entry_stmt
+execution_part_construct -> data_stmt [color="blue"]
+
+function_stmt -> generic_name_list [label="1 ?"]
+function_stmt -> suffix [label="2 ?"]
+
+function_subprogram -> function_stmt [label="1"]
+function_subprogram -> specification_part [label="2"]
+function_subprogram -> execution_part [label="3 ?"]
+function_subprogram -> internal_subprogram_part [label="4 ?"]
+function_subprogram -> end_function_stmt [label="5"]
+
+initialization -> expr [color=red]
+initialization -> null_init
+
+internal_subprogram_part -> contains_stmt [label="1"]
+internal_subprogram_part -> internal_subprogram [label="2 *"]
+internal_subprogram -> prefix [label="1 ?"]
+internal_subprogram -> function_subprogram [label="2"]
+internal_subprogram -> subroutine_subprogram
+
+intrinsic_type_spec -> kind_selector [color="red"]
+intrinsic_type_spec -> char_selector [color="red"]
+
+kind_selector -> expr [color=red]
+
+main_program -> program_stmt [label="1 ?"]
+main_program -> specification_part [label="2"]
+main_program -> execution_part [label="3 ?"]
+main_program -> internal_subprogram_part [label="4 ?"]
+main_program -> end_program_stmt [label="5"]
+
+module -> module_stmt [label="1"]
+module -> specification_part [label="2"]
+module -> module_subprogram_part [label="3 *"]
+module -> end_module_stmt [label="4"]
+
+module_subprogram_part -> contains_stmt [label="1"]
+module_subprogram_part -> module_subprogram [label="2 *"]
+
+module_subprogram -> prefix [label="?"]
+module_subprogram -> function_subprogram
+module_subprogram -> subroutine_subprogram
+module_subprogram -> separate_module_subprogram
+
+separate_module_subprogram -> mp_subprogram_stmt [label="1"]
+separate_module_subprogram -> specification_part [label="2"]
+separate_module_subprogram -> execution_part [label="3 ?"]
+separate_module_subprogram -> internal_subprogram_part [label="4 ?"]
+separate_module_subprogram -> end_mp_subprogram_stmt [label="5"]
+
+specification_part -> use_stmt [label="1 *"]
+specification_part -> import_stmt [label="2 *"]
+specification_part -> implicit_part_recursion [label="3"]
+specification_part -> declaration_construct [label="4 *",color="red"]
+
+subroutine_subprogram -> subroutine_stmt [label="1"]
+subroutine_subprogram -> specification_part [label="2"]
+subroutine_subprogram -> execution_part [label="3 ?"]
+subroutine_subprogram -> internal_subprogram_part [label="4 ?"]
+subroutine_subprogram -> end_subroutine_stmt [label="5"]
+
+type_declaration_stmt -> declaration_type_spec [label="1",color="red"]
+type_declaration_stmt -> attr_spec [label="2 *"]
+type_declaration_stmt -> entity_decl_list [label="3",color="red"]
+
+type_spec -> intrinsic_type_spec [color="red"]
+type_spec -> derived_type_spec
+
+
+// -------------------------------------------------------------------
+// |                      Statements sub-trees                       |
+// -------------------------------------------------------------------
+
+edge [color=blue]
+
+action_stmt -> allocate_stmt
+action_stmt -> assignment_stmt
+action_stmt -> backspace_stmt
+action_stmt -> call_stmt
+action_stmt -> close_stmt
+action_stmt -> continue_stmt
+action_stmt -> cycle_stmt
+action_stmt -> deallocate_stmt
+action_stmt -> endfile_stmt
+action_stmt -> exit_stmt
+action_stmt -> flush_stmt
+action_stmt -> forall_stmt
+action_stmt -> goto_stmt
+action_stmt -> if_stmt
+action_stmt -> inquire_stmt  
+action_stmt -> nullify_stmt
+action_stmt -> open_stmt
+action_stmt -> pointer_assignment_stmt
+action_stmt -> print_stmt
+action_stmt -> read_stmt
+action_stmt -> return_stmt
+action_stmt -> rewind_stmt
+action_stmt -> stop_stmt
+action_stmt -> wait_stmt
+action_stmt -> where_stmt
+action_stmt -> write_stmt
+action_stmt -> arithmetic_if_stmt
+action_stmt -> computed_goto_stmt
+action_stmt -> assign_stmt 
+action_stmt -> assigned_goto_stmt
+action_stmt -> pause_stmt
+
+call_stmt -> procedure_designator [label="1"]
+call_stmt -> actual_arg_spec_list [label="2",color="red"]
+
+executable_construct -> action_stmt
+executable_construct -> associate_construct
+executable_construct -> block_construct
+executable_construct -> case_construct
+executable_construct -> critical_construct
+executable_construct -> do_construct
+executable_construct -> forall_construct
+executable_construct -> if_construct
+executable_construct -> select_type_construct
+executable_construct -> where_construct
+
+if_construct -> if_then_stmt [label="1"]
+if_construct -> else_if_stmt [label="3 *"]
+if_construct -> block [label="2,4,6 *"]
+if_construct -> else_stmt [label="5 ?"]
+if_construct -> end_if_stmt [label="7"]
+
+other_specification_stmt -> access_stmt
+other_specification_stmt -> allocatable_stmt
+other_specification_stmt -> asynchronous_stmt
+other_specification_stmt -> bind_stmt
+other_specification_stmt -> codimension_stmt
+other_specification_stmt -> common_stmt
+other_specification_stmt -> data_stmt
+other_specification_stmt -> dimension_stmt
+other_specification_stmt -> equivalence_stmt
+other_specification_stmt -> external_stmt
+other_specification_stmt -> intent_stmt
+other_specification_stmt -> intrinsic_stmt
+other_specification_stmt -> namelist_stmt
+other_specification_stmt -> optional_stmt
+other_specification_stmt -> pointer_stmt
+other_specification_stmt -> protected_stmt
+other_specification_stmt -> save_stmt
+other_specification_stmt -> target_stmt
+other_specification_stmt -> volatile_stmt
+other_specification_stmt -> value_stmt
+other_specification_stmt -> other_spec_stmt_extension
+
+
+// -------------------------------------------------------------------
+// |                      Expressions sub-trees                      |
+// -------------------------------------------------------------------
+
+
+edge [color=red]
+
+actual_arg -> expr
+actual_arg_spec -> actual_arg
+actual_arg_spec_list -> actual_arg_spec [label="+"]
+
+data_ref -> part_ref [label="+"]
+
+data_stmt_constant -> designator
+data_stmt_constant -> signed_real_literal_constant
+data_stmt_constant -> signed_int_literal_constant
+data_stmt_constant -> complex_literal_constant
+data_stmt_constant -> logical_literal_constant
+data_stmt_constant -> char_literal_constant
+data_stmt_constant -> boz_literal_constant
+data_stmt_constant -> structure_constructor
+
+data_stmt_value_list -> data_stmt_value [label="+"]
+data_stmt_value -> designator
+data_stmt_value -> data_stmt_constant
+data_stmt_value -> int_literal_constant
+data_stmt_value -> signed_real_literal_constant
+data_stmt_value -> signed_int_literal_constant
+data_stmt_value -> complex_literal_constant
+data_stmt_value -> logical_literal_constant
+data_stmt_value -> char_literal_constant
+data_stmt_value -> boz_literal_constant
+data_stmt_value -> structure_constructor
+data_stmt_value -> hollerith_literal_constant
+
+designator_or_func_ref -> data_ref [label="1a"]
+designator_or_func_ref -> substring_range_or_arg_list [label="2a ?"]
+designator_or_func_ref -> char_literal_constant [label="1b"]
+designator_or_func_ref -> substring_range [label="2b"]
+
+expr -> primary [style=dotted]
+
+literal_constant -> int_literal_constant
+literal_constant -> real_literal_constant
+literal_constant -> complex_literal_constant
+literal_constant -> logical_literal_constant
+literal_constant -> char_literal_constant
+literal_constant -> boz_literal_constant
+literal_constant -> hollerith_literal_constant
+
+primary -> designator_or_func_ref
+primary -> literal_constant
+primary -> array_constructor
+primary -> structure_constructor
+primary -> expr
+
+substring -> data_ref
+substring -> substring_range [label="2"]
+substring -> char_literal_constant
+
+substring_range -> expr [color=red]
+substring_range_or_arg_list -> expr [color=red]
+substring_range_or_arg_list -> substr_range_or_arg_list_suffix
+substring_range_or_arg_list -> actual_arg_spec
+substr_range_or_arg_list_suffix -> expr [color=red]
+substr_range_or_arg_list_suffix -> actual_arg_spec
+
+}
