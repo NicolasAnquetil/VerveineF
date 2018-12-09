@@ -23,7 +23,7 @@ public class CommentVisitor extends AbstractDispatcherVisitor {
 	@Override
 	public void visitASTMainProgramNode(ASTMainProgramNode node) {
 		IREntity entity =  dico.getEntityByKey( mkKey(node.getProgramStmt().getProgramName()));
-		createCommentIfNonBlank(node,entity);
+		createCommentIfAny(node,entity, /*isEntityHeadComment*/true);
 
 		context.push(entity);
 		super.visitASTMainProgramNode(node);
@@ -33,7 +33,7 @@ public class CommentVisitor extends AbstractDispatcherVisitor {
 	@Override
 	public void visitASTModuleNode(ASTModuleNode node) {
 		IREntity entity = dico.getEntityByKey( mkKey(node));
-		createCommentIfNonBlank(node, entity);
+		createCommentIfAny(node, entity, /*isEntityHeadComment*/true);
 
 		context.push(entity);
 		super.visitASTModuleNode(node);
@@ -41,18 +41,18 @@ public class CommentVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	public void visitASTEndModuleStmtNode(ASTEndModuleStmtNode node) {
-		createCommentIfNonBlank(node, context.peek());
+		createCommentIfAny(node, context.peek(), /*isEntityHeadComment*/false);
 
 		super.visitASTEndModuleStmtNode(node);
 
 		context.pop();
 	}
-/*
+	/*
 	@Override
 	public void visitASTFunctionSubprogramNode(ASTFunctionSubprogramNode node) {
 		Function fmx = (Function) dico.getEntityByKey( mkKey(node.getNameToken()));
 		createCommentIfNonBlank(node, fmx);
-		
+
 		/*context.push(fmx);
 		super.visitASTFunctionSubprogramNode(node);
 		context.pop();* /
@@ -79,7 +79,7 @@ public class CommentVisitor extends AbstractDispatcherVisitor {
 		}
 	}
 
-	
+
 	// UTILITIES
 
 	/**
@@ -87,7 +87,7 @@ public class CommentVisitor extends AbstractDispatcherVisitor {
 	 * 
 	 * TODO Deal with #ifdef / #endif that are also "white"
 	 */
-	private void createCommentIfNonBlank(ASTNode node, IREntity entity) {
+	private void createCommentIfAny(ASTNode node, IREntity entity, boolean isEntityHeadComment) {
 		if (entity == null) {
 			new EntityNotFoundException("Entity key not found: "+entity);
 		}
@@ -100,13 +100,15 @@ public class CommentVisitor extends AbstractDispatcherVisitor {
 			irCmt = new IREntity(entity, IRKind.COMMENT);
 			irCmt.data(IREntity.COMMENT_CONTENT, cmtString);
 			dico.addAnonymousEntity( irCmt);
-			
-			// adjusting start of parent entity, removing the comment from it 
-			Integer entStart = (Integer) entity.getData(IREntity.ANCHOR_START);
-			if (entStart != null) {				
-				entity.data(IREntity.ANCHOR_START, entStart - cmtString.length() ); 
+
+			if (isEntityHeadComment) {
+				// adjusting start of parent entity, removing the comment from it 
+				Integer entStart = (Integer) entity.getData(IREntity.ANCHOR_START);
+				if (entStart != null) {				
+					entity.data(IREntity.ANCHOR_START, entStart - cmtString.length() ); 
+				}
 			}
 		}
 	}
-	
+
 }
