@@ -397,7 +397,6 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 		parsingCtxt.valueStackPush(exec_parts);
 	}
 
-
 	@Override
 	public void execution_part_construct(boolean is_executable_construct) {
 		if (! is_executable_construct) {
@@ -479,7 +478,6 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 	}
 	
 	// UTILITIES ---
-	
 
 	protected ASTToken asttk(Token tok) {
 		if (tok != null) {
