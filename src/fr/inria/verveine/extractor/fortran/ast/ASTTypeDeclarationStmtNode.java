@@ -118,4 +118,15 @@ public class ASTTypeDeclarationStmtNode extends ASTNode  implements IBlockDataBo
         default: throw new IllegalArgumentException("Invalid index");
         }
     }
+
+    @Override
+    public String toString() {
+    	// for debug purposes
+    	Object name = "--noEntityDecl--";
+    	if (entityDeclList.size() > 0) {
+    		name = this.entityDeclList.iterator().next().getObjectName();
+    	}
+    	return "ASTTypeDeclarationStmtNode " + name;
+    }
+
 }

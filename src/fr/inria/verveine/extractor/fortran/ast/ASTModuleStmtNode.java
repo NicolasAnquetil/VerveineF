@@ -68,4 +68,10 @@ public class ASTModuleStmtNode extends ASTNode {
         }
     }
 
+    @Override
+    public String toString() {
+    	// for debug purposes
+    	return "ASTModuleStmtNode " + moduleName;
+    }
+
 }

@@ -1,26 +1,77 @@
 package fr.inria.verveine.extractor.fortran.ast;
 
+
 import org.antlr.runtime.Token;
 
 import fortran.ofp.parser.java.FortranLexer;
 import fortran.ofp.parser.java.FortranParserActionNull;
 import fortran.ofp.parser.java.FortranToken;
-import fortran.ofp.parser.java.IActionEnums;
 import fortran.ofp.parser.java.IFortranParser;
 
 public class ParserActionAST extends FortranParserActionNull {
 
-	protected ParsingContext parsingCtxt = new ParsingContext();
+	protected ParsingContext parsingCtxt;
 	
 	public ParserActionAST(String[] args, IFortranParser parser, String filename) {
 		super(args, parser, filename);
-
-		parsingCtxt.valueStackPush( new ASTCompilationUnit(filename));
 	}
 
 	public ASTNode getAST() {
 		return (ASTNode) parsingCtxt.valueStackTop();
 	}
+
+	/**
+	 * Helper class for island grammar parsing: Allows to pop many entries from the parsingContext valuesStack
+	 */
+	protected abstract class Validator {
+		abstract boolean validate(IASTNode node);
+	}
+
+	/**
+	 * Helper class for island grammar parsing: Allows to pop many entries from the parsingContext valuesStack
+	 */
+	protected class CountValidator extends Validator {
+		int count;
+		CountValidator(int count) { this.count = count; }
+		boolean validate(IASTNode node) { return count-- > 0; }
+	}
+
+	/**
+	 * Helper method for island grammar parsing: Allows to pop many entries from the parsingContext valuesStack
+	 */
+	private IASTListNode<IASTNode> parsingContextPopAll(Validator valid) {
+		IASTListNode<IASTNode> poped = new ASTListNode<>();
+
+		IASTNode topNode = parsingCtxt.valueStackTop();
+		while ( valid.validate(topNode) ) {
+			poped.add( topNode);
+			parsingCtxt.valueStackPop();
+			topNode = parsingCtxt.valueStackTop();
+		}
+		return poped;
+	}
+	
+	
+	
+	@Override
+	public void start_of_file(String filename, String path) {
+		 parsingCtxt = new ParsingContext();
+		 parsingCtxt.valueStackPush( new ASTCompilationUnit(path+"/"+filename));
+	}
+
+
+	@Override
+	public void end_of_file(String filename, String path) {
+		IASTListNode<IASTNode> decls;
+		decls = parsingContextPopAll(new Validator() {
+			boolean validate(IASTNode node) {
+				return (! (node instanceof ASTCompilationUnit) );
+			}
+		});
+		ASTCompilationUnit parentNode = (ASTCompilationUnit) parsingCtxt.valueStackTop();
+		parentNode.addAll(decls);
+	}
+
 
 	@Override
 	public void	program_stmt(Token label, Token programKeyword, Token id, Token eos) {
@@ -68,11 +119,8 @@ public class ParserActionAST extends FortranParserActionNull {
 		if (hasProgramStmt) {
 			mainPgm.setProgramStmt((ASTProgramStmtNode) parsingCtxt.valueStackPop());
 		}
-
-		// programs are top level entities
-		// put it in the CompilatinUnit node
-		ASTCompilationUnit parentNode = (ASTCompilationUnit) parsingCtxt.valueStackTop();
-		parentNode.setProgramUnit(mainPgm);
+		
+		parsingCtxt.valueStackPush(mainPgm);
 	}
 
 
@@ -124,12 +172,10 @@ public class ParserActionAST extends FortranParserActionNull {
 		moduleNode.setModuleBody((IASTListNode<IModuleBodyConstruct>) parsingCtxt.valueStackPop());
 		moduleNode.setModuleStmt((ASTModuleStmtNode) parsingCtxt.valueStackPop());
 		
-		// modules are top level entities
-		// put it in the CompilatinUnit node
-		ASTCompilationUnit parentNode = (ASTCompilationUnit) parsingCtxt.valueStackTop();
-		parentNode.setProgramUnit(moduleNode);
+		parsingCtxt.valueStackPush(moduleNode);
 	}
 
+	
 
 	@Override
 	public void function_stmt(Token label, Token keyword, Token name, Token eos, boolean hasGenericNameList, boolean hasSuffix) {
@@ -264,16 +310,20 @@ public class ParserActionAST extends FortranParserActionNull {
 	public void specification_part(int numUseStmts, int numImportStmts, int numImplStmts, int numDeclConstructs) {
 		// numImplStmts = 0
 		ASTListNode<IASTNode> specifications = new ASTListNode<IASTNode>();
-		for (int i=0; i< numDeclConstructs; i++) {
-			specifications.add(parsingCtxt.valueStackPop());
-		}
-		//for (int i=0; i< numImportStmts; i++) {
-		//	specifications.add(parsingCtxt.valueStackPop());
-		//}
-		//for (int i=0; i< numUseStmts; i++) {
-		//	specifications.add(parsingCtxt.valueStackPop());
-		//}
+		specifications.addAll( parsingContextPopAll(new CountValidator(numDeclConstructs)));
+		//specifications.addAll( parsingContextPopAll(new CountValidator(numImportStmts)));
+		//specifications.addAll( parsingContextPopAll(new CountValidator(numUseStmts)));
 		parsingCtxt.valueStackPush(specifications);
+	}
+
+	@Override
+	public void declaration_type_spec(Token udtKeyword, int type) {
+		IASTNode top = parsingCtxt.valueStackTop();
+		if (top instanceof ASTVarOrFnRefNode) {
+			if ( ((ASTVarOrFnRefNode)top).getName().getText().equals("kind") ) {
+				parsingCtxt.valueStackPop();
+			}
+		}
 	}
 
 	@Override
@@ -293,6 +343,30 @@ public class ParserActionAST extends FortranParserActionNull {
 		
 		parsingCtxt.valueStackPush(typeDecl);
 	}
+
+	@Override
+	public void derived_type_stmt(Token label, Token keyword, Token id, Token eos, boolean hasTypeAttrSpecList, boolean hasGenericNameList) {
+		ASTDerivedTypeStmtNode typeStmt = new ASTDerivedTypeStmtNode();
+		typeStmt.setLabel(asttk(label));
+		typeStmt.setTypeName(asttk(id));
+		
+		parsingCtxt.valueStackPush(typeStmt);
+	}
+
+	@Override
+	public void derived_type_def() {
+		ASTDerivedTypeDefNode derivedType = new ASTDerivedTypeDefNode();
+		// ignore everything in the derived_type_def 
+		parsingContextPopAll( new Validator() {
+			@Override
+			boolean validate(IASTNode node) {
+				return ! (node instanceof ASTDerivedTypeStmtNode);
+			}
+		});
+		derivedType.setDerivedTypeStmt((ASTDerivedTypeStmtNode) parsingCtxt.valueStackPop());
+		parsingCtxt.valueStackPush(derivedType);
+	}
+
 
 	@Override
 	public void initialization(boolean hasExpr, boolean hasNullInit) {
@@ -387,19 +461,18 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 	@Override
 	public void execution_part(int execution_part_count) {
 		IASTListNode<IASTNode> exec_parts = new ASTListNode<>();
-		IASTNode topNode = parsingCtxt.valueStackTop();
-		while ( execution_part_of_interest(topNode) ) {
-			exec_parts.add( topNode);
-			parsingCtxt.valueStackPop();
-			topNode = parsingCtxt.valueStackTop();
-		}
+		exec_parts.addAll(
+				parsingContextPopAll( new Validator() {
+					@Override
+					boolean validate(IASTNode node) {
+						return (node instanceof ASTVarOrFnRefNode) || (node instanceof ASTCallStmtNode);
+					}
+				})
+			);
 
 		parsingCtxt.valueStackPush(exec_parts);
 	}
-	
-	private boolean execution_part_of_interest(IASTNode node ) {
-		return (node instanceof ASTVarOrFnRefNode) || (node instanceof ASTCallStmtNode);
-	}
+
 /*
 	@Override
 	public void execution_part_construct(boolean is_executable_construct) {
@@ -413,16 +486,20 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 	public void entity_decl(Token id, boolean hasArraySpec, boolean hasCoarraySpec, boolean hasCharLength, boolean hasInitialization) {
 		ASTEntityDeclNode entityDecl = new ASTEntityDeclNode();
 		entityDecl.setObjectName(asttk(id));
+		if (hasArraySpec) {
+			parsingContextPopAll( new Validator() {
+				boolean validate(IASTNode node) {
+					return node instanceof ASTVarOrFnRefNode;
+				}
+			});
+		}
 		parsingCtxt.valueStackPush( entityDecl);
 	}
 
 	@Override
 	public void entity_decl_list(int count) {
 		IASTListNode<ASTEntityDeclNode> declList = new ASTListNode<ASTEntityDeclNode>();
-		
-		for (int i=0; i<count; i++) {
-			declList.add((ASTEntityDeclNode) parsingCtxt.valueStackPop());
-		}
+		declList.addAll( (IASTListNode<? extends ASTEntityDeclNode>) parsingContextPopAll( new CountValidator(count)));
 		parsingCtxt.valueStackPush( declList);
 	}
 

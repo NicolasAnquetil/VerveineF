@@ -4,21 +4,18 @@ public class ASTCompilationUnit extends ASTNode {
 
 	protected String filename;
 	
-	protected IASTNode programUnit;
+    IASTListNode<IASTNode> compilationUnitBody;
 
 	public ASTCompilationUnit(String filename) {
 		this.filename = filename;
 	}
 
-	public IASTNode getProgramUnit() {
-		return programUnit;
+	public void add(IASTNode node) {
+		compilationUnitBody.add(node);
 	}
 
-	public void setProgramUnit(IASTNode node) {
-		programUnit = node;
-		if (programUnit != null) {
-			node.setParent(this);
-		}
+	public void addAll(IASTListNode<IASTNode> list) {
+		compilationUnitBody.addAll( list);
 	}
 
 	@Override
@@ -38,17 +35,7 @@ public class ASTCompilationUnit extends ASTNode {
     {
         switch (index)
         {
-        case 0:  return this.programUnit;
-        default: throw new IllegalArgumentException("Invalid index");
-        }
-    }
-
-    @Override 
-    protected void setASTField(int index, IASTNode value)
-    {
-        switch (index)
-        {
-        case 0:  this.programUnit = (IASTNode)value; if (value != null) value.setParent(this); return;
+        case 0:  return this.compilationUnitBody;
         default: throw new IllegalArgumentException("Invalid index");
         }
     }
@@ -61,6 +48,11 @@ public class ASTCompilationUnit extends ASTNode {
 	@Override
 	public String basename() {
 		return filename;
+	}
+
+	@Override
+	protected void setASTField(int index, IASTNode value) {
+		
 	}
 
 }

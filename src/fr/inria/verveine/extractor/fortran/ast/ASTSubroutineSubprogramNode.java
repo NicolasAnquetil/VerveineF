@@ -150,4 +150,10 @@ public class ASTSubroutineSubprogramNode extends ASTNode implements IInternalSub
 		return nameToken == null ? null : nameToken.getText();
 	}
 
+    @Override
+    public String toString() {
+    	// for debug purposes
+    	return "ASTSubroutineSubprogramNode " + getNameToken();
+    }
+
 }

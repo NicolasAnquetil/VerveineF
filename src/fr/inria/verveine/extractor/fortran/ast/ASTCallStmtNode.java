@@ -113,5 +113,12 @@ public class ASTCallStmtNode extends ASTNode implements IActionStmt
         default: throw new IllegalArgumentException("Invalid index");
         }
     }
+
+    @Override
+    public String toString() {
+    	// for debug purposes
+    	return "ASTCallStmtNode " + subroutineName;
+    }
+
 }
 

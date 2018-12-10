@@ -187,5 +187,12 @@ public class ASTVarOrFnRefNode extends ASTNode
         default: throw new IllegalArgumentException("Invalid index");
         }
     }
+
+    @Override
+    public String toString() {
+    	// for debug purposes
+    	return "ASTVarOrFnRefNode " + this.name;
+    }
+
 }
 
