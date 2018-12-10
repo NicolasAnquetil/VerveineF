@@ -69,7 +69,7 @@ public class ParserActionAST extends FortranParserActionNull {
 			}
 		});
 		ASTCompilationUnit parentNode = (ASTCompilationUnit) parsingCtxt.valueStackTop();
-		parentNode.addAll(decls);
+		parentNode.setBody(decls);
 	}
 
 
@@ -320,9 +320,7 @@ public class ParserActionAST extends FortranParserActionNull {
 	public void declaration_type_spec(Token udtKeyword, int type) {
 		IASTNode top = parsingCtxt.valueStackTop();
 		if (top instanceof ASTVarOrFnRefNode) {
-			if ( ((ASTVarOrFnRefNode)top).getName().getText().equals("kind") ) {
-				parsingCtxt.valueStackPop();
-			}
+			parsingCtxt.valueStackPop();
 		}
 	}
 

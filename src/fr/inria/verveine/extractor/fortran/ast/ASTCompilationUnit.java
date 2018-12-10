@@ -2,6 +2,8 @@ package fr.inria.verveine.extractor.fortran.ast;
 
 public class ASTCompilationUnit extends ASTNode {
 
+	public static final int BODY = 0;
+
 	protected String filename;
 	
     IASTListNode<IASTNode> compilationUnitBody;
@@ -10,18 +12,20 @@ public class ASTCompilationUnit extends ASTNode {
 		this.filename = filename;
 	}
 
-	public void add(IASTNode node) {
-		compilationUnitBody.add(node);
-	}
-
-	public void addAll(IASTListNode<IASTNode> list) {
-		compilationUnitBody.addAll( list);
-	}
-
 	@Override
 	public void accept(IASTVisitor visitor) {
 		visitor.visitASTCompilationUnit(this);
 		visitor.visitASTNode(this);
+	}
+
+	public IASTListNode<IASTNode> getBody() {
+		return this.compilationUnitBody;
+	}
+
+	public void setBody(IASTListNode<IASTNode> newValue) {
+		this.compilationUnitBody = newValue;
+		if (newValue != null)
+			newValue.setParent(this);
 	}
 
     @Override 
@@ -35,7 +39,7 @@ public class ASTCompilationUnit extends ASTNode {
     {
         switch (index)
         {
-        case 0:  return this.compilationUnitBody;
+        case BODY:  return this.compilationUnitBody;
         default: throw new IllegalArgumentException("Invalid index");
         }
     }
@@ -52,6 +56,11 @@ public class ASTCompilationUnit extends ASTNode {
 
 	@Override
 	protected void setASTField(int index, IASTNode value) {
+        switch (index)
+        {
+        case BODY:  this.compilationUnitBody = (IASTListNode<IASTNode>) value;
+        default: throw new IllegalArgumentException("Invalid index");
+        }
 		
 	}
 
