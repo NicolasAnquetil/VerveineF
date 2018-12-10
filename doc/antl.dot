@@ -43,16 +43,16 @@ data_component_def_stmt -> declaration_type_spec [label="1",color="red"]
 data_component_def_stmt -> component_attr_spec_list [label="2 ?"]
 data_component_def_stmt -> component_decl_list [label="3"]
 
-declaration_construct -> derived_type_def [label="1"]
-declaration_construct -> entry_stmt [label="2"]
-declaration_construct -> enum_def [label="3"]
-declaration_construct -> format_stmt [label="4"]
-declaration_construct -> interface_block [label="5"]
-declaration_construct -> parameter_stmt [label="6"]
-declaration_construct -> procedure_declaration_stmt [label="7"]
-declaration_construct -> other_specification_stmt [label="8"]
-declaration_construct -> type_declaration_stmt [label="9",color="red"]
-declaration_construct -> stmt_function_stmt [label="10"]
+declaration_construct -> derived_type_def
+declaration_construct -> entry_stmt
+declaration_construct -> enum_def
+declaration_construct -> format_stmt
+declaration_construct -> interface_block
+declaration_construct -> parameter_stmt
+declaration_construct -> procedure_declaration_stmt
+declaration_construct -> other_specification_stmt
+declaration_construct -> type_declaration_stmt [color="red"]
+declaration_construct -> stmt_function_stmt
 
 declaration_type_spec -> intrinsic_type_spec [color="red"]
 declaration_type_spec -> derived_type_spec
