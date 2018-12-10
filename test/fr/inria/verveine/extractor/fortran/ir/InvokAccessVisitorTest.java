@@ -1,8 +1,10 @@
 package fr.inria.verveine.extractor.fortran.ir;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,10 +24,15 @@ public class InvokAccessVisitorTest extends AbstractIRTest {
 	}
 
 	@Test
-	public void testFunctionInvocations() {
+	public void testVarOrFunctionRef() {
 		Collection<IREntity> calls = dico.allWithKind(IRKind.NAMEREF);
-		assertEquals(1, calls.size());
-		assertEquals("blih", calls.iterator().next().getName());
+		assertEquals(2, calls.size());
+		
+		Iterator<IREntity> iter = calls.iterator(); 
+		String name = iter.next().getName();
+		assertTrue( name.equals("blih") || name.equals("i") );
+		name = iter.next().getName();
+		assertTrue( name.equals("blih") || name.equals("i") );
 	}
 
 }

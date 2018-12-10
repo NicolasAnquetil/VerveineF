@@ -305,18 +305,28 @@ public class ParserActionAST extends FortranParserActionNull {
 		}
 	}
 
-/*	@Override
+
+	/*
+	@Override
 	public void intrinsic_type_spec(Token keyword1, Token keyword2, int type, boolean hasKindSelector) {
 		// for now pruning expressions
-		if ( (type == IActionEnums.IntrinsicTypeSpec_CHARACTER) ||
-			 (type == IActionEnums.IntrinsicTypeSpec_LOGICAL) ) {
-			if (hasKindSelector) {
-				parsingCtxt.valueStackPop();
-			}
+		if (hasKindSelector) {
+			parsingCtxt.valueStackPop();
 		}
 	}
 
-	
+	@Override
+	public void kind_selector(Token token1, Token token2, boolean hasExpression) {
+		if (hasExpression) {
+			parsingCtxt.valueStackPop();
+		}
+	}
+
+	@Override
+	public void char_selector(Token tk1, Token tk2, int kindOrLen1, int kindOrLen2, boolean hasAsterisk) {
+		super.char_selector(arg0, arg1, arg2, arg3, arg4);
+	}
+
 /*
 
 	@Override
@@ -361,7 +371,7 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 	}
 */
 
-	
+	/*
 	@Override
 	public void executable_construct() {
 		if (parsingCtxt.valueStackTop() instanceof ASTVarOrFnRefNode) {
@@ -372,31 +382,32 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 			parsingCtxt.valueStackPush(new ASTNullNode());
 		}
 	}
-
+*/
 
 	@Override
 	public void execution_part(int execution_part_count) {
 		IASTListNode<IASTNode> exec_parts = new ASTListNode<>();
-		IASTNode executable = parsingCtxt.valueStackPop();
-		if (! executable.isNullNode()) {
-			exec_parts.add( executable);
+		IASTNode topNode = parsingCtxt.valueStackTop();
+		while ( execution_part_of_interest(topNode) ) {
+			exec_parts.add( topNode);
+			parsingCtxt.valueStackPop();
+			topNode = parsingCtxt.valueStackTop();
 		}
-		for (int i=0; i< execution_part_count; i++) {
-			executable = parsingCtxt.valueStackPop();
-			if (! executable.isNullNode()) {
-				exec_parts.add( executable);
-			}
-		}
+
 		parsingCtxt.valueStackPush(exec_parts);
 	}
-
+	
+	private boolean execution_part_of_interest(IASTNode node ) {
+		return (node instanceof ASTVarOrFnRefNode) || (node instanceof ASTCallStmtNode);
+	}
+/*
 	@Override
 	public void execution_part_construct(boolean is_executable_construct) {
 		if (! is_executable_construct) {
 			parsingCtxt.valueStackPush(new ASTNullNode());
 		}
 	}
-
+*/
 
 	@Override
 	public void entity_decl(Token id, boolean hasArraySpec, boolean hasCoarraySpec, boolean hasCharLength, boolean hasInitialization) {
@@ -467,7 +478,7 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 	public void designator_or_func_ref() {
 		ASTVarOrFnRefNode invok = new ASTVarOrFnRefNode();
 		
-		invok.setName(asttk((Token) parsingCtxt.valueGet("part_ref.id")));   // TODO change for valueStack
+		invok.setName(asttk((Token) parsingCtxt.valueRetreive("part_ref.id")));   // TODO change for valueStack
 		
 		parsingCtxt.valueStackPush(invok);
 	}

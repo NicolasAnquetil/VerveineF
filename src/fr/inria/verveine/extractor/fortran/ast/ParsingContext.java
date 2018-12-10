@@ -4,6 +4,8 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Stack;
 
+import org.antlr.runtime.Token;
+
 /**
  * Stores intermediary results of the parser to build the AST<br>
  * Two ways to store these results:
@@ -54,6 +56,19 @@ public class ParsingContext {
 
 	public Object valueGet(String key) {
 		return ruleValues.get(key);
+	}
+
+	/**
+	 * {@link #valueGet(String)} + {@link #valueClear(String)}
+	 */
+	public Object valueRetreive(String key) {
+		Object tmp = valueGet(key);
+		valueClear(key);
+		return tmp;
+	}
+
+	public void valueClear(String key) {
+		ruleValues.remove(key);
 	}
 	
 }

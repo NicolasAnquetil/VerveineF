@@ -1,8 +1,10 @@
 package fr.inria.verveine.extractor.fortran.ast;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -10,7 +12,7 @@ import org.junit.Test;
 public class SubprgTest extends AbstractASTTest {
 		
 	@Before
-	public void setup() throws Exception {
+	public void setup() {
 		super.setup("test_src/unit-tests/simpleSubPrgs.f90");
 	}
 
@@ -44,12 +46,12 @@ public class SubprgTest extends AbstractASTTest {
 	}
 
 	@Test
-	public void testFunctionRef() {
+	public void testVarOrFunctionRef() {
 		Collection<ASTVarOrFnRefNode> calls = ast.findAll(ASTVarOrFnRefNode.class);
-		assertEquals(1, calls.size());
+		assertEquals(2, calls.size());
 
-		ASTVarOrFnRefNode invok = calls.iterator().next(); 
-		assertEquals("blih", invok.getName().getText());
+		Iterator<ASTVarOrFnRefNode> iter = calls.iterator(); 
+		assertTrue( iter.next().getName().getText().equals("blih") || iter.next().getName().getText().equals("blih"));
 	}
 
 }

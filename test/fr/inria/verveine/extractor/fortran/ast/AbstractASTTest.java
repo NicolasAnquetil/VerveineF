@@ -16,15 +16,16 @@ public class AbstractASTTest {
 			ofpParser = new FrontEnd(/*args*/new String[] {}, filename, VerveineFParser.VERVEINE_AST_BUILDER);
 		} catch (IOException e) {
 			e.printStackTrace();
+			return;
 		}
 		try {
 			ofpParser.call();
 		} catch (Exception e) {
 			e.printStackTrace();
+			return;
 		}
 
 		ast = ((ParserActionAST)ofpParser.getParser().getAction()).getAST();
-
 	}
 
 }
