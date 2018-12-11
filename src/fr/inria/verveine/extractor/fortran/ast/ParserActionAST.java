@@ -35,7 +35,7 @@ public class ParserActionAST extends FortranParserActionNull {
 		CountValidator(int count) { this.count = count; }
 		boolean validate(IASTNode node) { return count-- > 0; }
 	}
-
+	
 	/**
 	 * Helper method for island grammar parsing: Allows to pop many entries from the parsingContext valuesStack
 	 */
@@ -45,7 +45,7 @@ public class ParserActionAST extends FortranParserActionNull {
 		IASTNode topNode = parsingCtxt.valueStackTop();
 		while ( valid.validate(topNode) ) {
 			poped.add( topNode);
-			parsingCtxt.valueStackPop();
+			parsingCtxt.popValueStack();
 			topNode = parsingCtxt.valueStackTop();
 		}
 		return poped;
@@ -56,7 +56,7 @@ public class ParserActionAST extends FortranParserActionNull {
 	@Override
 	public void start_of_file(String filename, String path) {
 		 parsingCtxt = new ParsingContext();
-		 parsingCtxt.valueStackPush( new ASTCompilationUnit(path+"/"+filename));
+		 parsingCtxt.pushValueStack( new ASTCompilationUnit(path+"/"+filename));
 	}
 
 
@@ -82,7 +82,7 @@ public class ParserActionAST extends FortranParserActionNull {
 		pgmStmt.setASTField(ASTProgramStmtNode.TEOS, asttk(eos));
 		pgmStmt.setProgramName( asttk(id));
 
-		parsingCtxt.valueStackPush(pgmStmt);
+		parsingCtxt.pushValueStack(pgmStmt);
 	}
 
 	@Override
@@ -95,32 +95,32 @@ public class ParserActionAST extends FortranParserActionNull {
 		endPgmStmt.setEndName(asttk(id));
 		endPgmStmt.setASTField(ASTEndProgramStmtNode.TEOS, asttk(eos));
 
-		parsingCtxt.valueStackPush(endPgmStmt);
+		parsingCtxt.pushValueStack(endPgmStmt);
 	}
 
 	@Override
 	public void main_program(boolean hasProgramStmt, boolean hasExecutionPart, boolean hasInternalSubprogramPart) {
 		ASTMainProgramNode mainPgm = new ASTMainProgramNode();
 
-		mainPgm.setEndProgramStmt((ASTEndProgramStmtNode) parsingCtxt.valueStackPop());
+		mainPgm.setEndProgramStmt((ASTEndProgramStmtNode) parsingCtxt.popValueStack());
 		if (hasInternalSubprogramPart) {
 			//mainPgm.setInternalSubprograms((IASTListNode<IBodyConstruct>) parsingCtxt.valueStackPop());
 		}
 		IASTListNode<IBodyConstruct> specifications;
 		if (hasExecutionPart) {
-			IASTListNode<IBodyConstruct> execList = (IASTListNode<IBodyConstruct>) parsingCtxt.valueStackPop();
-			specifications = (IASTListNode<IBodyConstruct>) parsingCtxt.valueStackPop();
+			IASTListNode<IBodyConstruct> execList = (IASTListNode<IBodyConstruct>) parsingCtxt.popValueStack();
+			specifications = (IASTListNode<IBodyConstruct>) parsingCtxt.popValueStack();
 			specifications.addAll(execList);
 		}
 		else {
-			specifications = (IASTListNode<IBodyConstruct>) parsingCtxt.valueStackPop();
+			specifications = (IASTListNode<IBodyConstruct>) parsingCtxt.popValueStack();
 		}
 		mainPgm.setBody(specifications);
 		if (hasProgramStmt) {
-			mainPgm.setProgramStmt((ASTProgramStmtNode) parsingCtxt.valueStackPop());
+			mainPgm.setProgramStmt((ASTProgramStmtNode) parsingCtxt.popValueStack());
 		}
 		
-		parsingCtxt.valueStackPush(mainPgm);
+		parsingCtxt.pushValueStack(mainPgm);
 	}
 
 
@@ -135,7 +135,7 @@ public class ParserActionAST extends FortranParserActionNull {
 
 		moduleStmt.setModuleName(asttk(id));
 		
-		parsingCtxt.valueStackPush(moduleStmt);
+		parsingCtxt.pushValueStack(moduleStmt);
 	}
 
 	@Override
@@ -146,7 +146,7 @@ public class ParserActionAST extends FortranParserActionNull {
 			// we add to it all (count) module_subprograms
 			IASTListNode<IModuleBodyConstruct> moduleBody = (IASTListNode<IModuleBodyConstruct>) parsingCtxt.valueStackTop(-1 * (count+1));
 			for (int i=0; i<count; i++) {
-				moduleBody.add((IModuleBodyConstruct) parsingCtxt.valueStackPop());
+				moduleBody.add((IModuleBodyConstruct) parsingCtxt.popValueStack());
 			}
 		}
 	}
@@ -161,18 +161,18 @@ public class ParserActionAST extends FortranParserActionNull {
 		endModule.setEndName(asttk(id));
 		endModule.setASTField(ASTEndModuleStmtNode.TEOS, asttk(eos));
 
-		parsingCtxt.valueStackPush(endModule);
+		parsingCtxt.pushValueStack(endModule);
 	}
 
 	@Override
 	public void module() {
 		ASTModuleNode moduleNode = new ASTModuleNode();
 		
-		moduleNode.setEndModuleStmt((ASTEndModuleStmtNode) parsingCtxt.valueStackPop());
-		moduleNode.setModuleBody((IASTListNode<IModuleBodyConstruct>) parsingCtxt.valueStackPop());
-		moduleNode.setModuleStmt((ASTModuleStmtNode) parsingCtxt.valueStackPop());
+		moduleNode.setEndModuleStmt((ASTEndModuleStmtNode) parsingCtxt.popValueStack());
+		moduleNode.setModuleBody((IASTListNode<IModuleBodyConstruct>) parsingCtxt.popValueStack());
+		moduleNode.setModuleStmt((ASTModuleStmtNode) parsingCtxt.popValueStack());
 		
-		parsingCtxt.valueStackPush(moduleNode);
+		parsingCtxt.pushValueStack(moduleNode);
 	}
 
 	
@@ -187,7 +187,7 @@ public class ParserActionAST extends FortranParserActionNull {
 		
 		fctStmt.setFunctionName(asttk(name));
 
-		parsingCtxt.valueStackPush(fctStmt);
+		parsingCtxt.pushValueStack(fctStmt);
 	}
 
 	@Override
@@ -204,30 +204,30 @@ public class ParserActionAST extends FortranParserActionNull {
 		endFct.setASTField(ASTEndFunctionStmtNode.TFUNCTION, asttk(keyword2));
 		endFct.setASTField(ASTEndFunctionStmtNode.TEOS, asttk(eos));
 		
-		parsingCtxt.valueStackPush(endFct);
+		parsingCtxt.pushValueStack(endFct);
 	}
 
 	@Override
 	public void function_subprogram(boolean hasExePart, boolean hasIntSubProg) {
 		ASTFunctionSubprogramNode fctNode = new ASTFunctionSubprogramNode();
 
-		fctNode.setEndFunctionStmt((ASTEndFunctionStmtNode) parsingCtxt.valueStackPop());
+		fctNode.setEndFunctionStmt((ASTEndFunctionStmtNode) parsingCtxt.popValueStack());
 		if (hasIntSubProg) {
 			//fctNode.setInternalSubprograms((IASTListNode<IBodyConstruct>) parsingCtxt.valueStackPop());
 		}
 		IASTListNode<IBodyConstruct> specifications;
 		if (hasExePart) {
-			IASTListNode<IBodyConstruct> execList = (IASTListNode<IBodyConstruct>) parsingCtxt.valueStackPop();
-			specifications = (IASTListNode<IBodyConstruct>) parsingCtxt.valueStackPop();
+			IASTListNode<IBodyConstruct> execList = (IASTListNode<IBodyConstruct>) parsingCtxt.popValueStack();
+			specifications = (IASTListNode<IBodyConstruct>) parsingCtxt.popValueStack();
 			specifications.addAll(execList);
 		}
 		else {
-			specifications = (IASTListNode<IBodyConstruct>) parsingCtxt.valueStackPop();
+			specifications = (IASTListNode<IBodyConstruct>) parsingCtxt.popValueStack();
 		}
 		fctNode.setBody(specifications);
-		fctNode.setFunctionStmt((ASTFunctionStmtNode) parsingCtxt.valueStackPop());
+		fctNode.setFunctionStmt((ASTFunctionStmtNode) parsingCtxt.popValueStack());
 
-		parsingCtxt.valueStackPush(fctNode);
+		parsingCtxt.pushValueStack(fctNode);
 	}
 
 	
@@ -241,7 +241,7 @@ public class ParserActionAST extends FortranParserActionNull {
 		
 		pcdStmt.setSubroutineName(asttk(name));
 		
-		parsingCtxt.valueStackPush( pcdStmt);
+		parsingCtxt.pushValueStack( pcdStmt);
 	}
 	
 	@Override
@@ -258,36 +258,48 @@ public class ParserActionAST extends FortranParserActionNull {
 		endPcd.setASTField(ASTEndSubroutineStmtNode.TSUBROUT, asttk(keyword2));
 		endPcd.setASTField(ASTEndSubroutineStmtNode.TEOS, asttk(eos));
 		
-		parsingCtxt.valueStackPush(endPcd);
+		parsingCtxt.pushValueStack(endPcd);
 	}
 
 	@Override
 	public void subroutine_subprogram(boolean hasExePart, boolean hasIntSubProg) {
 		ASTSubroutineSubprogramNode pcdNode = new ASTSubroutineSubprogramNode();
 
-		pcdNode.setEndSubroutineStmt((ASTEndSubroutineStmtNode) parsingCtxt.valueStackPop());
+		pcdNode.setEndSubroutineStmt((ASTEndSubroutineStmtNode) parsingCtxt.popValueStack());
 		if (hasIntSubProg) {
 			//fctNode.setInternalSubprograms((IASTListNode<IBodyConstruct>) parsingCtxt.valueStackPop());
 		}
 		IASTListNode<IBodyConstruct> specifications;
 		if (hasExePart) {
-			IASTListNode<IBodyConstruct> execList = (IASTListNode<IBodyConstruct>) parsingCtxt.valueStackPop();
-			specifications = (IASTListNode<IBodyConstruct>) parsingCtxt.valueStackPop();
+			IASTListNode<IBodyConstruct> execList = (IASTListNode<IBodyConstruct>) parsingCtxt.popValueStack();
+			specifications = (IASTListNode<IBodyConstruct>) parsingCtxt.popValueStack();
 			specifications.addAll(execList);
 		}
 		else {
-			specifications = (IASTListNode<IBodyConstruct>) parsingCtxt.valueStackPop();
+			specifications = (IASTListNode<IBodyConstruct>) parsingCtxt.popValueStack();
 		}
 		pcdNode.setBody(specifications);
-		pcdNode.setSubroutineStmt((ASTSubroutineStmtNode) parsingCtxt.valueStackPop());
+		try {
+			pcdNode.setSubroutineStmt((ASTSubroutineStmtNode) parsingCtxt.popValueStack());
+		}
+		catch (ClassCastException e) {
+			// helps debugging
+			parsingContextPopAll(new Validator() {
+				boolean validate(IASTNode node) {
+					return ! (node instanceof ASTSubroutineStmtNode);
+				}
+			});
+			ASTSubroutineStmtNode subroutineStmt = (ASTSubroutineStmtNode) parsingCtxt.popValueStack();
+			System.err.println("Parsing error, ignoring subroutine_subprogram " + subroutineStmt.getSubroutineName().getText());
+		}
 
-		parsingCtxt.valueStackPush(pcdNode);
+		parsingCtxt.pushValueStack(pcdNode);
 	}
 
 
 	@Override
 	public void block_data_stmt(Token label, Token blockKeyword, Token dataKeyword, Token id, Token eos) {
-		parsingCtxt.valueStackPush((IASTNode) new ASTListNode<>());
+		parsingCtxt.pushValueStack((IASTNode) new ASTListNode<>());
 	}
 
 	@Override
@@ -297,8 +309,8 @@ public class ParserActionAST extends FortranParserActionNull {
 	@Override
 	public void block_data() {
 		// pop end_block_data_stmt
-		parsingCtxt.valueStackPop(); // specification_part list
-		parsingCtxt.valueStackPop(); // block_data_stmt
+		parsingCtxt.popValueStack(); // specification_part list
+		parsingCtxt.popValueStack(); // block_data_stmt
 		
 		
 		super.block_data();
@@ -313,14 +325,27 @@ public class ParserActionAST extends FortranParserActionNull {
 		specifications.addAll( parsingContextPopAll(new CountValidator(numDeclConstructs)));
 		//specifications.addAll( parsingContextPopAll(new CountValidator(numImportStmts)));
 		//specifications.addAll( parsingContextPopAll(new CountValidator(numUseStmts)));
-		parsingCtxt.valueStackPush(specifications);
+		parsingCtxt.pushValueStack(specifications);
 	}
+
+	
+	
+	@Override
+	public void data_stmt(Token label, Token keyword, Token eos, int count) {
+		parsingCtxt.pushValueStack(new ASTNullNode());  // counts as a declaration_construct in specification_part(...)
+	}
+
+	@Override
+	public void save_stmt(Token label, Token keyword, Token eos, boolean hasSavedEntityList) {
+		parsingCtxt.pushValueStack(new ASTNullNode());  // counts as a declaration_construct in specification_part(...)
+	}
+
 
 	@Override
 	public void declaration_type_spec(Token udtKeyword, int type) {
 		IASTNode top = parsingCtxt.valueStackTop();
 		if (top instanceof ASTVarOrFnRefNode) {
-			parsingCtxt.valueStackPop();
+			parsingCtxt.popValueStack();
 		}
 	}
 
@@ -331,15 +356,15 @@ public class ParserActionAST extends FortranParserActionNull {
 		typeDecl.setLabel(asttk(label));
 		typeDecl.setASTField(ASTTypeDeclarationStmtNode.TEOS, asttk(eos));
 
-		typeDecl.setEntityDeclList( (IASTListNode<ASTEntityDeclNode>) parsingCtxt.valueStackPop());
+		typeDecl.setEntityDeclList( (IASTListNode<ASTEntityDeclNode>) parsingCtxt.popValueStack());
 		for (int i=0; i < numAttributes; i++ ) {
 			ASTAttrSpecSeqNode attrSpecSeq  = new ASTAttrSpecSeqNode();
-			attrSpecSeq.setAttrSpec((ASTAttrSpecNode) parsingCtxt.valueStackPop());
+			attrSpecSeq.setAttrSpec((ASTAttrSpecNode) parsingCtxt.popValueStack());
 			typeDecl.getAttrSpecSeq().add( attrSpecSeq);
 		}
 		//typeDecl.setASTField(, (ASTTypeSpecNode)parsingCtxt.valueStackPop());
 		
-		parsingCtxt.valueStackPush(typeDecl);
+		parsingCtxt.pushValueStack(typeDecl);
 	}
 
 	@Override
@@ -348,7 +373,7 @@ public class ParserActionAST extends FortranParserActionNull {
 		typeStmt.setLabel(asttk(label));
 		typeStmt.setTypeName(asttk(id));
 		
-		parsingCtxt.valueStackPush(typeStmt);
+		parsingCtxt.pushValueStack(typeStmt);
 	}
 
 	@Override
@@ -361,8 +386,8 @@ public class ParserActionAST extends FortranParserActionNull {
 				return ! (node instanceof ASTDerivedTypeStmtNode);
 			}
 		});
-		derivedType.setDerivedTypeStmt((ASTDerivedTypeStmtNode) parsingCtxt.valueStackPop());
-		parsingCtxt.valueStackPush(derivedType);
+		derivedType.setDerivedTypeStmt((ASTDerivedTypeStmtNode) parsingCtxt.popValueStack());
+		parsingCtxt.pushValueStack(derivedType);
 	}
 
 
@@ -372,7 +397,7 @@ public class ParserActionAST extends FortranParserActionNull {
 		if (hasExpr) {
 			IASTNode top = parsingCtxt.valueStackTop();
 			if (top instanceof ASTVarOrFnRefNode) {
-				parsingCtxt.valueStackPop();
+				parsingCtxt.popValueStack();
 			}
 		}
 	}
@@ -468,7 +493,7 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 				})
 			);
 
-		parsingCtxt.valueStackPush(exec_parts);
+		parsingCtxt.pushValueStack(exec_parts);
 	}
 
 /*
@@ -491,14 +516,14 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 				}
 			});
 		}
-		parsingCtxt.valueStackPush( entityDecl);
+		parsingCtxt.pushValueStack( entityDecl);
 	}
 
 	@Override
 	public void entity_decl_list(int count) {
 		IASTListNode<ASTEntityDeclNode> declList = new ASTListNode<ASTEntityDeclNode>();
 		declList.addAll( (IASTListNode<? extends ASTEntityDeclNode>) parsingContextPopAll( new CountValidator(count)));
-		parsingCtxt.valueStackPush( declList);
+		parsingCtxt.pushValueStack( declList);
 	}
 
 
@@ -534,7 +559,7 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 		default: return;
 		}
 
-		parsingCtxt.valueStackPush(attrSpec);
+		parsingCtxt.pushValueStack(attrSpec);
 	}
 
 	@Override
@@ -546,7 +571,7 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 		call.setSubroutineName( asttk((Token) parsingCtxt.valueGet("part_ref.id")) );
 		call.setASTField( ASTCallStmtNode.TEOS, asttk(eos));
 
-		parsingCtxt.valueStackPush(call);
+		parsingCtxt.pushValueStack(call);
 	}
 
 	@Override
@@ -555,7 +580,7 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 		
 		invok.setName(asttk((Token) parsingCtxt.valueRetreive("part_ref.id")));   // TODO change for valueStack
 		
-		parsingCtxt.valueStackPush(invok);
+		parsingCtxt.pushValueStack(invok);
 	}
 	
 	@Override

@@ -123,5 +123,11 @@ public class ASTDerivedTypeDefNode extends ASTNode //ScopingNode implements IDec
         }
     }
 
+    @Override
+    public String toString() {
+    	// for debug purposes
+    	return "ASTDerivedTypeDefNode " + ((derivedTypeStmt != null) ? derivedTypeStmt.basename() : "without DerivedTypeStmt");
+    }
+
 }
 

@@ -176,4 +176,11 @@ public class ASTEntityDeclNode extends ASTNode {
         default: throw new IllegalArgumentException("Invalid index");
         }
     }
+
+    @Override
+    public String toString() {
+    	// for debug purposes
+    	return "ASTEntityDeclNode " + objectName;
+    }
+
 }

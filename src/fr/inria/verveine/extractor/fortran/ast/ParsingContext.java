@@ -10,7 +10,7 @@ import org.antlr.runtime.Token;
  * Stores intermediary results of the parser to build the AST<br>
  * Two ways to store these results:
  * <ul>
- * <li> A stack of values: {@link #valueStackPush(IASTNode)},  {@link #valueStackTop()},  {@link #valueStackPop()}<br>
+ * <li> A stack of values: {@link #pushValueStack(IASTNode)},  {@link #valueStackTop()},  {@link #popValueStack()}<br>
  * 		Used by "upper" rules to pass info to their "inner" rules
  * <li> A dictionary of rule results: {@link #valueSet(String,Object)},  {@link #valueGetString()}<br>
  * 		Used by "lower" rules to pass info to their "owner" rules
@@ -30,7 +30,7 @@ public class ParsingContext {
 		ruleValues = new Hashtable<>();
 	}
 
-	public void valueStackPush(IASTNode node) {
+	public void pushValueStack(IASTNode node) {
 		valueStack.push(node);
 	}
 
@@ -46,7 +46,7 @@ public class ParsingContext {
 		return valueStack.peek();
 	}
 
-	public IASTNode valueStackPop() {
+	public IASTNode popValueStack() {
 		return valueStack.pop();
 	}
 
