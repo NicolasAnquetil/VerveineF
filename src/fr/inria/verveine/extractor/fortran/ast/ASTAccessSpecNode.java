@@ -18,8 +18,8 @@ import java.util.List;
 @SuppressWarnings("all")
 public class ASTAccessSpecNode extends ASTNode
 {
-    ASTToken isPrivate; // in ASTAccessSpecNode
-    ASTToken isPublic; // in ASTAccessSpecNode
+    ASTToken isPrivate;
+    ASTToken isPublic;
 
     public boolean isPrivate()
     {
@@ -76,5 +76,12 @@ public class ASTAccessSpecNode extends ASTNode
         default: throw new IllegalArgumentException("Invalid index");
         }
     }
+
+    @Override
+    public String toString() {
+    	// for debug purposes
+    	return "ASTAccessSpecNode " + (isPrivate==null?isPublic:isPrivate);
+    }
+
 }
 

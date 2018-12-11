@@ -21,6 +21,8 @@ attr_spec -> intent_spec
 attr_spec -> language_binding_spec
 attr_spec -> attr_spec_extension
 
+binding_attr -> access_spec
+
 block -> execution_part_construct [label="*"]
 
 block_data -> block_data_stmt [label="1"]
@@ -96,6 +98,10 @@ function_subprogram -> execution_part [label="3 ?"]
 function_subprogram -> internal_subprogram_part [label="4 ?"]
 function_subprogram -> end_function_stmt [label="5"]
 
+generic_binding -> access_spec [label="1"]
+generic_binding -> generic_spec [label="2"]
+generic_binding -> generic_name_list [label="3"]
+
 initialization -> expr [color=red]
 initialization -> null_init
 
@@ -129,6 +135,13 @@ module_subprogram -> function_subprogram
 module_subprogram -> subroutine_subprogram
 module_subprogram -> separate_module_subprogram
 
+proc_component_attr_spec -> access_spec
+
+proc_attr_spec -> access_spec
+proc_attr_spec -> proc_language_binding_spec
+proc_attr_spec -> intent_spec
+proc_attr_spec -> proc_attr_spec_extension
+
 separate_module_subprogram -> mp_subprogram_stmt [label="1"]
 separate_module_subprogram -> specification_part [label="2"]
 separate_module_subprogram -> execution_part [label="3 ?"]
@@ -150,6 +163,8 @@ type_declaration_stmt -> declaration_type_spec [label="1",color="red"]
 type_declaration_stmt -> attr_spec [label="2 *",color="red"]
 type_declaration_stmt -> entity_decl_list [label="3",color="red"]
 
+type_attr_spec -> access_spec
+
 type_spec -> intrinsic_type_spec [color="red"]
 type_spec -> derived_type_spec
 
@@ -159,6 +174,9 @@ type_spec -> derived_type_spec
 // -------------------------------------------------------------------
 
 edge [color=blue]
+
+access_stmt -> acces_spec [label="1"]
+access_stmt -> access_id_list [label="2 ?"]
 
 action_stmt -> allocate_stmt
 action_stmt -> assignment_stmt

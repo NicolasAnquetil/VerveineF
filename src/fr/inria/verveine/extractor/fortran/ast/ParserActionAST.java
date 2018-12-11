@@ -565,7 +565,7 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 		}
 		
 		switch (attr) {
-		case IActionEnums.AttrSpec_access: attrSpec.setAccessSpec((ASTAccessSpecNode) parsingCtxt.valueRetreive("access_spec")); break;
+		case IActionEnums.AttrSpec_access: attrSpec.setAccessSpec((ASTAccessSpecNode) parsingCtxt.popValueStack()); break;
 		case IActionEnums.AttrSpec_ALLOCATABLE: attrSpec.setIsAllocatable(tk); break;
 		case IActionEnums.AttrSpec_ASYNCHRONOUS: attrSpec.setIsAsync(tk); break;
 		case IActionEnums.AttrSpec_CODIMENSION: attrSpec.setIsCodimension(tk); break;
@@ -592,6 +592,18 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 	}
 
 	@Override
+	public void access_stmt(Token label, Token eos, boolean hasList) {
+		ASTAccessStmtNode accessStmt = new ASTAccessStmtNode();
+		accessStmt.setLabel(asttk(label));
+		accessStmt.setASTField(ASTAccessStmtNode.T_EOS,asttk(eos));
+		
+		accessStmt.setAccessSpec((ASTAccessSpecNode) parsingCtxt.popValueStack());
+		
+		parsingCtxt.pushValueStack(accessStmt);
+	}
+
+
+	@Override
 	public void access_spec(Token keyword, int type) {
 		ASTAccessSpecNode accessSpec = new ASTAccessSpecNode();
 		switch (type) {
@@ -600,7 +612,7 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 		default:
 			System.err.println("Unknown access_spec:"+type+"("+keyword+")");
 		}
-		parsingCtxt.valueSet("access_spec",accessSpec);
+		parsingCtxt.pushValueStack(accessSpec);
 	}
 
 	@Override
