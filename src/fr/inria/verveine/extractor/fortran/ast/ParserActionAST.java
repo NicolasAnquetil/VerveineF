@@ -6,6 +6,7 @@ import org.antlr.runtime.Token;
 import fortran.ofp.parser.java.FortranLexer;
 import fortran.ofp.parser.java.FortranParserActionNull;
 import fortran.ofp.parser.java.FortranToken;
+import fortran.ofp.parser.java.IActionEnums;
 import fortran.ofp.parser.java.IFortranParser;
 
 public class ParserActionAST extends FortranParserActionNull {
@@ -181,6 +182,7 @@ public class ParserActionAST extends FortranParserActionNull {
 				}
 			});
 			System.err.println("Parsing error, ignoring all since  " + parsingCtxt.topValueStack());
+			return;
 		}
 
 		parsingCtxt.pushValueStack(moduleNode);
@@ -247,6 +249,7 @@ public class ParserActionAST extends FortranParserActionNull {
 				}
 			});
 			System.err.println("Parsing error, ignoring all since  " + parsingCtxt.topValueStack());
+			return;
 		}
 
 		parsingCtxt.pushValueStack(fctNode);
@@ -312,6 +315,7 @@ public class ParserActionAST extends FortranParserActionNull {
 				}
 			});
 			System.err.println("Parsing error, ignoring all since  " + parsingCtxt.topValueStack());
+			return;
 		}
 
 		parsingCtxt.pushValueStack(pcdNode);
@@ -380,6 +384,9 @@ public class ParserActionAST extends FortranParserActionNull {
 		typeDecl.setEntityDeclList( (IASTListNode<ASTEntityDeclNode>) parsingCtxt.popValueStack());
 		for (int i=0; i < numAttributes; i++ ) {
 			ASTAttrSpecSeqNode attrSpecSeq  = new ASTAttrSpecSeqNode();
+			if (!(parsingCtxt.topValueStack() instanceof ASTAttrSpecNode)) {
+				System.out.println();
+			}
 			attrSpecSeq.setAttrSpec((ASTAttrSpecNode) parsingCtxt.popValueStack());
 			typeDecl.getAttrSpecSeq().add( attrSpecSeq);
 		}
@@ -551,36 +558,49 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 	@Override
 	public void attr_spec(Token attrKeyword, int attr) {
 		ASTAttrSpecNode attrSpec = new ASTAttrSpecNode();
-		
-		if (attrKeyword == null) {
-			return;
+		ASTToken tk = null;
+
+		if (attrKeyword != null) {
+			tk = asttk(attrKeyword);
 		}
 		
-		ASTToken tk = asttk(attrKeyword);
-		
-		switch (tk.getType()) {
-		case FortranLexer.T_ALLOCATABLE: attrSpec.setIsAllocatable(tk); break;
-		case FortranLexer.T_ASYNCHRONOUS: attrSpec.setIsAsync(tk); break;
-		case FortranLexer.T_CODIMENSION: attrSpec.setIsCodimension(tk); break;
-		case FortranLexer.T_CONTIGUOUS: attrSpec.setIsContiguous(tk); break;
-		case FortranLexer.T_DIMENSION: attrSpec.setIsDimension(tk); break;
-		case FortranLexer.T_EXTERNAL: attrSpec.setIsExternal(tk); break;
-		case FortranLexer.T_INTENT: attrSpec.setIsIntent(tk); break;
-		case FortranLexer.T_INTRINSIC: attrSpec.setIsIntrinsic(tk); break;
-		case FortranLexer.T_OPTIONAL: attrSpec.setIsOptional(tk); break;
-		case FortranLexer.T_PARAMETER: attrSpec.setIsParameter(tk); break;
-		case FortranLexer.T_POINTER: attrSpec.setIsPointer(tk); break;
-		case FortranLexer.T_PROTECTED: attrSpec.setIsProtected(tk); break;
-		case FortranLexer.T_SAVE: attrSpec.setIsSave(tk); break;
-		case FortranLexer.T_TARGET: attrSpec.setIsTarget(tk); break;
-		case FortranLexer.T_VALUE: attrSpec.setIsValue(tk); break;
-		case FortranLexer.T_VOLATILE: attrSpec.setIsVolatile(tk); break;
+		switch (attr) {
+		case IActionEnums.AttrSpec_access: attrSpec.setAccessSpec((ASTAccessSpecNode) parsingCtxt.valueRetreive("access_spec")); break;
+		case IActionEnums.AttrSpec_ALLOCATABLE: attrSpec.setIsAllocatable(tk); break;
+		case IActionEnums.AttrSpec_ASYNCHRONOUS: attrSpec.setIsAsync(tk); break;
+		case IActionEnums.AttrSpec_CODIMENSION: attrSpec.setIsCodimension(tk); break;
+		case IActionEnums.AttrSpec_CONTIGUOUS: attrSpec.setIsContiguous(tk); break;
+		case IActionEnums.AttrSpec_DIMENSION: attrSpec.setIsDimension(tk); break;
+		case IActionEnums.AttrSpec_EXTERNAL: attrSpec.setIsExternal(tk); break;
+		case IActionEnums.AttrSpec_INTENT: attrSpec.setIsIntent(tk); break;
+		case IActionEnums.AttrSpec_INTRINSIC: attrSpec.setIsIntrinsic(tk); break;
+		case IActionEnums.AttrSpec_OPTIONAL: attrSpec.setIsOptional(tk); break;
+		case IActionEnums.AttrSpec_PARAMETER: attrSpec.setIsParameter(tk); break;
+		case IActionEnums.AttrSpec_POINTER: attrSpec.setIsPointer(tk); break;
+		case IActionEnums.AttrSpec_PROTECTED: attrSpec.setIsProtected(tk); break;
+		case IActionEnums.AttrSpec_SAVE: attrSpec.setIsSave(tk); break;
+		case IActionEnums.AttrSpec_TARGET: attrSpec.setIsTarget(tk); break;
+		case IActionEnums.AttrSpec_VALUE: attrSpec.setIsValue(tk); break;
+		case IActionEnums.AttrSpec_VOLATILE: attrSpec.setIsVolatile(tk); break;
 		//case FortranLexer.T_KIND: attrSpec.; break;
 		//case FortranLexer.T_LEN: attrSpec.; break;
-		default: return;
+		default:
+			System.err.println("Unknown attr_spec:"+attr+"("+attrKeyword+")");
 		}
 
 		parsingCtxt.pushValueStack(attrSpec);
+	}
+
+	@Override
+	public void access_spec(Token keyword, int type) {
+		ASTAccessSpecNode accessSpec = new ASTAccessSpecNode();
+		switch (type) {
+		case IActionEnums.AttrSpec_PUBLIC: accessSpec.setIsPublic(asttk(keyword)); break;
+		case IActionEnums.AttrSpec_PRIVATE: accessSpec.setIsPrivate(asttk(keyword)); break;
+		default:
+			System.err.println("Unknown access_spec:"+type+"("+keyword+")");
+		}
+		parsingCtxt.valueSet("access_spec",accessSpec);
 	}
 
 	@Override

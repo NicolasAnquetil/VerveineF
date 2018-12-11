@@ -14,7 +14,7 @@ public class ASTAttrSpecNode extends ASTNode {
 	ASTToken hiddenTLbracket;
 	//ASTCoarraySpecNode coarraySpec;
 	ASTToken hiddenTRbracket;
-	//ASTAccessSpecNode accessSpec;
+	ASTAccessSpecNode accessSpec;
 	ASTToken isIntrinsic;
 	//ASTLanguageBindingSpecNode languageBindingSpec;
 	ASTToken isAllocatable;
@@ -157,19 +157,18 @@ public class ASTAttrSpecNode extends ASTNode {
 	        this.coarraySpec = newValue;
 	        if (newValue != null) newValue.setParent(this);
 	    }
+*/
 
+	public ASTAccessSpecNode getAccessSpec()
+	{
+		return this.accessSpec;
+	}
 
-	    public ASTAccessSpecNode getAccessSpec()
-	    {
-	        return this.accessSpec;
-	    }
-
-	    public void setAccessSpec(ASTAccessSpecNode newValue)
-	    {
-	        this.accessSpec = newValue;
-	        if (newValue != null) newValue.setParent(this);
-	    }
-	 */
+	public void setAccessSpec(ASTAccessSpecNode newValue)
+	{
+		this.accessSpec = newValue;
+		if (newValue != null) newValue.setParent(this);
+	}
 
 	public boolean isIntrinsic()
 	{
@@ -307,7 +306,7 @@ public class ASTAttrSpecNode extends ASTNode {
 	        case 10: return this.hiddenTLbracket;
 	        case 11: return new ASTNullNode(); //this.coarraySpec;
 	        case 12: return this.hiddenTRbracket;
-	        case 13: return new ASTNullNode(); //this.accessSpec;
+	        case 13: return this.accessSpec;
 	        case 14: return this.isIntrinsic;
 	        case 15: return new ASTNullNode(); //this.languageBindingSpec;
 	        case 16: return this.isAllocatable;
@@ -340,7 +339,7 @@ public class ASTAttrSpecNode extends ASTNode {
 	        case 10: this.hiddenTLbracket = (ASTToken)value; if (value != null) value.setParent(this); return;
 	        case 11: return; //this.coarraySpec = (ASTCoarraySpecNode)value; if (value != null) value.setParent(this); return;
 	        case 12: this.hiddenTRbracket = (ASTToken)value; if (value != null) value.setParent(this); return;
-	        case 13: return; //this.accessSpec = (ASTAccessSpecNode)value; if (value != null) value.setParent(this); return;
+	        case 13: this.accessSpec = (ASTAccessSpecNode)value; if (value != null) value.setParent(this); return;
 	        case 14: this.isIntrinsic = (ASTToken)value; if (value != null) value.setParent(this); return;
 	        case 15: return; //this.languageBindingSpec = (ASTLanguageBindingSpecNode)value; if (value != null) value.setParent(this); return;
 	        case 16: this.isAllocatable = (ASTToken)value; if (value != null) value.setParent(this); return;
@@ -354,6 +353,12 @@ public class ASTAttrSpecNode extends ASTNode {
 	        case 24: this.isParameter = (ASTToken)value; if (value != null) value.setParent(this); return;
 	        default: throw new IllegalArgumentException("Invalid index");
 	        }
+	    }
+
+	    @Override
+	    public String toString() {
+	    	// for debug purposes
+	    	return "ASTAttrSpecNode";
 	    }
 
 }

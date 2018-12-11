@@ -14,6 +14,13 @@ array_constructor -> ac_spec [color=red]
 array_spec -> array_spec_element [label="+",color="red"]
 array_spec_element -> expr [color=red]
 
+attr_spec -> access_spec
+attr_spec -> coarray_spec
+attr_spec -> array_spec [color=red]
+attr_spec -> intent_spec
+attr_spec -> language_binding_spec
+attr_spec -> attr_spec_extension
+
 block -> execution_part_construct [label="*"]
 
 block_data -> block_data_stmt [label="1"]
@@ -140,7 +147,7 @@ subroutine_subprogram -> internal_subprogram_part [label="4 ?"]
 subroutine_subprogram -> end_subroutine_stmt [label="5"]
 
 type_declaration_stmt -> declaration_type_spec [label="1",color="red"]
-type_declaration_stmt -> attr_spec [label="2 *"]
+type_declaration_stmt -> attr_spec [label="2 *",color="red"]
 type_declaration_stmt -> entity_decl_list [label="3",color="red"]
 
 type_spec -> intrinsic_type_spec [color="red"]

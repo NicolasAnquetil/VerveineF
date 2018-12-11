@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.Iterator;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -46,13 +48,19 @@ public class VarDeclTest extends AbstractASTTest {
 
 	@Test
 	public void testAttrSpecParameter() {
+		Iterator<ASTAttrSpecSeqNode> iter;
 		for (ASTTypeDeclarationStmtNode decls : ast.findAll(ASTTypeDeclarationStmtNode.class)) {
 			String name = decls.getEntityDeclList().iterator().next().getObjectName().getText();
 			switch (name) {
 			case "aString": 
-			case "aBool":
 				assertEquals(1, decls.getAttrSpecSeq().size());
-				assertTrue( decls.getAttrSpecSeq().iterator().next().getAttrSpec().isParameter());
+				iter = decls.getAttrSpecSeq().iterator();
+				assertTrue( iter.next().getAttrSpec().isParameter());
+				break;
+			case "aBool":
+				assertEquals(2, decls.getAttrSpecSeq().size());
+				iter = decls.getAttrSpecSeq().iterator();
+				assertTrue( iter.next().getAttrSpec().isParameter() || iter.next().getAttrSpec().isParameter());
 				break;
 			
 			case "anInt":
