@@ -18,7 +18,7 @@ public class VarDeclTest extends AbstractASTTest {
 
 	@Test
 	public void testNumberVarDecl() {
-		assertEquals(4, ast.findAll(ASTTypeDeclarationStmtNode.class).size());
+		assertEquals(5, ast.findAll(ASTTypeDeclarationStmtNode.class).size());
 	}
 	
 	@Test
@@ -36,11 +36,12 @@ public class VarDeclTest extends AbstractASTTest {
 			case "anInt":   anInt++;   break;
 			case "aBool":   aBool++;   break;
 			case "aReal":   aReal++;   break;
+			case "dimVar":   anInt++;   break;
 			default: fail("Unknown declared variable: "+name);
 			}
 		}
 		assertEquals(1, aString);
-		assertEquals(1, anInt);
+		assertEquals(2, anInt);
 		assertEquals(1, aBool);
 		assertEquals(1, aReal);
 	}

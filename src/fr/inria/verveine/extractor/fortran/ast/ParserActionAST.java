@@ -3,6 +3,7 @@ package fr.inria.verveine.extractor.fortran.ast;
 
 import org.antlr.runtime.Token;
 
+import antlr.collections.impl.ASTArray;
 import fortran.ofp.parser.java.FortranLexer;
 import fortran.ofp.parser.java.FortranParserActionNull;
 import fortran.ofp.parser.java.FortranToken;
@@ -384,9 +385,7 @@ public class ParserActionAST extends FortranParserActionNull {
 		typeDecl.setEntityDeclList( (IASTListNode<ASTEntityDeclNode>) parsingCtxt.popValueStack());
 		for (int i=0; i < numAttributes; i++ ) {
 			ASTAttrSpecSeqNode attrSpecSeq  = new ASTAttrSpecSeqNode();
-			if (!(parsingCtxt.topValueStack() instanceof ASTAttrSpecNode)) {
-				System.out.println();
-			}
+			bugLocator(ASTVarOrFnRefNode.class);
 			attrSpecSeq.setAttrSpec((ASTAttrSpecNode) parsingCtxt.popValueStack());
 			typeDecl.getAttrSpecSeq().add( attrSpecSeq);
 		}
@@ -423,10 +422,11 @@ public class ParserActionAST extends FortranParserActionNull {
 	public void initialization(boolean hasExpr, boolean hasNullInit) {
 		// for now pruning expressions
 		if (hasExpr) {
-			IASTNode top = parsingCtxt.topValueStack();
-			if (top instanceof ASTVarOrFnRefNode) {
-				parsingCtxt.popValueStack();
-			}
+			parsingContextPopAll(new Validator() {
+				boolean validate(IASTNode node) {
+					return node instanceof ASTVarOrFnRefNode;
+				}
+			});
 		}
 	}
 
@@ -604,6 +604,23 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 
 
 	@Override
+	public void array_spec_element(int type) {
+		if ((type == IActionEnums.ArraySpecElement_expr) ||
+				(type == IActionEnums.ArraySpecElement_expr_colon) ||
+				(type == IActionEnums.ArraySpecElement_expr_colon_expr) ||
+				(type == IActionEnums.ArraySpecElement_expr_colon_asterisk) ) {
+			if (parsingCtxt.topValueStack() instanceof ASTVarOrFnRefNode) {
+				parsingCtxt.popValueStack();				
+			}
+			if (type == IActionEnums.ArraySpecElement_expr_colon_expr) {
+				if (parsingCtxt.topValueStack() instanceof ASTVarOrFnRefNode) {
+					parsingCtxt.popValueStack();				
+				}
+			}
+		}
+	}
+
+	@Override
 	public void access_spec(Token keyword, int type) {
 		ASTAccessSpecNode accessSpec = new ASTAccessSpecNode();
 		switch (type) {
@@ -652,4 +669,15 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 		}
 	}
 	
+	/**
+	 * helps debugging ClassCastException bugs when poping nodes from the context stack<br>
+	 * For this, there should always be a breakpoint set inside the if
+	 */
+	private void bugLocator(Class<? extends IASTNode> clazz) {
+		IASTNode top = parsingCtxt.topValueStack();
+		if (clazz.isInstance(top)) {
+			System.out.println();
+		}
+	}
+
 }
