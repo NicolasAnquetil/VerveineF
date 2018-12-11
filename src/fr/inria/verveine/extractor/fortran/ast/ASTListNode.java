@@ -162,4 +162,9 @@ public class ASTListNode<T extends IASTNode> extends ArrayList<T> implements IAS
 		return false;
 	}
 
+	@Override
+	public boolean isTopLevelNode() {
+		return false;
+	}
+    
 }

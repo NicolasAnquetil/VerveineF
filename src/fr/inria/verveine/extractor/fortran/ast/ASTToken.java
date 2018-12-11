@@ -263,4 +263,10 @@ public class ASTToken implements Token, IASTNode
 	public boolean isNullNode() {
 		return false;
 	}
+
+	@Override
+	public boolean isTopLevelNode() {
+		return false;
+	}
+    
 }

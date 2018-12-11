@@ -17,7 +17,7 @@ public class ParserActionAST extends FortranParserActionNull {
 	}
 
 	public ASTNode getAST() {
-		return (ASTNode) parsingCtxt.valueStackTop();
+		return (ASTNode) parsingCtxt.topValueStack();
 	}
 
 	/**
@@ -42,11 +42,11 @@ public class ParserActionAST extends FortranParserActionNull {
 	private IASTListNode<IASTNode> parsingContextPopAll(Validator valid) {
 		IASTListNode<IASTNode> poped = new ASTListNode<>();
 
-		IASTNode topNode = parsingCtxt.valueStackTop();
+		IASTNode topNode = parsingCtxt.topValueStack();
 		while ( valid.validate(topNode) ) {
 			poped.add( topNode);
 			parsingCtxt.popValueStack();
-			topNode = parsingCtxt.valueStackTop();
+			topNode = parsingCtxt.topValueStack();
 		}
 		return poped;
 	}
@@ -68,7 +68,7 @@ public class ParserActionAST extends FortranParserActionNull {
 				return (! (node instanceof ASTCompilationUnit) );
 			}
 		});
-		ASTCompilationUnit parentNode = (ASTCompilationUnit) parsingCtxt.valueStackTop();
+		ASTCompilationUnit parentNode = (ASTCompilationUnit) parsingCtxt.topValueStack();
 		parentNode.setBody(decls);
 	}
 
@@ -168,10 +168,21 @@ public class ParserActionAST extends FortranParserActionNull {
 	public void module() {
 		ASTModuleNode moduleNode = new ASTModuleNode();
 		
-		moduleNode.setEndModuleStmt((ASTEndModuleStmtNode) parsingCtxt.popValueStack());
-		moduleNode.setModuleBody((IASTListNode<IModuleBodyConstruct>) parsingCtxt.popValueStack());
-		moduleNode.setModuleStmt((ASTModuleStmtNode) parsingCtxt.popValueStack());
-		
+		try {
+			moduleNode.setEndModuleStmt((ASTEndModuleStmtNode) parsingCtxt.popValueStack());
+			moduleNode.setModuleBody((IASTListNode<IModuleBodyConstruct>) parsingCtxt.popValueStack());
+			moduleNode.setModuleStmt((ASTModuleStmtNode) parsingCtxt.popValueStack());
+		}
+		catch (ClassCastException e) {
+			// try to recover from error ...
+			parsingContextPopAll(new Validator() {
+				boolean validate(IASTNode node) {
+					return ! node.isTopLevelNode();
+				}
+			});
+			System.err.println("Parsing error, ignoring all since  " + parsingCtxt.topValueStack());
+		}
+
 		parsingCtxt.pushValueStack(moduleNode);
 	}
 
@@ -225,7 +236,18 @@ public class ParserActionAST extends FortranParserActionNull {
 			specifications = (IASTListNode<IBodyConstruct>) parsingCtxt.popValueStack();
 		}
 		fctNode.setBody(specifications);
-		fctNode.setFunctionStmt((ASTFunctionStmtNode) parsingCtxt.popValueStack());
+		try {
+			fctNode.setFunctionStmt((ASTFunctionStmtNode) parsingCtxt.popValueStack());
+		}
+		catch (ClassCastException e) {
+			// try to recover from error ...
+			parsingContextPopAll(new Validator() {
+				boolean validate(IASTNode node) {
+					return ! node.isTopLevelNode();
+				}
+			});
+			System.err.println("Parsing error, ignoring all since  " + parsingCtxt.topValueStack());
+		}
 
 		parsingCtxt.pushValueStack(fctNode);
 	}
@@ -283,14 +305,13 @@ public class ParserActionAST extends FortranParserActionNull {
 			pcdNode.setSubroutineStmt((ASTSubroutineStmtNode) parsingCtxt.popValueStack());
 		}
 		catch (ClassCastException e) {
-			// helps debugging
+			// try to recover from error ...
 			parsingContextPopAll(new Validator() {
 				boolean validate(IASTNode node) {
-					return ! (node instanceof ASTSubroutineStmtNode);
+					return ! node.isTopLevelNode();
 				}
 			});
-			ASTSubroutineStmtNode subroutineStmt = (ASTSubroutineStmtNode) parsingCtxt.popValueStack();
-			System.err.println("Parsing error, ignoring subroutine_subprogram " + subroutineStmt.getSubroutineName().getText());
+			System.err.println("Parsing error, ignoring all since  " + parsingCtxt.topValueStack());
 		}
 
 		parsingCtxt.pushValueStack(pcdNode);
@@ -343,7 +364,7 @@ public class ParserActionAST extends FortranParserActionNull {
 
 	@Override
 	public void declaration_type_spec(Token udtKeyword, int type) {
-		IASTNode top = parsingCtxt.valueStackTop();
+		IASTNode top = parsingCtxt.topValueStack();
 		if (top instanceof ASTVarOrFnRefNode) {
 			parsingCtxt.popValueStack();
 		}
@@ -395,7 +416,7 @@ public class ParserActionAST extends FortranParserActionNull {
 	public void initialization(boolean hasExpr, boolean hasNullInit) {
 		// for now pruning expressions
 		if (hasExpr) {
-			IASTNode top = parsingCtxt.valueStackTop();
+			IASTNode top = parsingCtxt.topValueStack();
 			if (top instanceof ASTVarOrFnRefNode) {
 				parsingCtxt.popValueStack();
 			}

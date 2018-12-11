@@ -87,5 +87,11 @@ public class ASTSubmoduleNode extends ASTNode implements IProgramUnit  // extend
         default: throw new IllegalArgumentException("Invalid index");
         }
     }
+
+	@Override
+	public boolean isTopLevelNode() {
+		return true;
+	}
+    
 }
 

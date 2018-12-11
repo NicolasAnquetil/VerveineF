@@ -102,5 +102,10 @@ public class ASTModuleNode extends ASTNode implements IProgramUnit // extends Sc
 	public ASTToken getNameToken() {
 		return this.getModuleStmt().getModuleName();
 	}
+
+	@Override
+	public boolean isTopLevelNode() {
+		return true;
+	}
     
 }

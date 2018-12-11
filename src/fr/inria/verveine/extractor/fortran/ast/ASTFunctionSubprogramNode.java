@@ -150,4 +150,9 @@ public class ASTFunctionSubprogramNode extends ASTNode implements IInternalSubpr
 		return nameToken == null ? null : nameToken.getText();
 	}
 
+	@Override
+	public boolean isTopLevelNode() {
+		return true;
+	}
+    
 }

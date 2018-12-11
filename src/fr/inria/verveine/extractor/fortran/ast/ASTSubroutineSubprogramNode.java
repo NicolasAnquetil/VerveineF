@@ -156,4 +156,9 @@ public class ASTSubroutineSubprogramNode extends ASTNode implements IInternalSub
     	return "ASTSubroutineSubprogramNode " + getNameToken();
     }
 
+	@Override
+	public boolean isTopLevelNode() {
+		return true;
+	}
+    
 }

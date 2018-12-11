@@ -110,4 +110,10 @@ public class ASTMainProgramNode extends ASTNode implements IProgramUnit // exten
         default: throw new IllegalArgumentException("Invalid index");
         }
     }
+
+	@Override
+	public boolean isTopLevelNode() {
+		return true;
+	}
+    
 }

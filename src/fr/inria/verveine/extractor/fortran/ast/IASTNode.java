@@ -30,4 +30,6 @@ public interface IASTNode {
 
     public boolean isNullNode();
 
+    public boolean isTopLevelNode();
+
 }

@@ -86,5 +86,11 @@ public class ASTBlockDataSubprogramNode extends ASTNode implements IProgramUnit 
         default: throw new IllegalArgumentException("Invalid index");
         }
     }
+
+	@Override
+	public boolean isTopLevelNode() {
+		return true;
+	}
+    
 }
 
