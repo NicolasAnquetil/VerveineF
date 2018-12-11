@@ -1,5 +1,6 @@
 package fr.inria.verveine.extractor.fortran.visitors;
 
+import fr.inria.verveine.extractor.fortran.ast.ASTCompilationUnit;
 import fr.inria.verveine.extractor.fortran.ast.ASTMainProgramNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTModuleNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTToken;
@@ -25,11 +26,20 @@ public class ScopeDefVisitor extends AbstractDispatcherVisitor {
 	}
 
 	@Override
+	public void visitASTCompilationUnit(ASTCompilationUnit node) {
+		IREntity entity = dico.addEntity(mkKey(node), IRKind.COMPILATION_UNIT, /*parent*/null);
+		entity.name(node.fullyQualifiedName());
+		context.push(entity);
+
+		super.visitASTCompilationUnit(node);
+	}
+
+	@Override
 	public void visitASTMainProgramNode(ASTMainProgramNode node) {
 		ASTToken tk = node.getProgramStmt().getProgramName();
 		
-		//Create the Famix Program from the ProgramNameNode which contains the name instead of using MAinProgramNode
-		IREntity entity = dico.addEntity(mkKey(tk), IRKind.PROGRAM, /*parent*/null);
+		//Create the Famix Program from the ProgramNameNode which contains the name instead of using MainProgramNode
+		IREntity entity = dico.addEntity(mkKey(tk), IRKind.PROGRAM, /*parent*/context.peek());
 		entity.name(tk.getText());
 		entity.data(IREntity.IS_STUB, false);
 		entity.addSourceAnchor( filename, node);
@@ -37,7 +47,7 @@ public class ScopeDefVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	public void visitASTModuleNode(ASTModuleNode node) {
-		IREntity entity = dico.addEntity( mkKey(node), IRKind.MODULE, /*parent*/null);
+		IREntity entity = dico.addEntity( mkKey(node), IRKind.MODULE, /*parent*/context.peek());
 		entity.name(node.basename());
 		entity.data(IREntity.IS_STUB, false);
 		entity.addSourceAnchor( filename, node);

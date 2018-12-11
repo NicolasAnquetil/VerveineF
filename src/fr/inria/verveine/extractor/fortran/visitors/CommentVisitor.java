@@ -1,6 +1,7 @@
 package fr.inria.verveine.extractor.fortran.visitors;
 
 import fr.inria.verveine.extractor.fortran.EntityNotFoundException;
+import fr.inria.verveine.extractor.fortran.ast.ASTCompilationUnit;
 import fr.inria.verveine.extractor.fortran.ast.ASTEndModuleStmtNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTMainProgramNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTModuleNode;
@@ -18,6 +19,14 @@ public class CommentVisitor extends AbstractDispatcherVisitor {
 	@Override
 	protected String msgTrace() {
 		return "Adding comments to entities";
+	}
+
+	@Override
+	public void visitASTCompilationUnit(ASTCompilationUnit node) {
+		IREntity entity = dico.getEntityByKey(mkKey(node));
+		context.push(entity);
+
+		super.visitASTCompilationUnit(node);
 	}
 
 	@Override

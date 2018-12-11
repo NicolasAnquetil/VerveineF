@@ -2,6 +2,7 @@ package fr.inria.verveine.extractor.fortran.visitors;
 
 import fr.inria.verveine.extractor.fortran.ast.ASTCaseConstructNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTCaseStmtNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTCompilationUnit;
 import fr.inria.verveine.extractor.fortran.ast.ASTElseIfConstructNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTEndFunctionStmtNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTEndModuleStmtNode;
@@ -33,6 +34,14 @@ public class SubprgDefVisitor extends AbstractDispatcherVisitor {
 	@Override
 	protected String msgTrace() {
 		return "Creating subprograms";
+	}
+
+	@Override
+	public void visitASTCompilationUnit(ASTCompilationUnit node) {
+		IREntity entity = dico.getEntityByKey(mkKey(node));
+		context.push(entity);
+
+		super.visitASTCompilationUnit(node);
 	}
 
 	/**

@@ -1,6 +1,7 @@
 package fr.inria.verveine.extractor.fortran.visitors;
 
 import fr.inria.verveine.extractor.fortran.ast.ASTCallStmtNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTCompilationUnit;
 import fr.inria.verveine.extractor.fortran.ast.ASTEndFunctionStmtNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTEndProgramStmtNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTEndSubroutineStmtNode;
@@ -24,7 +25,14 @@ public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 		return "Creating variable accesses and subprograms calls";
 	}
 	
-	// ================  V I S I T O R  =======================
+	@Override
+	public void visitASTCompilationUnit(ASTCompilationUnit node) {
+		IREntity entity = dico.getEntityByKey(mkKey(node));
+		context.push(entity);
+
+		super.visitASTCompilationUnit(node);
+	}
+
 	@Override
 	public void visitASTMainProgramNode(ASTMainProgramNode node) {
 		ASTToken tk = node.getProgramStmt().getProgramName();

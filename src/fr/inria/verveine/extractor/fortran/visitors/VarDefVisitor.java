@@ -1,6 +1,7 @@
 package fr.inria.verveine.extractor.fortran.visitors;
 
 import fr.inria.verveine.extractor.fortran.ast.ASTAttrSpecSeqNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTCompilationUnit;
 import fr.inria.verveine.extractor.fortran.ast.ASTEndModuleStmtNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTEndProgramStmtNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTEntityDeclNode;
@@ -24,6 +25,14 @@ public class VarDefVisitor extends AbstractDispatcherVisitor {
 	@Override
 	protected String msgTrace() {
 		return "Creating variables";
+	}
+
+	@Override
+	public void visitASTCompilationUnit(ASTCompilationUnit node) {
+		IREntity entity = dico.getEntityByKey(mkKey(node));
+		context.push(entity);
+
+		super.visitASTCompilationUnit(node);
 	}
 
 	/**

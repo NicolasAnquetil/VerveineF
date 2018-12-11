@@ -56,7 +56,7 @@ public class ParserActionAST extends FortranParserActionNull {
 	@Override
 	public void start_of_file(String filename, String path) {
 		 parsingCtxt = new ParsingContext();
-		 parsingCtxt.pushValueStack( new ASTCompilationUnit(path+"/"+filename));
+		 parsingCtxt.pushValueStack( new ASTCompilationUnit(filename));
 	}
 
 

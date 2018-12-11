@@ -2,6 +2,8 @@ package fr.inria.verveine.extractor.fortran.ir;
 
 import static org.junit.Assert.*;
 
+import java.util.Collection;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,14 +15,25 @@ public class ScopeVisitorProgramTest extends AbstractIRTest {
 	}
 
 	@Test
-	public void testProgram() {
+	public void testCompilationUnit() {
 		IREntity root;
 		root = dico.getRoot();
 		
 		assertNotNull(root);
-		assertEquals("LE_PROGRAMME", root.getName());
-		assertEquals(0, root.getData("anchorstart"));
-		assertEquals(33, root.getData("anchorend"));
+		assertEquals("[test_src/unit-tests/smallProgram.f90]", root.getName());
+	}
+
+	@Test
+	public void testProgram() {
+		Collection<IREntity> pgms = dico.allWithKind(IRKind.PROGRAM);
+		assertEquals(1, pgms.size());
+
+		IREntity pgm = pgms.iterator().next(); 
+		
+		assertNotNull(pgm);
+		assertEquals("LE_PROGRAMME", pgm.getName());
+		assertEquals(0, pgm.getData("anchorstart"));
+		assertEquals(33, pgm.getData("anchorend"));
 	}
 
 }
