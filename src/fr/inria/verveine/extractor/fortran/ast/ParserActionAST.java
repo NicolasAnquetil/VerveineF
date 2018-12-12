@@ -201,7 +201,8 @@ public class ParserActionAST extends FortranParserActionNull {
 		catch (ClassCastException e) {
 			// try to recover from error ...
 			parsingContextPopAll(new UntilTopEntityValidator());
-			System.err.println("Parsing error "+moduleNode.getEndModuleStmt().getEndName()+", ignoring all since  " + parsingCtxt.topValueStack());
+			ASTToken lastToken = (ASTToken) moduleNode.getEndModuleStmt().getASTField(ASTEndModuleStmtNode.TEOS);
+			System.err.println("Parsing error "+lastToken+", ignoring all since  " + parsingCtxt.topValueStack());
 			return;
 		}
 
@@ -264,7 +265,8 @@ public class ParserActionAST extends FortranParserActionNull {
 		catch (ClassCastException e) {
 			// try to recover from error ...
 			parsingContextPopAll(new UntilTopEntityValidator());
-			System.err.println("Parsing error after "+fctNode.getEndFunctionStmt().getEndName()+", ignoring all since  " + parsingCtxt.topValueStack());
+			ASTToken lastToken = (ASTToken) fctNode.getEndFunctionStmt().getASTField(ASTEndFunctionStmtNode.TEOS);
+			System.err.println("Parsing error after "+lastToken+", ignoring all since  " + parsingCtxt.topValueStack());
 			return;
 		}
 
@@ -326,7 +328,8 @@ public class ParserActionAST extends FortranParserActionNull {
 		catch (ClassCastException e) {
 			// try to recover from error ...
 			parsingContextPopAll(new UntilTopEntityValidator());
-			System.err.println("Parsing error after "+ pcdNode.getEndSubroutineStmt().getEndName()+", ignoring all since  " + parsingCtxt.topValueStack());
+			IASTNode lastToken = pcdNode.getEndSubroutineStmt().getASTField(ASTEndSubroutineStmtNode.TEOS);
+			System.err.println("Parsing error after "+ lastToken+", ignoring all since  " + parsingCtxt.topValueStack());
 			return;
 		}
 
