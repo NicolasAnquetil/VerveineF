@@ -12,7 +12,7 @@ public class ModuleTest extends AbstractASTTest {
 		
 	@Before
 	public void setup() throws Exception {
-		super.setup("test_src/unit-tests/simpleModule.f90");
+		super.setup("test_src/unit-tests/specificationPart.f90");
 	}
 
 	@Test
@@ -21,7 +21,7 @@ public class ModuleTest extends AbstractASTTest {
 		assertEquals(1, mods.size());
 
 		ASTModuleNode mod = mods.iterator().next(); 
-		assertEquals("simpleModule", mod.basename());
+		assertEquals(3, mod.getModuleBody().size());
 	}
 
 }

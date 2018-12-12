@@ -104,5 +104,12 @@ public class ASTAccessStmtNode extends ASTNode //implements ISpecificationStmt
         default: throw new IllegalArgumentException("Invalid index");
         }
     }
+
+    @Override
+    public String toString() {
+    	// for debug purposes
+    	return "ASTAccessStmtNode " + hiddenTEos;
+    }
+
 }
 

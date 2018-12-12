@@ -209,8 +209,6 @@ public class ParserActionAST extends FortranParserActionNull {
 		parsingCtxt.pushValueStack(moduleNode);
 	}
 
-	
-
 	@Override
 	public void function_stmt(Token label, Token keyword, Token name, Token eos, boolean hasGenericNameList, boolean hasSuffix) {
 		ASTFunctionStmtNode fctStmt = new ASTFunctionStmtNode();
@@ -361,10 +359,16 @@ public class ParserActionAST extends FortranParserActionNull {
 
 
 	@Override
+	public void interface_block() {
+		parsingCtxt.pushValueStack(new ASTInterfaceBodyNode());
+	}
+
+
+	@Override
 	public void specification_part(int numUseStmts, int numImportStmts, int numImplStmts, int numDeclConstructs) {
 		// numImplStmts = 0
-		ASTListNode<IASTNode> specifications = new ASTListNode<IASTNode>();
-		specifications.addAll( parsingContextPopAll(new CountValidator(numDeclConstructs)));
+		ASTListNode<IASTNode> specifications;
+		specifications = (ASTListNode<IASTNode>) parsingContextPopAll(new CountValidator(numDeclConstructs));
 		//specifications.addAll( parsingContextPopAll(new CountValidator(numImportStmts)));
 		//specifications.addAll( parsingContextPopAll(new CountValidator(numUseStmts)));
 		parsingCtxt.pushValueStack(specifications);
@@ -625,14 +629,7 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 				(type == IActionEnums.ArraySpecElement_expr_colon) ||
 				(type == IActionEnums.ArraySpecElement_expr_colon_expr) ||
 				(type == IActionEnums.ArraySpecElement_expr_colon_asterisk) ) {
-			if (parsingCtxt.topValueStack() instanceof ASTVarOrFnRefNode) {
-				parsingCtxt.popValueStack();				
-			}
-			if (type == IActionEnums.ArraySpecElement_expr_colon_expr) {
-				if (parsingCtxt.topValueStack() instanceof ASTVarOrFnRefNode) {
-					parsingCtxt.popValueStack();				
-				}
-			}
+			parsingContextPopAll(new WhileTypeValidator(ASTVarOrFnRefNode.class));				
 		}
 	}
 
