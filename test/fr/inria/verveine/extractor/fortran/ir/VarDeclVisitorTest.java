@@ -17,7 +17,7 @@ public class VarDeclVisitorTest extends AbstractIRTest {
 
 	@Test
 	public void testNumberVarDecl() {
-		assertEquals(4, dico.allWithKind(IRKind.VARIABLE).size());
+		assertEquals(5, dico.allWithKind(IRKind.VARIABLE).size());
 	}
 	
 	@Test
@@ -33,11 +33,12 @@ public class VarDeclVisitorTest extends AbstractIRTest {
 			case "anInt":   anInt++;   break;
 			case "aBool":   aBool++;   break;
 			case "aReal":   aReal++;   break;
+			case "dimVar":   anInt++;   break;
 			default: fail("Unknown declared variable: "+var.getName());
 			}
 		}
 		assertEquals(1, aString);
-		assertEquals(1, anInt);
+		assertEquals(2, anInt);
 		assertEquals(1, aBool);
 		assertEquals(1, aReal);
 	}

@@ -14,14 +14,6 @@ public class ParserActionAST extends FortranParserActionNull {
 
 	protected ParsingContext parsingCtxt;
 	
-	public ParserActionAST(String[] args, IFortranParser parser, String filename) {
-		super(args, parser, filename);
-	}
-
-	public ASTNode getAST() {
-		return (ASTNode) parsingCtxt.topValueStack();
-	}
-
 	/**
 	 * Helper class for island grammar parsing: Allows to pop many entries from the parsingContext valuesStack
 	 */
@@ -30,14 +22,49 @@ public class ParserActionAST extends FortranParserActionNull {
 	}
 
 	/**
-	 * Helper class for island grammar parsing: Allows to pop many entries from the parsingContext valuesStack
+	 * Helper class for island grammar parsing: Pops a given number of entries from the parsingContext valuesStack
 	 */
 	protected class CountValidator extends Validator {
 		int count;
 		CountValidator(int count) { this.count = count; }
 		boolean validate(IASTNode node) { return count-- > 0; }
 	}
+
+	/**
+	 * Helper class for island grammar parsing: Allows to pop all entries of a given type from the parsingContext valuesStack
+	 */
+	protected class WhileTypeValidator extends Validator {
+		Class<? extends IASTNode> clazz;
+		WhileTypeValidator(Class<? extends IASTNode> clazz) { this.clazz = clazz; }
+		boolean validate(IASTNode node) { return clazz.isInstance(node); }
+	}
+
+	/**
+	 * Helper class for island grammar parsing: Allows to pop all entries not of a given type from the parsingContext valuesStack
+	 */
+	protected class UntilTypeValidator extends Validator {
+		Class<? extends IASTNode> clazz;
+		UntilTypeValidator(Class<? extends IASTNode> clazz) { this.clazz = clazz; }
+		boolean validate(IASTNode node) { return ! clazz.isInstance(node); }
+	}
+
+	/**
+	 * Helper class for island grammar parsing: Allows to pop all entries that are not {@link #IASTNode.isTopLevel()} from the parsingContext valuesStack
+	 */
+	protected class UntilTopEntityValidator extends Validator {
+		boolean validate(IASTNode node) { return ! node.isTopLevelNode(); }
+	}
+
 	
+	
+	public ParserActionAST(String[] args, IFortranParser parser, String filename) {
+		super(args, parser, filename);
+	}
+
+	public ASTNode getAST() {
+		return (ASTNode) parsingCtxt.topValueStack();
+	}
+
 	/**
 	 * Helper method for island grammar parsing: Allows to pop many entries from the parsingContext valuesStack
 	 */
@@ -65,11 +92,7 @@ public class ParserActionAST extends FortranParserActionNull {
 	@Override
 	public void end_of_file(String filename, String path) {
 		IASTListNode<IASTNode> decls;
-		decls = parsingContextPopAll(new Validator() {
-			boolean validate(IASTNode node) {
-				return (! (node instanceof ASTCompilationUnit) );
-			}
-		});
+		decls = parsingContextPopAll(new UntilTypeValidator(ASTCompilationUnit.class));
 		ASTCompilationUnit parentNode = (ASTCompilationUnit) parsingCtxt.topValueStack();
 		parentNode.setBody(decls);
 	}
@@ -177,12 +200,8 @@ public class ParserActionAST extends FortranParserActionNull {
 		}
 		catch (ClassCastException e) {
 			// try to recover from error ...
-			parsingContextPopAll(new Validator() {
-				boolean validate(IASTNode node) {
-					return ! node.isTopLevelNode();
-				}
-			});
-			System.err.println("Parsing error, ignoring all since  " + parsingCtxt.topValueStack());
+			parsingContextPopAll(new UntilTopEntityValidator());
+			System.err.println("Parsing error "+moduleNode.getEndModuleStmt().getEndName()+", ignoring all since  " + parsingCtxt.topValueStack());
 			return;
 		}
 
@@ -244,12 +263,8 @@ public class ParserActionAST extends FortranParserActionNull {
 		}
 		catch (ClassCastException e) {
 			// try to recover from error ...
-			parsingContextPopAll(new Validator() {
-				boolean validate(IASTNode node) {
-					return ! node.isTopLevelNode();
-				}
-			});
-			System.err.println("Parsing error, ignoring all since  " + parsingCtxt.topValueStack());
+			parsingContextPopAll(new UntilTopEntityValidator());
+			System.err.println("Parsing error after "+fctNode.getEndFunctionStmt().getEndName()+", ignoring all since  " + parsingCtxt.topValueStack());
 			return;
 		}
 
@@ -310,12 +325,8 @@ public class ParserActionAST extends FortranParserActionNull {
 		}
 		catch (ClassCastException e) {
 			// try to recover from error ...
-			parsingContextPopAll(new Validator() {
-				boolean validate(IASTNode node) {
-					return ! node.isTopLevelNode();
-				}
-			});
-			System.err.println("Parsing error, ignoring all since  " + parsingCtxt.topValueStack());
+			parsingContextPopAll(new UntilTopEntityValidator());
+			System.err.println("Parsing error after "+ pcdNode.getEndSubroutineStmt().getEndName()+", ignoring all since  " + parsingCtxt.topValueStack());
 			return;
 		}
 
@@ -407,12 +418,7 @@ public class ParserActionAST extends FortranParserActionNull {
 	public void derived_type_def() {
 		ASTDerivedTypeDefNode derivedType = new ASTDerivedTypeDefNode();
 		// ignore everything in the derived_type_def 
-		parsingContextPopAll( new Validator() {
-			@Override
-			boolean validate(IASTNode node) {
-				return ! (node instanceof ASTDerivedTypeStmtNode);
-			}
-		});
+		parsingContextPopAll( new UntilTypeValidator(ASTDerivedTypeStmtNode.class));
 		derivedType.setDerivedTypeStmt((ASTDerivedTypeStmtNode) parsingCtxt.popValueStack());
 		parsingCtxt.pushValueStack(derivedType);
 	}
@@ -422,11 +428,7 @@ public class ParserActionAST extends FortranParserActionNull {
 	public void initialization(boolean hasExpr, boolean hasNullInit) {
 		// for now pruning expressions
 		if (hasExpr) {
-			parsingContextPopAll(new Validator() {
-				boolean validate(IASTNode node) {
-					return node instanceof ASTVarOrFnRefNode;
-				}
-			});
+			parsingContextPopAll(new WhileTypeValidator(ASTVarOrFnRefNode.class));
 		}
 	}
 
@@ -538,11 +540,7 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 		ASTEntityDeclNode entityDecl = new ASTEntityDeclNode();
 		entityDecl.setObjectName(asttk(id));
 		if (hasArraySpec) {
-			parsingContextPopAll( new Validator() {
-				boolean validate(IASTNode node) {
-					return node instanceof ASTVarOrFnRefNode;
-				}
-			});
+			parsingContextPopAll( new UntilTypeValidator(ASTVarOrFnRefNode.class));
 		}
 		parsingCtxt.pushValueStack( entityDecl);
 	}
