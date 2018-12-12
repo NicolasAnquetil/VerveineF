@@ -58,17 +58,25 @@ public class VarDeclTest extends AbstractASTTest {
 				iter = decls.getAttrSpecSeq().iterator();
 				assertTrue( iter.next().getAttrSpec().isParameter());
 				break;
+			case "anInt":
+				assertEquals(1, decls.getAttrSpecSeq().size());
+				iter = decls.getAttrSpecSeq().iterator();
+				assertTrue( iter.next().getAttrSpec().isIntent());
+				break;
 			case "aBool":
 				assertEquals(2, decls.getAttrSpecSeq().size());
 				iter = decls.getAttrSpecSeq().iterator();
 				assertTrue( iter.next().getAttrSpec().isParameter() || iter.next().getAttrSpec().isParameter());
-				break;
-			
-			case "anInt":
+				break;			
 			case "aReal":
 				assertEquals(0, decls.getAttrSpecSeq().size());
 				break;
-				
+			case "dimVar":
+				assertEquals(1, decls.getAttrSpecSeq().size());
+				iter = decls.getAttrSpecSeq().iterator();
+				assertTrue( iter.next().getAttrSpec().isDimension());
+				break;
+		
 			default:
 				break;
 			}

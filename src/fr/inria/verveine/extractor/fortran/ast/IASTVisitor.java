@@ -47,5 +47,6 @@ public interface IASTVisitor {
 	public void visitASTVarOrFnRefNode(ASTVarOrFnRefNode node);
 	public void visitASTAccessSpecNode(ASTAccessSpecNode astAccessSpecNode);
 	public void visitASTAccessStmtNode(ASTAccessStmtNode astAccessStmtNode);
+	public void visitASTIntentSpecNode(ASTIntentSpecNode astIntentSpecNode);
 
 }

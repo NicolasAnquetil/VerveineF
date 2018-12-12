@@ -307,6 +307,8 @@ public class ParserActionAST extends FortranParserActionNull {
 	@Override
 	public void subroutine_subprogram(boolean hasExePart, boolean hasIntSubProg) {
 		ASTSubroutineSubprogramNode pcdNode = new ASTSubroutineSubprogramNode();
+		
+		ASTToken tk = (ASTToken) ((ASTEndSubroutineStmtNode) parsingCtxt.topValueStack()).getASTField(ASTEndSubroutineStmtNode.TEOS);
 
 		pcdNode.setEndSubroutineStmt((ASTEndSubroutineStmtNode) parsingCtxt.popValueStack());
 		if (hasIntSubProg) {
@@ -601,6 +603,19 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 		accessStmt.setAccessSpec((ASTAccessSpecNode) parsingCtxt.popValueStack());
 		
 		parsingCtxt.pushValueStack(accessStmt);
+	}
+
+
+	@Override
+	public void intent_spec(Token intentKeyword1, Token intentKeyword2, int intent) {
+		ASTIntentSpecNode intent_spec = new ASTIntentSpecNode();
+		switch (intent) {
+		case IActionEnums.IntentSpec_IN: intent_spec.setIsIntentIn(asttk(intentKeyword1)); break;
+		case IActionEnums.IntentSpec_OUT: intent_spec.setIsIntentOut(asttk(intentKeyword1)); break;
+		case IActionEnums.IntentSpec_INOUT: intent_spec.setIsIntentInOut(asttk(intentKeyword1)); break;
+		default:
+			System.err.println("Unknown intent_spec:"+intent+"("+intentKeyword1+")");
+		}
 	}
 
 
