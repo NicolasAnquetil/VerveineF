@@ -549,7 +549,7 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 		ASTEntityDeclNode entityDecl = new ASTEntityDeclNode();
 		entityDecl.setObjectName(asttk(id));
 		if (hasArraySpec) {
-			parsingContextPopAll( new UntilTypeValidator(ASTVarOrFnRefNode.class));
+			parsingContextPopAll( new WhileTypeValidator(ASTVarOrFnRefNode.class));
 		}
 		parsingCtxt.pushValueStack( entityDecl);
 	}
