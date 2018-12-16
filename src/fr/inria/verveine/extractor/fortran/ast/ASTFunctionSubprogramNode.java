@@ -66,12 +66,12 @@ public class ASTFunctionSubprogramNode extends ASTNode implements IInternalSubpr
 	@Override
 	public void accept(IASTVisitor visitor) {
 		visitor.visitASTFunctionSubprogramNode(this);
-		visitor.visitIInternalSubprogram(this);
-		visitor.visitIModuleBodyConstruct(this);
-		visitor.visitIModuleSubprogram(this);
-		visitor.visitIModuleSubprogramPartConstruct(this);
-		visitor.visitIProgramUnit(this);
-		visitor.visitASTNode(this);
+//		visitor.visitIInternalSubprogram(this);
+//		visitor.visitIModuleBodyConstruct(this);
+//		visitor.visitIModuleSubprogram(this);
+//		visitor.visitIModuleSubprogramPartConstruct(this);
+//		visitor.visitIProgramUnit(this);
+//		visitor.visitASTNode(this);
 	}
 
 	@Override

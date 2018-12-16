@@ -49,8 +49,8 @@ public class ASTFunctionArgListNode extends ASTNode
     @Override
     public void accept(IASTVisitor visitor)
     {
-//        visitor.visitASTFunctionArgListNode(this);
-        visitor.visitASTNode(this);
+        visitor.visitASTFunctionArgListNode(this);
+//        visitor.visitASTNode(this);
     }
 
     @Override protected int getNumASTFields()

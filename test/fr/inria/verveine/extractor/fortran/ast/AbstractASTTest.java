@@ -13,7 +13,7 @@ public class AbstractASTTest {
 		FrontEnd ofpParser = null;
 
 		try {
-			ofpParser = new FrontEnd(/*args*/new String[] {}, filename, VerveineFParser.VERVEINE_AST_BUILDER);
+			ofpParser = new FrontEnd(/*args*/new String[] {}, filename, VerveineFParser.VERVEINEF_PARSER_ACTION);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;

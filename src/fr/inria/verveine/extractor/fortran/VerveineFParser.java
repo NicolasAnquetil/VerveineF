@@ -22,8 +22,7 @@ import fr.inria.verveine.extractor.fortran.visitors.SubprgDefVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.VarDefVisitor;
 
 public class VerveineFParser  {
-
-	public static final String VERVEINE_AST_BUILDER = "fr.inria.verveine.extractor.fortran.ast.ParserActionAST";
+	public static final String VERVEINEF_PARSER_ACTION = "fr.inria.verveine.extractor.fortran.ast.ParserActionAST";
 
 	private static final String VERVEINEF_VERSION = "0.1.0_201801201-IR";
 
@@ -82,23 +81,28 @@ public class VerveineFParser  {
 		}
 	}
 
-	public boolean parse() {
-		VerveineFFrontEnd ofpParser = null;
+	public void parse() {
+		FrontEnd ofpParser = null;
 		dico = new IRDictionary();
-		
+
 		try {
-			ofpParser = new VerveineFFrontEnd(/*args*/new String[] {}, userProjectDir, VERVEINE_AST_BUILDER);
-			ofpParser.call();
-			
-			ast = ((ParserActionAST)ofpParser.getParser().getAction()).getAST();
-			runAllVisitors( dico, userProjectDir, ast);
+			ofpParser = createParser();
 		} catch (IOException e) {
 			e.printStackTrace();
+			return;
+		}
+
+		try {
+			ofpParser.call();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		ast = ((ParserActionAST)ofpParser.getParser().getAction()).getAST();
+		runAllVisitors( dico, userProjectDir, ast);
+	}
 
-		return true;
+	protected FrontEnd createParser() throws IOException {
+		return new FrontEnd(/*args*/new String[] {}, userProjectDir, VERVEINEF_PARSER_ACTION);
 	}
 
 	private void runAllVisitors(IRDictionary dico, String filename, ASTNode ast)  {

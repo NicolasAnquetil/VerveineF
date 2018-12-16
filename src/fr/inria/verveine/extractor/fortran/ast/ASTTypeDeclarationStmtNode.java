@@ -73,13 +73,13 @@ public class ASTTypeDeclarationStmtNode extends ASTNode  implements IBlockDataBo
     public void accept(IASTVisitor visitor)
     {
         visitor.visitASTTypeDeclarationStmtNode(this);
-        visitor.visitIBlockDataBodyConstruct(this);
-        visitor.visitIBodyConstruct(this);
-        visitor.visitIDeclarationConstruct(this);
-        visitor.visitIHPField(this);
-        visitor.visitIModuleBodyConstruct(this);
-        visitor.visitISpecificationPartConstruct(this);
-        visitor.visitASTNode(this);
+//        visitor.visitIBlockDataBodyConstruct(this);
+//        visitor.visitIBodyConstruct(this);
+//        visitor.visitIDeclarationConstruct(this);
+//        visitor.visitIHPField(this);
+//        visitor.visitIModuleBodyConstruct(this);
+//        visitor.visitISpecificationPartConstruct(this);
+//        visitor.visitASTNode(this);
     }
 
     @Override protected int getNumASTFields()

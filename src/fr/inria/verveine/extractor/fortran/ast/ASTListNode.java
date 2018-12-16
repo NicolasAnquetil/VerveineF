@@ -97,7 +97,6 @@ public class ASTListNode<T extends IASTNode> extends ArrayList<T> implements IAS
 
     public void accept(IASTVisitor visitor)
     {
-        //visitor.visitASTNode(this);
         visitor.visitASTListNode(this);
     }
 

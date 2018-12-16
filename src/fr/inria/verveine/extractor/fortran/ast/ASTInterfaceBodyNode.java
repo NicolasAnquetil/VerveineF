@@ -82,8 +82,8 @@ public class ASTInterfaceBodyNode extends ASTNode implements IInterfaceSpecifica
     public void accept(IASTVisitor visitor)
     {
         visitor.visitASTInterfaceBodyNode(this);
-        visitor.visitIInterfaceSpecification(this);
-        visitor.visitASTNode(this);
+//        visitor.visitIInterfaceSpecification(this);
+//        visitor.visitASTNode(this);
     }
 
     @Override protected int getNumASTFields()

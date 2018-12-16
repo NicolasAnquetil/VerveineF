@@ -85,4 +85,10 @@ public class IREntity {
 		return data;
 	}
 
+	/**
+	 * for debug purposes
+	 */
+	public String toString() {
+		return "IREntity " + key;
+	}
 }

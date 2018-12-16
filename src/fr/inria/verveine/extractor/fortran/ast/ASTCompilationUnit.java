@@ -15,7 +15,7 @@ public class ASTCompilationUnit extends ASTNode {
 	@Override
 	public void accept(IASTVisitor visitor) {
 		visitor.visitASTCompilationUnit(this);
-		visitor.visitASTNode(this);
+//		visitor.visitASTNode(this);
 	}
 
 	public IASTListNode<IASTNode> getBody() {

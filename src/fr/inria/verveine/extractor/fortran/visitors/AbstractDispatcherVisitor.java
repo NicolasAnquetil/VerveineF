@@ -38,15 +38,4 @@ public abstract class AbstractDispatcherVisitor extends ASTVisitor {
 		return node.getClass().getSimpleName() + "/" + node.fullyQualifiedName();
 	}
 
-	// VISITING METODS ON ICELEMENT HIERARCHY (ICElementVisitor) ===========================================================================
-/*
-	public void visit(ITranslationUnit elt) {
-		// this is the method merging ICElementVisitor and ASTVisitor
-		filename = elt.getElementName();
-		if (elt.getElementName().toLowerCase().endsWith(".f90") ) {
-			IFortranAST ast =  vpg.acquireTransientAST(elt.getFile());
-			ast.accept(this);
-		}
-	}
-*/
 }

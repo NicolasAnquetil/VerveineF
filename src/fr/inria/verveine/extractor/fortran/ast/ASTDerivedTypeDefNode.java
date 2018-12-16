@@ -87,9 +87,9 @@ public class ASTDerivedTypeDefNode extends ASTNode //ScopingNode implements IDec
     @Override
     public void accept(IASTVisitor visitor)
     {
-        //visitor.visitASTDerivedTypeDefNode(this);
-        //visitor.visitIDeclarationConstruct(this);
-        visitor.visitASTNode(this);
+        visitor.visitASTDerivedTypeDefNode(this);
+//        visitor.visitIDeclarationConstruct(this);
+//        visitor.visitASTNode(this);
     }
 
     @Override protected int getNumASTFields()

@@ -73,8 +73,8 @@ public class ASTIfConstructNode extends ASTNode implements IExecutableConstruct
     public void accept(IASTVisitor visitor)
     {
         visitor.visitASTIfConstructNode(this);
-        visitor.visitIExecutableConstruct(this);
-        visitor.visitASTNode(this);
+//        visitor.visitIExecutableConstruct(this);
+//        visitor.visitASTNode(this);
     }
 
     @Override protected int getNumASTFields()

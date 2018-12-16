@@ -49,7 +49,7 @@ public class ASTAccessSpecNode extends ASTNode
     public void accept(IASTVisitor visitor)
     {
         visitor.visitASTAccessSpecNode(this);
-        visitor.visitASTNode(this);
+//        visitor.visitASTNode(this);
     }
 
     @Override protected int getNumASTFields()

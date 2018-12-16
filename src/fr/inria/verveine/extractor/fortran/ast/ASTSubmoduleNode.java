@@ -56,9 +56,9 @@ public class ASTSubmoduleNode extends ASTNode implements IProgramUnit  // extend
     @Override
     public void accept(IASTVisitor visitor)
     {
-//        visitor.visitASTSubmoduleNode(this);
-        visitor.visitIProgramUnit(this);
-        visitor.visitASTNode(this);
+        visitor.visitASTSubmoduleNode(this);
+//        visitor.visitIProgramUnit(this);
+//        visitor.visitASTNode(this);
     }
 
     @Override protected int getNumASTFields()

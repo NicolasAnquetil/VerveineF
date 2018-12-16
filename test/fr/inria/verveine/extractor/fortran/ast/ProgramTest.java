@@ -22,6 +22,7 @@ public class ProgramTest extends AbstractASTTest {
 
 		ASTMainProgramNode mod = mods.iterator().next(); 
 		assertEquals("LE_PROGRAMME", mod.getProgramStmt().getProgramName().getText());
+		assertEquals(0, mod.getBody().size());
 	}
 
 }

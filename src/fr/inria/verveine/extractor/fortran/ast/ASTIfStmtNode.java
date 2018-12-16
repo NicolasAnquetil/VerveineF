@@ -62,8 +62,8 @@ public class ASTIfStmtNode extends ASTNode implements IActionStmt //extends ASTN
     public void accept(IASTVisitor visitor)
     {
         visitor.visitASTIfStmtNode(this);
-        visitor.visitIActionStmt(this);
-        visitor.visitASTNode(this);
+//        visitor.visitIActionStmt(this);
+//        visitor.visitASTNode(this);
     }
 
     @Override protected int getNumASTFields()

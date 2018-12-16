@@ -81,8 +81,8 @@ public class ASTDerivedTypeStmtNode extends ASTNode
     @Override
     public void accept(IASTVisitor visitor)
     {
-        //visitor.visitASTDerivedTypeStmtNode(this);
-        visitor.visitASTNode(this);
+        visitor.visitASTDerivedTypeStmtNode(this);
+//        visitor.visitASTNode(this);
     }
 
     @Override protected int getNumASTFields()

@@ -63,10 +63,10 @@ public class ASTCaseStmtNode extends ASTNode {
     public void accept(IASTVisitor visitor)
     {
         visitor.visitASTCaseStmtNode(this);
-        //visitor.visitIActionStmt(this);
-        //visitor.visitICaseBodyConstruct(this);
-        //visitor.visitIActionStmt(this);
-        visitor.visitASTNode(this);
+//        visitor.visitIActionStmt(this);
+//        visitor.visitICaseBodyConstruct(this);
+//        visitor.visitIActionStmt(this);
+//        visitor.visitASTNode(this);
     }
 
     @Override protected int getNumASTFields()

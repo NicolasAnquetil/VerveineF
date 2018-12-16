@@ -81,9 +81,9 @@ public class ASTSeparateModuleSubprogramNode extends ASTNode implements IModuleS
     @Override
     public void accept(IASTVisitor visitor)
     {
-//        visitor.visitASTSeparateModuleSubprogramNode(this);
-        visitor.visitIModuleSubprogramPartConstruct(this);
-        visitor.visitASTNode(this);
+        visitor.visitASTSeparateModuleSubprogramNode(this);
+//        visitor.visitIModuleSubprogramPartConstruct(this);
+//        visitor.visitASTNode(this);
     }
 
     @Override protected int getNumASTFields()

@@ -8,6 +8,7 @@ import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 
+
 public class VarDeclVisitorTest extends AbstractIRTest {
 
 	@Before
@@ -17,6 +18,7 @@ public class VarDeclVisitorTest extends AbstractIRTest {
 
 	@Test
 	public void testNumberVarDecl() {
+		
 		assertEquals(5, dico.allWithKind(IRKind.VARIABLE).size());
 	}
 	

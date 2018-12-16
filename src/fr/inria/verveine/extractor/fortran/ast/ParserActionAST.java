@@ -78,15 +78,13 @@ public class ParserActionAST extends FortranParserActionNull {
 		}
 		return poped;
 	}
-	
-	
-	
+
+
 	@Override
 	public void start_of_file(String filename, String path) {
 		 parsingCtxt = new ParsingContext();
 		 parsingCtxt.pushValueStack( new ASTCompilationUnit(filename));
 	}
-
 
 	@Override
 	public void end_of_file(String filename, String path) {

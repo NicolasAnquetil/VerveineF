@@ -55,8 +55,8 @@ public class ASTModuleNode extends ASTNode implements IProgramUnit // extends Sc
     public void accept(IASTVisitor visitor)
     {
         visitor.visitASTModuleNode(this);
-        visitor.visitIProgramUnit(this);
-        visitor.visitASTNode(this);
+//        visitor.visitIProgramUnit(this);
+//        visitor.visitASTNode(this);
     }
 
     @Override 

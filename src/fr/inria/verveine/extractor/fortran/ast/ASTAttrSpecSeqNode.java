@@ -21,7 +21,7 @@ public class ASTAttrSpecSeqNode extends ASTNode {
     public void accept(IASTVisitor visitor)
     {
         visitor.visitASTAttrSpecSeqNode(this);
-        visitor.visitASTNode(this);
+//        visitor.visitASTNode(this);
     }
 
     @Override protected int getNumASTFields()

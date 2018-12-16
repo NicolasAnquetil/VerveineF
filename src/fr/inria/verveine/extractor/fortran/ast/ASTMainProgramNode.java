@@ -76,8 +76,8 @@ public class ASTMainProgramNode extends ASTNode implements IProgramUnit // exten
     public void accept(IASTVisitor visitor)
     {
         visitor.visitASTMainProgramNode(this);
-        visitor.visitIProgramUnit(this);
-        visitor.visitASTNode(this);
+//        visitor.visitIProgramUnit(this);
+//        visitor.visitASTNode(this);
     }
 
     @Override protected int getNumASTFields()

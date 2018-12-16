@@ -43,6 +43,8 @@ public class ScopeDefVisitor extends AbstractDispatcherVisitor {
 		entity.name(tk.getText());
 		entity.data(IREntity.IS_STUB, false);
 		entity.addSourceAnchor( filename, node);
+
+		super.visitASTMainProgramNode(node);
 	}
 
 	@Override

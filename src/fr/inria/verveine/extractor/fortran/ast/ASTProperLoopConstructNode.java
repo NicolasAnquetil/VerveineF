@@ -76,8 +76,8 @@ public class ASTProperLoopConstructNode extends ASTNode implements IExecutableCo
     @Override public void accept(IASTVisitor visitor)
     {
     	visitor.visitASTProperLoopConstructNode(this);
-        visitor.visitIExecutableConstruct(this);
-        visitor.visitASTNode(this);
+//        visitor.visitIExecutableConstruct(this);
+//        visitor.visitASTNode(this);
     }
 
     @Override protected int getNumASTFields()

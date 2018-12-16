@@ -82,12 +82,12 @@ public class ASTSubroutineSubprogramNode extends ASTNode implements IInternalSub
     public void accept(IASTVisitor visitor)
     {
         visitor.visitASTSubroutineSubprogramNode(this);
-        visitor.visitIInternalSubprogram(this);
-        visitor.visitIModuleBodyConstruct(this);
-        visitor.visitIModuleSubprogram(this);
-        visitor.visitIModuleSubprogramPartConstruct(this);
-        visitor.visitIProgramUnit(this);
-        visitor.visitASTNode(this);
+//        visitor.visitIInternalSubprogram(this);
+//        visitor.visitIModuleBodyConstruct(this);
+//        visitor.visitIModuleSubprogram(this);
+//        visitor.visitIModuleSubprogramPartConstruct(this);
+//        visitor.visitIProgramUnit(this);
+//        visitor.visitASTNode(this);
     }
 
     @Override protected int getNumASTFields()

@@ -134,9 +134,9 @@ public class ASTVarOrFnRefNode extends ASTNode
     public void accept(IASTVisitor visitor)
     {
         visitor.visitASTVarOrFnRefNode(this);
-        //visitor.visitIExpr(this);
-        //visitor.visitISelector(this);
-        visitor.visitASTNode(this);
+//        visitor.visitIExpr(this);
+//        visitor.visitISelector(this);
+//        visitor.visitASTNode(this);
     }
 
     @Override protected int getNumASTFields()

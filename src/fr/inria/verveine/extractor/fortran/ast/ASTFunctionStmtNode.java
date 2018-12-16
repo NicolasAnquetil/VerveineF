@@ -113,9 +113,9 @@ public class ASTFunctionStmtNode extends ASTNode implements IActionStmt {  // ex
     public void accept(IASTVisitor visitor)
     {
         visitor.visitASTFunctionStmtNode(this);
-        visitor.visitIActionStmt(this);
-        visitor.visitIActionStmt(this);
-        visitor.visitASTNode(this);
+//        visitor.visitIActionStmt(this);
+//        visitor.visitIActionStmt(this);
+//        visitor.visitASTNode(this);
     }
 
     @Override protected int getNumASTFields()

@@ -41,7 +41,7 @@ public class ASTEndFunctionStmtNode extends ASTNode {
     public void accept(IASTVisitor visitor)
     {
         visitor.visitASTEndFunctionStmtNode(this);
-        visitor.visitASTNode(this);
+//        visitor.visitASTNode(this);
     }
 
     @Override protected int getNumASTFields()

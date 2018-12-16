@@ -75,9 +75,9 @@ public class ASTSubroutineStmtNode extends ASTNode implements IActionStmt /* ext
     public void accept(IASTVisitor visitor)
     {
         visitor.visitASTSubroutineStmtNode(this);
-        visitor.visitIActionStmt(this);
-        visitor.visitIActionStmt(this);
-        visitor.visitASTNode(this);
+//        visitor.visitIActionStmt(this);
+//        visitor.visitIActionStmt(this);
+//        visitor.visitASTNode(this);
     }
 
     @Override protected int getNumASTFields()

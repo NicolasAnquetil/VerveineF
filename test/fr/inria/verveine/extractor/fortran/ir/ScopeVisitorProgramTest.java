@@ -20,6 +20,7 @@ public class ScopeVisitorProgramTest extends AbstractIRTest {
 		root = dico.getRoot();
 		
 		assertNotNull(root);
+		assertEquals(IRKind.COMPILATION_UNIT, root.getKind());
 		assertEquals("[test_src/unit-tests/smallProgram.f90]", root.getName());
 	}
 

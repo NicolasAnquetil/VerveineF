@@ -68,8 +68,8 @@ public class ASTAccessStmtNode extends ASTNode //implements ISpecificationStmt
     public void accept(IASTVisitor visitor)
     {
         visitor.visitASTAccessStmtNode(this);
-        //visitor.visitISpecificationStmt(this);
-        visitor.visitASTNode(this);
+//        visitor.visitISpecificationStmt(this);
+//        visitor.visitASTNode(this);
     }
 
     @Override protected int getNumASTFields()
