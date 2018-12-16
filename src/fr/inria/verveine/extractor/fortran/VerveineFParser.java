@@ -2,6 +2,8 @@ package fr.inria.verveine.extractor.fortran;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,6 +44,11 @@ public class VerveineFParser  {
 	 */
 	private Map<String,String> argDefined;
 
+	/**
+	 * Temporary variable to gather include dirs defined from the command line
+	 */
+	private Collection<String> includeDirs;
+
 	private String outputFileName;
 
 	public static void main(String[] args) {
@@ -53,6 +60,7 @@ public class VerveineFParser  {
 
 	public VerveineFParser() {
 		this.argDefined = new HashMap<String,String>();
+		includeDirs = new ArrayList<>();
 		userProjectDir = null;
 		outputFileName = "output.ir";
 	}
@@ -75,11 +83,11 @@ public class VerveineFParser  {
 	}
 
 	public boolean parse() {
-		FrontEnd ofpParser = null;
+		VerveineFFrontEnd ofpParser = null;
 		dico = new IRDictionary();
 		
 		try {
-			ofpParser = new FrontEnd(/*args*/new String[] {}, userProjectDir, VERVEINE_AST_BUILDER);
+			ofpParser = new VerveineFFrontEnd(/*args*/new String[] {}, userProjectDir, VERVEINE_AST_BUILDER);
 			ofpParser.call();
 			
 			ast = ((ParserActionAST)ofpParser.getParser().getAction()).getAST();
@@ -121,6 +129,9 @@ public class VerveineFParser  {
 				} else {
 					System.err.println("-o requires a filename");
 				}
+			}
+			else if (arg.startsWith("-I")) {
+				includeDirs.add(arg.substring(2));   // remove -I from argument, the rest is the include dir
 			}
 			else if (arg.startsWith("-D")) {
 				parseMacroDefinition(arg);

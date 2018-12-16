@@ -3,7 +3,6 @@ package fr.inria.verveine.extractor.fortran.ast;
 
 import org.antlr.runtime.Token;
 
-import antlr.collections.impl.ASTArray;
 import fortran.ofp.parser.java.FortranLexer;
 import fortran.ofp.parser.java.FortranParserActionNull;
 import fortran.ofp.parser.java.FortranToken;
