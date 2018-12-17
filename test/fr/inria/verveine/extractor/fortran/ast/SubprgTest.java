@@ -1,4 +1,4 @@
-ackage fr.inria.verveine.extractor.fortran.ast;
+package fr.inria.verveine.extractor.fortran.ast;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
