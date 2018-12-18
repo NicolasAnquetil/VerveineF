@@ -16,8 +16,8 @@ import fr.inria.verveine.extractor.fortran.ir.IRKind;
 
 public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 
-	public InvokAccessVisitor(IRDictionary dico, String filename) {
-		super(dico, filename);
+	public InvokAccessVisitor(IRDictionary dico, String filename, boolean allLocals) {
+		super(dico, filename, allLocals);
 	}
 
 	@Override

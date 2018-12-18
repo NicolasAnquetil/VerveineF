@@ -7,8 +7,12 @@ public class AbstractIRTest {
 	protected IRDictionary dico;
 
 	public void setup(String filename) throws Exception {
+		setup(new String[] {filename});
+	}
+
+	public void setup(String[] args) throws Exception {
 		VerveineFParser parser = new VerveineFParser();
-		parser.setOptions( new String[] {filename});
+		parser.setOptions( args);
 		parser.parse();
 		dico = parser.getDico();
 	}

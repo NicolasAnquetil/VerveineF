@@ -12,8 +12,8 @@ import fr.inria.verveine.extractor.fortran.ir.IRKind;
 
 public class CommentVisitor extends AbstractDispatcherVisitor {
 
-	public CommentVisitor(IRDictionary dico, String filename) {
-		super(dico, filename);
+	public CommentVisitor(IRDictionary dico, String filename, boolean allLocals) {
+		super(dico, filename, allLocals);
 	}
 
 	@Override

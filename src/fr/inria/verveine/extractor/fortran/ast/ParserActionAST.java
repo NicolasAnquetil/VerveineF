@@ -92,6 +92,7 @@ public class ParserActionAST extends FortranParserActionNull {
 		decls = parsingContextPopAll(new UntilTypeValidator(ASTCompilationUnit.class));
 		ASTCompilationUnit parentNode = (ASTCompilationUnit) parsingCtxt.topValueStack();
 		parentNode.setBody(decls);
+		decls.setParent(parentNode);
 	}
 
 
@@ -138,6 +139,7 @@ public class ParserActionAST extends FortranParserActionNull {
 			specifications = (IASTListNode<IBodyConstruct>) parsingCtxt.popValueStack();
 		}
 		mainPgm.setBody(specifications);
+		specifications.setParent(mainPgm);
 		if (hasProgramStmt) {
 			mainPgm.setProgramStmt((ASTProgramStmtNode) parsingCtxt.popValueStack());
 		}
@@ -192,7 +194,9 @@ public class ParserActionAST extends FortranParserActionNull {
 		
 		try {
 			moduleNode.setEndModuleStmt((ASTEndModuleStmtNode) parsingCtxt.popValueStack());
-			moduleNode.setModuleBody((IASTListNode<IModuleBodyConstruct>) parsingCtxt.popValueStack());
+			IASTListNode<IModuleBodyConstruct> moduleBody = (IASTListNode<IModuleBodyConstruct>) parsingCtxt.popValueStack();
+			moduleNode.setModuleBody(moduleBody);
+			moduleBody.setParent(moduleNode);
 			moduleNode.setModuleStmt((ASTModuleStmtNode) parsingCtxt.popValueStack());
 		}
 		catch (ClassCastException e) {
@@ -254,6 +258,7 @@ public class ParserActionAST extends FortranParserActionNull {
 			specifications = (IASTListNode<IBodyConstruct>) parsingCtxt.popValueStack();
 		}
 		fctNode.setBody(specifications);
+		specifications.setParent(fctNode);
 		try {
 			fctNode.setFunctionStmt((ASTFunctionStmtNode) parsingCtxt.popValueStack());
 		}
@@ -319,6 +324,7 @@ public class ParserActionAST extends FortranParserActionNull {
 			specifications = (IASTListNode<IBodyConstruct>) parsingCtxt.popValueStack();
 		}
 		pcdNode.setBody(specifications);
+		specifications.setParent(pcdNode);
 		try {
 			pcdNode.setSubroutineStmt((ASTSubroutineStmtNode) parsingCtxt.popValueStack());
 		}
@@ -399,7 +405,9 @@ public class ParserActionAST extends FortranParserActionNull {
 		typeDecl.setLabel(asttk(label));
 		typeDecl.setASTField(ASTTypeDeclarationStmtNode.TEOS, asttk(eos));
 
-		typeDecl.setEntityDeclList( (IASTListNode<ASTEntityDeclNode>) parsingCtxt.popValueStack());
+		IASTListNode<ASTEntityDeclNode> typeMembers = (IASTListNode<ASTEntityDeclNode>) parsingCtxt.popValueStack();
+		typeDecl.setEntityDeclList( typeMembers);
+		typeMembers.setParent(typeDecl);
 		for (int i=0; i < numAttributes; i++ ) {
 			ASTAttrSpecSeqNode attrSpecSeq  = new ASTAttrSpecSeqNode();
 			bugLocator(ASTVarOrFnRefNode.class);
@@ -553,8 +561,8 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 
 	@Override
 	public void entity_decl_list(int count) {
-		IASTListNode<ASTEntityDeclNode> declList = new ASTListNode<ASTEntityDeclNode>();
-		declList.addAll( (IASTListNode<? extends ASTEntityDeclNode>) parsingContextPopAll( new CountValidator(count)));
+		// should be IASTListNode<ASTEntityDeclNode> but this gives a compilation error in Eclipse for incompatible type ?!?!
+		IASTListNode<IASTNode> declList = parsingContextPopAll( new CountValidator(count));
 		parsingCtxt.pushValueStack( declList);
 	}
 

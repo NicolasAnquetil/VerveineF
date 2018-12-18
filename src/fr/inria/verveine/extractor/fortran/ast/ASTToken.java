@@ -174,7 +174,7 @@ public class ASTToken implements Token, IASTNode
 
 	@Override
 	public String fullyQualifiedName() {
-		return actualToken.getText();
+		return getParent().fullyQualifiedName()+".<"+actualToken.getText()+">";
 	}
 
     @Override

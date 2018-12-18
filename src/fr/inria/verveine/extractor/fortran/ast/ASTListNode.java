@@ -153,7 +153,7 @@ public class ASTListNode<T extends IASTNode> extends ArrayList<T> implements IAS
 
 	@Override
 	public String fullyQualifiedName() {
-		return null;
+		return getParent().fullyQualifiedName() + ".[]";
 	}
 
 	@Override

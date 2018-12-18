@@ -2,13 +2,14 @@ package fr.inria.verveine.extractor.fortran.visitors;
 
 import fr.inria.verveine.extractor.fortran.ast.ASTAttrSpecSeqNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTCompilationUnit;
+import fr.inria.verveine.extractor.fortran.ast.ASTEndFunctionStmtNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTEndModuleStmtNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTEndProgramStmtNode;
+import fr.inria.verveine.extractor.fortran.ast.ASTEndSubroutineStmtNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTEntityDeclNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTFunctionSubprogramNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTMainProgramNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTModuleNode;
-import fr.inria.verveine.extractor.fortran.ast.ASTProgramStmtNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTSubroutineSubprogramNode;
 import fr.inria.verveine.extractor.fortran.ast.ASTToken;
 import fr.inria.verveine.extractor.fortran.ast.ASTTypeDeclarationStmtNode;
@@ -18,8 +19,8 @@ import fr.inria.verveine.extractor.fortran.ir.IRKind;
 
 public class VarDefVisitor extends AbstractDispatcherVisitor {
 
-	public VarDefVisitor(IRDictionary dico, String filename) {
-		super(dico, filename);
+	public VarDefVisitor(IRDictionary dico, String filename, boolean allLocals) {
+		super(dico, filename, allLocals);
 	}
 
 	@Override
@@ -69,23 +70,44 @@ public class VarDefVisitor extends AbstractDispatcherVisitor {
 	}
 
 	@Override
-	public void visitASTProgramStmtNode(ASTProgramStmtNode node) {
-		// pruning AST Visit (Avoids visiting local variable declarations)
+	public void visitASTFunctionSubprogramNode(ASTFunctionSubprogramNode node) {
+		if (allLocals) {
+			IREntity entity = dico.getEntityByKey( mkKey(node) );
+			
+			context.push(entity);
+			super.visitASTFunctionSubprogramNode(node);
+		}
+		// else pruning AST Visit (Avoids visiting local variable declarations)
 	}
 
 	@Override
-	public void visitASTFunctionSubprogramNode(ASTFunctionSubprogramNode node) {
-		// pruning AST Visit (Avoids visiting local variable declarations)
+	public void visitASTEndFunctionStmtNode(ASTEndFunctionStmtNode node) {
+		super.visitASTEndFunctionStmtNode(node);
+		if (allLocals) {
+			context.pop();
+		}
 	}
 
 	@Override
 	public void visitASTSubroutineSubprogramNode(ASTSubroutineSubprogramNode node) {
-		// pruning AST Visit (Avoids visiting local variable declarations)
+		if (allLocals) {
+			IREntity entity = dico.getEntityByKey( mkKey(node) );
+
+			context.push(entity);
+			super.visitASTSubroutineSubprogramNode(node);
+		}
+		// else pruning AST Visit (Avoids visiting local variable declarations)
 	}
 
-	/*
-	 * Because of AST visit pruning, here we should only have global variables
-	 */
+	@Override
+	public void visitASTEndSubroutineStmtNode(ASTEndSubroutineStmtNode node) {
+		super.visitASTEndSubroutineStmtNode(node);
+		if (allLocals) {
+			context.pop();
+		}
+	}
+
+
 	@Override
 	public void visitASTTypeDeclarationStmtNode(ASTTypeDeclarationStmtNode node) {
 		for (ASTEntityDeclNode decl : node.getEntityDeclList()) {

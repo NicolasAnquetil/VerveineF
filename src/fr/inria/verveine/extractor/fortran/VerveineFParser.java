@@ -22,6 +22,8 @@ import fr.inria.verveine.extractor.fortran.visitors.SubprgDefVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.VarDefVisitor;
 
 public class VerveineFParser  {
+	public static final String ALLLOCALS_OPTION = "--alllocals";
+
 	public static final String VERVEINEF_PARSER_ACTION = "fr.inria.verveine.extractor.fortran.ast.ParserActionAST";
 
 	private static final String VERVEINEF_VERSION = "0.1.0_201801201-IR";
@@ -49,6 +51,12 @@ public class VerveineFParser  {
 	private Collection<String> includeDirs;
 
 	private String outputFileName;
+
+	/**
+	 * Whether to output all local variables (even those with primitive type or not (default is not).<br>
+	 * Note: allLocals => not classSummary
+	 */
+	private boolean allLocals;
 
 	public static void main(String[] args) {
 		VerveineFParser parser = new VerveineFParser();
@@ -106,13 +114,13 @@ public class VerveineFParser  {
 	}
 
 	private void runAllVisitors(IRDictionary dico, String filename, ASTNode ast)  {
-		ast.accept(new ScopeDefVisitor(dico, filename));
-		ast.accept(new SubprgDefVisitor(dico, filename));
-		ast.accept(new VarDefVisitor(dico, filename));
+		ast.accept(new ScopeDefVisitor(dico, filename, allLocals));
+		ast.accept(new SubprgDefVisitor(dico, filename, allLocals));
+		ast.accept(new VarDefVisitor(dico, filename, allLocals));
 
-		ast.accept(new CommentVisitor(dico, filename));
+		ast.accept(new CommentVisitor(dico, filename, allLocals));
 
-		ast.accept(new InvokAccessVisitor(dico, filename));
+		ast.accept(new InvokAccessVisitor(dico, filename, allLocals));
 	}
 
 	public void setOptions(String[] args) {
@@ -139,6 +147,9 @@ public class VerveineFParser  {
 			}
 			else if (arg.startsWith("-D")) {
 				parseMacroDefinition(arg);
+			}
+			else if (arg.equals(ALLLOCALS_OPTION)) {
+				this.allLocals = true;
 			}
 			else {
 				System.err.println("** Unrecognized option: " + arg);
@@ -180,6 +191,7 @@ public class VerveineFParser  {
 		System.err.println("      -v: prints the version");
 		System.err.println("      -o <output-file-name>: changes the name of the output file (default: output.mse)");
 		System.err.println("      -D<macro>: defines a C/C++ macro");
+		System.err.println("      ["+ALLLOCALS_OPTION+"] Forces outputing all local variables, even those with primitive type (incompatible with \"-summary\"");
 		System.err.println("      <Fortran project directory>: directory containing the Fortran project to export in MSE");
 		System.exit(0);
 	}

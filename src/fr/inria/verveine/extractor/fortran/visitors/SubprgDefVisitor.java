@@ -27,8 +27,8 @@ import fr.inria.verveine.extractor.fortran.ir.IRKind;
  */
 public class SubprgDefVisitor extends AbstractDispatcherVisitor {
 
-	public SubprgDefVisitor(IRDictionary dico, String filename) {
-		super(dico, filename);
+	public SubprgDefVisitor(IRDictionary dico, String filename, boolean allLocals) {
+		super(dico, filename, allLocals);
 	}
 
 	@Override

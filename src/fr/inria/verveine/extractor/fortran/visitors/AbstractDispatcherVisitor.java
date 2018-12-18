@@ -18,12 +18,15 @@ public abstract class AbstractDispatcherVisitor extends ASTVisitor {
 	
 	protected  Stack<IREntity> context;
 
+	protected boolean allLocals;
+
 	// CONSTRUCTOR ==========================================================================================================================
 
-	public AbstractDispatcherVisitor(IRDictionary dico, String filename) {
+	public AbstractDispatcherVisitor(IRDictionary dico, String filename, boolean allLocals) {
 		super();
 		this.dico = dico;
 		this.filename = filename;
+		this.allLocals = allLocals;
 
 		this.context = new Stack<IREntity>();
 
