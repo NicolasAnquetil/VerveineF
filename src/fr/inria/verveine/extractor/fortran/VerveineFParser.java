@@ -57,10 +57,16 @@ public class VerveineFParser  {
 	 */
 	private boolean allLocals;
 
+	public static final int FIXED_FORM = 2;
+
+	public static final int FREE_FORM = 1;
+
+	public static final int UNKNOWN_SOURCE_FORM = -1;
+
 	public static void main(String[] args) {
 		VerveineFParser parser = new VerveineFParser();
 		parser.setOptions(args);
-		parser.parse();
+		parser.parse(args);
 		parser.outputIR();
 	}
 
@@ -88,12 +94,12 @@ public class VerveineFParser  {
 		}
 	}
 
-	public void parse() {
+	public void parse(String[] args) {
 		VerveineFrontEnd ofpParser = null;
 		dico = new IRDictionary();
 
 		try {
-			ofpParser = createParser();
+			ofpParser = createParser(args);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return;
@@ -108,8 +114,8 @@ public class VerveineFParser  {
 		runAllVisitors( dico, userProjectDir, ast);
 	}
 
-	protected VerveineFrontEnd createParser() throws Exception {
-		return new VerveineFrontEnd(/*args*/new String[] {userProjectDir}, VERVEINEF_PARSER_ACTION);
+	protected VerveineFrontEnd createParser(String[] args) throws Exception {
+		return new VerveineFrontEnd(args, VERVEINEF_PARSER_ACTION);
 	}
 
 	private void runAllVisitors(IRDictionary dico, String filename, ASTNode ast)  {
@@ -146,6 +152,8 @@ public class VerveineFParser  {
 			}
 			else if (arg.startsWith("-D")) {
 				parseMacroDefinition(arg);
+			}
+			else if (arg.startsWith("--stdinput")) {
 			}
 			else if (arg.equals(ALLLOCALS_OPTION)) {
 				this.allLocals = true;

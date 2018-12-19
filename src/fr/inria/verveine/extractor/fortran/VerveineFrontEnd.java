@@ -26,6 +26,7 @@ import fortran.ofp.parser.java.FortranParser2008;
 
 import fortran.ofp.parser.java.FortranLexer;
 import fortran.ofp.parser.java.FortranLexicalPrepass;
+import fortran.ofp.parser.java.FortranParser;
 import fortran.ofp.parser.java.FortranStream;
 import fortran.ofp.parser.java.FortranTokenStream;
 import fortran.ofp.parser.java.IFortranParser;
@@ -36,21 +37,23 @@ import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
 public class VerveineFrontEnd implements Callable<Boolean> {
-
-	private FortranStream inputStream;
-	private FortranTokenStream tokens;
-	private FortranLexer lexer;
-	private IFortranParser parser;
-	private FortranLexicalPrepass prepass;
 	private int sourceForm;
 	private  ArrayList<String> includeDirs;
+	private String filename;
+	private String path;
+	protected FortranParser parser;
+	protected FortranLexicalPrepass prepass;
+	protected FortranStream inputStream;
+	protected FortranTokenStream tokens;
+	private FortranLexer lexer;
 
 	public VerveineFrontEnd(String args[]) throws Exception {
 		this(args, "fortran.ofp.parser.java.FortranParserActionNull");
 	}
+
 	public VerveineFrontEnd(String args[], String type) throws Exception {
-		String filename;
 		includeDirs = new ArrayList<String>();
+		String fortranSource = null;
 
 		ArrayList<String> newArgsList = new ArrayList<>();
 		String [] newArgs;
@@ -61,6 +64,10 @@ public class VerveineFrontEnd implements Callable<Boolean> {
 				includeDirs.add(args[i+1]);
 				i++;
 			}
+			else if (args[i].equals("--stdinput")) {
+				fortranSource = args[i+1];
+				i++;
+			}
 			else {
 				newArgsList.add(args[i]);
 			}
@@ -68,35 +75,30 @@ public class VerveineFrontEnd implements Callable<Boolean> {
 		}
 		newArgs = newArgsList.toArray(new String[newArgsList.size()]);
 
+		if (fortranSource == null) {
+			for ( ; i<args.length ; i++) {
+				filename = args[i];
 
-		for ( ; i<args.length ; i++) {
-			filename = args[i];
+				/* Make sure the file exists. */
+				File file = new File(filename);
+				if (file.exists() == false) {
+					System.err.println("Error: " + filename + " does not exist!");
+				} else {
+					includeDirs.add(file.getParent());
+				}
 
-			/* Make sure the file exists. */
-			File file = new File(filename);
-			if (file.exists() == false) {
-				System.err.println("Error: " + filename + " does not exist!");
-			} else {
-				includeDirs.add(file.getParent());
+				path = file.getAbsolutePath();
+
+				inputStream = new VerveineFortranStream(filename);
+				call(type, newArgs);
 			}
-
-			String path = file.getAbsolutePath();
-
-			this.inputStream = new FortranStream(filename);
-			this.lexer = new FortranLexer(inputStream);
-
-			// Changes associated with antlr version 3.3 require that includeDirs
-			// be set here as the tokens are loaded by the constructor.
-			this.lexer.setIncludeDirs(includeDirs);
-			this.tokens = new FortranTokenStream(lexer);
-
-			this.parser = new FortranParser2008(tokens);
-			this.parser.initialize(newArgs, type, filename, path);
-
-			this.prepass = new FortranLexicalPrepass(lexer, tokens, parser);
-			this.sourceForm = inputStream.getSourceForm();
-
-			call();
+		}
+		else {
+			filename = "-no-file-";
+			path = "/no/path";
+			inputStream = new VerveineFortranStream(fortranSource, VerveineFParser.FREE_FORM);
+			
+			call(type, newArgs);
 		}
 	}
 
@@ -218,10 +220,25 @@ public class VerveineFrontEnd implements Callable<Boolean> {
 		return this.parser;
 	}
 
-	public Boolean call() throws Exception {
-		boolean error = false;
+	public Boolean call(String type, String[] args) throws Exception {
+		lexer = new FortranLexer(inputStream);
 
-		int sourceForm = inputStream.getSourceForm();
+		// Changes associated with antlr version 3.3 require that includeDirs
+		// be set here as the tokens are loaded by the constructor.
+		lexer.setIncludeDirs(includeDirs);
+		tokens = new FortranTokenStream(lexer);
+
+		parser = new FortranParser2008(tokens);
+		parser.initialize(args, type, filename, path);
+
+		return call();
+	}
+	
+	public Boolean call() throws Exception {
+		boolean error;
+		
+		prepass = new FortranLexicalPrepass(lexer, tokens, parser);
+		this.sourceForm = inputStream.getSourceForm();
 
 		// determine whether the file is fixed or free form and
 		// set the source form in the prepass so it knows how to handle lines.

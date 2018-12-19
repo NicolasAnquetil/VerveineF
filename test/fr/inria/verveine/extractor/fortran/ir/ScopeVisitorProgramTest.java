@@ -4,28 +4,27 @@ import static org.junit.Assert.*;
 
 import java.util.Collection;
 
-import org.junit.Before;
 import org.junit.Test;
 
 public class ScopeVisitorProgramTest extends AbstractIRTest {
 
-	@Before
-	public void setUp() throws Exception {
-		super.setup("test_src/unit-tests/smallProgram.f90");
-	}
+	public static final String SOURCE_CODE = "PROGRAM LE_PROGRAMME\nEND PROGRAM\n";
 
 	@Test
 	public void testCompilationUnit() {
-		IREntity root;
-		root = dico.getRoot();
+		parseCode(SOURCE_CODE);
+
+		IREntity root = dico.getRoot();
 		
 		assertNotNull(root);
 		assertEquals(IRKind.COMPILATION_UNIT, root.getKind());
-		assertEquals("[test_src/unit-tests/smallProgram.f90]", root.getName());
+		assertEquals("[-no-file-]", root.getName());
 	}
 
 	@Test
 	public void testProgram() {
+		parseCode(SOURCE_CODE);
+
 		Collection<IREntity> pgms = dico.allWithKind(IRKind.PROGRAM);
 		assertEquals(1, pgms.size());
 
@@ -34,7 +33,7 @@ public class ScopeVisitorProgramTest extends AbstractIRTest {
 		assertNotNull(pgm);
 		assertEquals("LE_PROGRAMME", pgm.getName());
 		assertEquals(0, pgm.getData("anchorstart"));
-		assertEquals(33, pgm.getData("anchorend"));
+		assertEquals(32, pgm.getData("anchorend"));
 	}
 
 }

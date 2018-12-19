@@ -13,7 +13,15 @@ public class AbstractIRTest {
 	public void setup(String[] args) throws Exception {
 		VerveineFParser parser = new VerveineFParser();
 		parser.setOptions( args);
-		parser.parse();
+		parser.parse(args);
+		dico = parser.getDico();
+	}
+
+	protected void parseCode(String sourceCode) {
+		String[] args = new String[] {"--stdinput",sourceCode};
+		VerveineFParser parser = new VerveineFParser();
+		parser.setOptions(args);
+		parser.parse(args);
 		dico = parser.getDico();
 	}
 
