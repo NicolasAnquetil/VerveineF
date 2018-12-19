@@ -10,7 +10,6 @@ import java.util.Map;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import fortran.ofp.FrontEnd;
 import fr.inria.verveine.extractor.fortran.ast.ASTNode;
 import fr.inria.verveine.extractor.fortran.ast.ParserActionAST;
 import fr.inria.verveine.extractor.fortran.ir.IRDictionary;
@@ -90,12 +89,12 @@ public class VerveineFParser  {
 	}
 
 	public void parse() {
-		FrontEnd ofpParser = null;
+		VerveineFrontEnd ofpParser = null;
 		dico = new IRDictionary();
 
 		try {
 			ofpParser = createParser();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return;
 		}
@@ -109,8 +108,8 @@ public class VerveineFParser  {
 		runAllVisitors( dico, userProjectDir, ast);
 	}
 
-	protected FrontEnd createParser() throws IOException {
-		return new FrontEnd(/*args*/new String[] {}, userProjectDir, VERVEINEF_PARSER_ACTION);
+	protected VerveineFrontEnd createParser() throws Exception {
+		return new VerveineFrontEnd(/*args*/new String[] {userProjectDir}, VERVEINEF_PARSER_ACTION);
 	}
 
 	private void runAllVisitors(IRDictionary dico, String filename, ASTNode ast)  {
