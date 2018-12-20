@@ -11,9 +11,15 @@ import org.junit.Test;
 
 public class CommentTest extends AbstractIRTest {
 
+	public static final String SOURCE_CODE = "! This is a simple Module\n" + 
+			"! It has comments\n" + 
+			"MODULE simpleModuleWithComments\n" + 
+			"  ! Comments again\n" + 
+			"END MODULE";
+
 	@Before
 	public void setUp() throws Exception {
-		super.setup("test_src/unit-tests/simpleModuleWithComments.f90");
+		parseCode(SOURCE_CODE);
 	}
 
 	@Test

@@ -1,39 +1,52 @@
 package fr.inria.verveine.extractor.fortran.ir;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import fr.inria.verveine.extractor.fortran.VerveineFParser;
 
 
 public class LocalVarDeclVisitorTest extends AbstractIRTest {
-	
-	private void parse(String[] args) {
-		try {
-			super.setup(args);
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		}
+
+	public static final String SOURCE_CODE = "MODULE simpleModule\n" + 
+			"CONTAINS\n" + 
+			"\n" + 
+			"    SUBROUTINE blah()\n" + 
+			"		INTEGER i\n" + 
+			"		i = blih()\n" + 
+			" 		i = i+1\n" + 
+			"    END SUBROUTINE blah\n" + 
+			"\n" + 
+			"	function blih()  result(i)\n" + 
+			"		INTEGER :: i\n" + 
+			"		CALL blah()\n" + 
+			"		i = 0\n" + 
+			"	END function blih\n" + 
+			"\n" + 
+			"END MODULE\n";
+
+	@Before
+	public void setUp() throws Exception {
+		parseCode(SOURCE_CODE);
 	}
 
 	@Test
 	public void testNumberLocalsVarDecl() {
-		parse(new String[] {VerveineFParser.ALLLOCALS_OPTION, "test_src/unit-tests/simpleSubPrgs.f90"});
+		parseCode( new String[] {VerveineFParser.ALLLOCALS_OPTION, "--stdinput", SOURCE_CODE} );
 		assertEquals(2, dico.allWithKind(IRKind.VARIABLE).size());
 	}
 
 	@Test
 	public void testNumberGlobalsVarDecl() {
-		parse(new String[] { "test_src/unit-tests/simpleSubPrgs.f90"});
+		parseCode( SOURCE_CODE);
 		assertEquals(0, dico.allWithKind(IRKind.VARIABLE).size());
 	}
 	
 	@Test
 	public void testVarDeclNames() {
-		parse(new String[] {VerveineFParser.ALLLOCALS_OPTION, "test_src/unit-tests/simpleSubPrgs.f90"});
+		parseCode( new String[] {VerveineFParser.ALLLOCALS_OPTION, "--stdinput", SOURCE_CODE} );
 		for (IREntity var : dico.allWithKind(IRKind.VARIABLE)) {
 			assertEquals("i", var.getName());
 		}

@@ -4,19 +4,17 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Collection;
 
-import org.junit.Before;
 import org.junit.Test;
 
 
 public class ProgramTest extends AbstractASTTest {
-		
-	@Before
-	public void setup() throws Exception {
-		super.setup("test_src/unit-tests/smallProgram.f90");
-	}
+
+	public static final String SOURCE_CODE = "PROGRAM LE_PROGRAMME\nEND PROGRAM\n";
 
 	@Test
 	public void testProgram() {
+		parseCode(SOURCE_CODE);
+
 		Collection<ASTMainProgramNode> mods = ast.findAll(ASTMainProgramNode.class);
 		assertEquals(1, mods.size());
 

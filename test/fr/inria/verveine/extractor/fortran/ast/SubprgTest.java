@@ -10,10 +10,27 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class SubprgTest extends AbstractASTTest {
-		
+
+	public static final String SOURCE_CODE = "MODULE simpleModule\n" + 
+			"CONTAINS\n" + 
+			"\n" + 
+			"    SUBROUTINE blah()\n" + 
+			"		INTEGER i\n" + 
+			"		i = blih()\n" + 
+			" 		i = i+1\n" + 
+			"    END SUBROUTINE blah\n" + 
+			"\n" + 
+			"	function blih()  result(i)\n" + 
+			"		INTEGER :: i\n" + 
+			"		CALL blah()\n" + 
+			"		i = 0\n" + 
+			"	END function blih\n" + 
+			"\n" + 
+			"END MODULE";
+
 	@Before
 	public void setup() {
-		super.setup("test_src/unit-tests/simpleSubPrgs.f90");
+		parseCode(SOURCE_CODE);
 	}
 
 	@Test

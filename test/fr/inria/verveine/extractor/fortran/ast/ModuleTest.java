@@ -4,19 +4,25 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Collection;
 
-import org.junit.Before;
 import org.junit.Test;
 
 
 public class ModuleTest extends AbstractASTTest {
-		
-	@Before
-	public void setup() throws Exception {
-		super.setup("test_src/unit-tests/specificationPart.f90");
-	}
+
+	public static final String SOURCE_CODE = "MODULE simpleModule\n" + 
+			"implicit none\n" + 
+			"  private :: aProc\n" + 
+			"  interface anotherProc\n" + 
+			"    module procedure aProc\n" + 
+			"  end interface\n" + 
+			"\n" + 
+			"  integer :: aVar\n" + 
+			"END MODULE simpleModule";
 
 	@Test
 	public void testModule() {
+		parseCode(SOURCE_CODE);
+
 		Collection<ASTModuleNode> mods = ast.findAll(ASTModuleNode.class);
 		assertEquals(1, mods.size());
 

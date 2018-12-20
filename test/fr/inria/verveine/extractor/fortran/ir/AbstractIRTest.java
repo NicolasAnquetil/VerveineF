@@ -6,19 +6,11 @@ public class AbstractIRTest {
 
 	protected IRDictionary dico;
 
-	public void setup(String filename) throws Exception {
-		setup(new String[] {filename});
-	}
-
-	public void setup(String[] args) throws Exception {
-		VerveineFParser parser = new VerveineFParser();
-		parser.setOptions( args);
-		parser.parse(args);
-		dico = parser.getDico();
-	}
-
 	protected void parseCode(String sourceCode) {
-		String[] args = new String[] {"--stdinput",sourceCode};
+		parseCode( new String[] {"--stdinput",sourceCode});
+	}
+
+	protected void parseCode(String[] args) {
 		VerveineFParser parser = new VerveineFParser();
 		parser.setOptions(args);
 		parser.parse(args);

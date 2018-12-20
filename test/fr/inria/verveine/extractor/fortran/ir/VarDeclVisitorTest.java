@@ -11,9 +11,18 @@ import org.junit.Test;
 
 public class VarDeclVisitorTest extends AbstractIRTest {
 
+	public static final String SOURCE_CODE = "MODULE simpleModule\n" + 
+			"  CHARACTER(LEN = 10), PARAMETER :: aString\n" + 
+			"  INTEGER, intent(inout) :: anInt = 19\n" + 
+			"  LOGICAL, PARAMETER, PUBLIC :: aBool = .false.\n" + 
+			"  REAL(KIND(0D0))  :: aReal = 2000.0D0\n" + 
+			"  integer, dimension(dim) :: dimVar =&\n" + 
+			"       (/init1, init2, init3, init4/)\n" + 
+			"END MODULE simpleModule";
+
 	@Before
-	public void setup() throws Exception {
-		super.setup("test_src/unit-tests/simpleModule.f90");
+	public void setUp() throws Exception {
+		parseCode(SOURCE_CODE);
 	}
 
 	@Test

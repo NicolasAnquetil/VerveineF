@@ -524,38 +524,6 @@ public class VerveineFortranStream extends FortranStream
    }
 
    /**
-    * If a comment, beginning with '!', copy the comment to comments buffer excluding
-    * the terminating '\n' character.  Because the next line could be a fixed form
-    * continuation, we can't immediately consume the comment as all comments must
-    * come after all continued lines (comments can be interspersed between continued
-    * lines).
-    * 
-    * Unused for now.  In future could be used to shorten code in made section
-    * when processing comments.
-    */
-   private int consumeFixedFormComments(int i, char buf[], StringBuffer comments)
-   {
-      if (i < super.n && buf[i] == '!') {
-         // found comment character, copy characters up to '\n'
-         do {
-            comments.append(buf[i++]);
-         }
-         while (i < super.n && buf[i] != '\n');
-      }
-
-      // consume all comment lines before looking for continuation
-      //
-      while (matchFixedFormCommentLine(i, buf)) {
-         // add '\n' so comments are not merged on a single line
-         comments.append('\n');
-         // TODO - bump line number and set column?
-         i = consumeFixedFormCommentLine(i, buf, comments);
-      }
-
-      return i;
-   }
-
-   /**
     * Return true if a fixed form comment line is found.
     *
     * Check for comment characters, 'C', '*', and '!' at the start of

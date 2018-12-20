@@ -680,7 +680,10 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 
 	protected ASTToken asttk(Token tok) {
 		if (tok != null) {
-			return new ASTToken( (FortranToken)tok);
+			if (tok.getType() == FortranLexer.EOF) {
+				tok = new FortranToken(tok) ;
+			}
+			return new ASTToken( (FortranToken) tok);
 		}
 		else {
 			return null;
