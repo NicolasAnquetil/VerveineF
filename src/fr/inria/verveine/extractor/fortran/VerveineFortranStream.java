@@ -49,7 +49,7 @@ public class VerveineFortranStream extends FortranStream
    public VerveineFortranStream(String content, int sourceForm) throws IOException
    {
 	   super("verveineStubFile.f90");
-	   this.fileName = "-no-input-file-";
+	   this.name = "-no-input-file-";
 
 	   this.sourceForm = sourceForm;
 
@@ -70,6 +70,7 @@ public class VerveineFortranStream extends FortranStream
    }
 
 
+   @Override
    public int determineSourceForm(String fileName) {
       if (fileName.endsWith(new String(".f")) == true ||
 	      fileName.endsWith(new String(".F")) == true) {
@@ -81,16 +82,19 @@ public class VerveineFortranStream extends FortranStream
       }
    } // end determineSourceForm()
 
+   @Override
    public int getSourceForm()
    {
       return this.sourceForm;
    }
 
+   @Override
    public String getFileName()
    {
-      return fileName;
+      return name;
    }
 
+   @Override
    public String getAbsolutePath()
    {
       return filepath;
@@ -101,6 +105,7 @@ public class VerveineFortranStream extends FortranStream
     * used in building tokens, in particular key words, the actually
     * character buffer is unchanged so id tokens have original case. 
     */
+   @Override
    public int LA(int i)
    {
       int letter_value = super.LA(i);
@@ -114,45 +119,10 @@ public class VerveineFortranStream extends FortranStream
       return letter_value;
    } // end LA()
    
-   
-   private void convertInputBuffer()
+   @Override
+   protected void convertInputBuffer()
    {
-      //
-      // Processing is a lot easier if we add a couple of '\n'
-      // chars to buffer, as file can terminate on '!', for example.
-      //
-      // IMPORTANT NOTE: In processing a buffer we assume we can always
-      // advance to character beyond a '\n'.
-      // TODO - I believe this means we don't have to check for end
-      // of buffer (as currently doing in many places) and these
-      // checks, for example, 
-      //
-      //      if (i < super.n && buf[i] == '!') {
-      //
-      // can be removed.
-      //
 
-      // SKW (2011-08-24) noticed and helped fix a problem with CR-LF line
-      // termination.  All CRs are replaced with LFs and the extra LF
-      // (if it exists) is dropped.
-
-      // CER 2011-08-25: It would be nice not to have to pad the buffer
-      // with ' ' characters.  However, we get an index out of bounds
-      // exception unless we do.  So for now pad with ' '.
-
-      // count the number of dropped characters
-      //      int count = 0;
-      //      for (int i = 0; i < super.n; i++) {
-      //         if (super.data[i] == '\r') {
-      //            if (i+1 < super.n && super.data[i+1] == '\n') {
-      //               count += 1;  // drop the '\r' character
-      //               System.out.println("convertInputBuffer: count=" + count);
-      //               i += 1;
-      //            }
-      //         }
-      //      }
-      //      count = super.n + 2 - count;
-    
       char[] newData = new char[super.n+2];
 
       int from = 0, to = 0;
@@ -191,7 +161,8 @@ public class VerveineFortranStream extends FortranStream
    }
 
 
-   private void convertFreeFormInputBuffer()
+   @Override
+   protected void convertFreeFormInputBuffer()
    {
       // an integer "tuple" to hold i, count return values
       int [] index_count;
@@ -332,7 +303,8 @@ public class VerveineFortranStream extends FortranStream
     * All comments in the middle of continuation lines are moved to a location
     * immediately AFTER the continued line.
     */
-   private void convertFixedFormInputBuffer()
+   @Override
+   protected void convertFixedFormInputBuffer()
    {
       // an integer "tuple" to hold i, count return values
       int [] index_count;
@@ -446,7 +418,8 @@ public class VerveineFortranStream extends FortranStream
    /**
     * Copy comment line and preprocessor lines to data buffer
     */
-   int consumeCommentLines(int i, char [] newData, StringBuffer comments)
+   @Override
+   protected int consumeCommentLines(int i, char [] newData, StringBuffer comments)
    {
       for(int ii = 0; ii < comments.length(); ii++) {
          newData[i++] = comments.charAt(ii);
@@ -458,7 +431,8 @@ public class VerveineFortranStream extends FortranStream
    /**
     * Return true if this character starts a comment
     */
-   private boolean matchComment(int i, char buf[])
+   @Override
+   protected boolean matchComment(int i, char buf[])
    {
       return (buf[i] == '!');
    }
@@ -466,7 +440,8 @@ public class VerveineFortranStream extends FortranStream
    /**
     * if a comment, copy comment to comments buffer excluding terminating '\n' character 
     */
-   private int consumeComment(int i, char buf[], StringBuffer comments)
+   @Override
+   protected int consumeComment(int i, char buf[], StringBuffer comments)
    {
       if (i < super.n && buf[i] == '!') {
          // found comment character, copy characters up to '\n'
@@ -481,7 +456,8 @@ public class VerveineFortranStream extends FortranStream
    /**
     * Return true if a comment line beginning with '!' is found
     */
-   private boolean matchFreeFormCommentLine(int i, char buf[])
+   @Override
+   protected boolean matchFreeFormCommentLine(int i, char buf[])
    {
       // skip over leading blank characters
       // TODO - what about TABS
@@ -495,7 +471,8 @@ public class VerveineFortranStream extends FortranStream
       return false;
    }
 
-   private int consumeFreeFormCommentLine(int i, char buf[], StringBuffer comments)
+   @Override
+   protected int consumeFreeFormCommentLine(int i, char buf[], StringBuffer comments)
    {
       if (i >= super.n) return i;
       
@@ -529,7 +506,8 @@ public class VerveineFortranStream extends FortranStream
     * Check for comment characters, 'C', '*', and '!' at the start of
     * a line.  A blank line is also a comment line.
     */
-   private boolean matchFixedFormCommentLine(int i, char buf[])
+   @Override
+   protected boolean matchFixedFormCommentLine(int i, char buf[])
    {
       if (i >= super.n) return false;
 
@@ -548,7 +526,8 @@ public class VerveineFortranStream extends FortranStream
     * found, copy the line comment to the comments buffer (without trailing
     * '\n', and return the position of the character after the '\n' character.
     */
-   private int consumeFixedFormCommentLine(int i, char buf[], StringBuffer comments)
+   @Override
+  protected int consumeFixedFormCommentLine(int i, char buf[], StringBuffer comments)
    {
       if (i >= super.n) return i;
 
@@ -568,7 +547,8 @@ public class VerveineFortranStream extends FortranStream
     * If character at i == c, skip to next line advancing past '\n', while
     * copying intervening characters to comments buffer.
     */
-   private int processLineForCommentChar(char c, int i, char buf[], StringBuffer comments)
+   @Override
+   protected int processLineForCommentChar(char c, int i, char buf[], StringBuffer comments)
    {
       if (i >= super.n) return i;
 
@@ -594,12 +574,14 @@ public class VerveineFortranStream extends FortranStream
    }
 
 
-   private boolean matchPreprocessLine(int i, char buf[])
+   @Override
+   protected boolean matchPreprocessLine(int i, char buf[])
    {
       return (buf[i] == '#');
    }
 
-   private int consumePreprocessLine(int i, char buf[], StringBuffer comments)
+   @Override
+   protected int consumePreprocessLine(int i, char buf[], StringBuffer comments)
    {
       return processLineForCommentChar('#', i, buf, comments);
    }
@@ -607,7 +589,8 @@ public class VerveineFortranStream extends FortranStream
    /**
     * Return true if the current character is '&'
     */
-   private boolean matchFreeFormContinuationAtEnd(int i, char buf[])
+   @Override
+   protected boolean matchFreeFormContinuationAtEnd(int i, char buf[])
    {
       return (buf[i] == '&');
    }
@@ -617,7 +600,8 @@ public class VerveineFortranStream extends FortranStream
     * copy all remaining characters to the comments buffer, including
     * '\n', to retain possible comments following the continuation character.
     */
-   private int consumeFreeFormContinuationAtEnd(int i, char buf[], StringBuffer comments)
+   @Override
+   protected int consumeFreeFormContinuationAtEnd(int i, char buf[], StringBuffer comments)
    {
       if (i >= super.n || buf[i] != '&') return i;
       
@@ -638,7 +622,8 @@ public class VerveineFortranStream extends FortranStream
     * the first non-blank character in a line.  If there is, return
     * the position after the '&' character.
     */
-   private int skipFreeFormContinuationAtBegin(int i, char buf[])
+   @Override
+   protected int skipFreeFormContinuationAtBegin(int i, char buf[])
    {
       int ii = i;
 
@@ -662,7 +647,8 @@ public class VerveineFortranStream extends FortranStream
     *
     * WARNING, don't go beyond length of stream, super.n
     */
-   private boolean matchFixedFormContinuation(int i, char buf[])
+   @Override
+   protected boolean matchFixedFormContinuation(int i, char buf[])
    {
       int ii;
      
@@ -710,7 +696,8 @@ public class VerveineFortranStream extends FortranStream
     *
     * WARNING, don't go beyond length of stream, super.n
     */
-   private int consumeFixedFormContinuation(int i, char buf[], StringBuffer comments)
+   @Override
+   protected int consumeFixedFormContinuation(int i, char buf[], StringBuffer comments)
    {
       int i0 = i;      // save initial value of i
       int ii = i + 1;  // look ahead past the '\n'
@@ -774,7 +761,8 @@ public class VerveineFortranStream extends FortranStream
     *
     * Return the last character position in the Hollerith constant if found.
     */
-   private int[] consumeHollerith(int i, char buf[], int count, char newBuf[])
+   @Override
+   protected int[] consumeHollerith(int i, char buf[], int count, char newBuf[])
    {
       int k;
 
@@ -832,7 +820,8 @@ public class VerveineFortranStream extends FortranStream
    /**
     * Complete the processing of a string that is continued across multiple lines.
     */
-   private int[] completeContinuedString(char quoteChar, int i, char buf[], int count, char newBuf[])
+   @Override
+   protected int[] completeContinuedString(char quoteChar, int i, char buf[], int count, char newBuf[])
    {
       int i0 = i;
 
@@ -874,7 +863,8 @@ public class VerveineFortranStream extends FortranStream
    /**
     * Check for the beginning of a string at this character position.
     */
-   private boolean matchFreeFormString(int i, char buf[])
+   @Override
+   protected boolean matchFreeFormString(int i, char buf[])
    {
       if (i >= super.n) return false;
 
@@ -891,7 +881,8 @@ public class VerveineFortranStream extends FortranStream
     * of the trailing '&'.  If a string doesn't terminate it's an error,
     * return '\n' position.  
     */
-   private int[] consumeFreeFormString(int i, char buf[], int count, char newBuf[])
+   @Override
+   protected int[] consumeFreeFormString(int i, char buf[], int count, char newBuf[])
    {
       if (i >= super.n) return new int[] {i,count};
 
@@ -926,7 +917,8 @@ public class VerveineFortranStream extends FortranStream
    /**
     * Check for the beginning of a string at this character position.
     */
-   private boolean matchFixedFormString(int i, char buf[])
+   @Override
+   protected boolean matchFixedFormString(int i, char buf[])
    {
       return matchFreeFormString(i, buf);
    }
@@ -937,7 +929,8 @@ public class VerveineFortranStream extends FortranStream
     * terminating quote character.  If a string doesn't terminate it's an error,
     * return '\n' position.  
     */
-   private int consumeFixedFormString(int i, char buf[], int count, char newBuf[])
+   @Override
+   protected int consumeFixedFormString(int i, char buf[], int count, char newBuf[])
    {
       if (i >= super.n) return i;
 
@@ -957,7 +950,8 @@ public class VerveineFortranStream extends FortranStream
       return i;
    }
 
-   private int findCharacter(char ch, int i, char buf[])
+   @Override
+protected int findCharacter(char ch, int i, char buf[])
    {
       int i0 = i;
       while (i < super.n && buf[i] != ch) i += 1;
