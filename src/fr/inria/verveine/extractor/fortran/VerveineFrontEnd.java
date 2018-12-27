@@ -23,13 +23,15 @@ import java.io.*;
 
 // the concrete parser class
 import fortran.ofp.parser.java.FortranParser2008;
-
+import fortran.ofp.parser.java.AbstractFortranStream;
+import fortran.ofp.parser.java.FortranFileStream;
 import fortran.ofp.parser.java.FortranLexer;
 import fortran.ofp.parser.java.FortranLexicalPrepass;
 import fortran.ofp.parser.java.FortranParser;
-import fortran.ofp.parser.java.FortranStream;
+import fortran.ofp.parser.java.FortranStringStream;
 import fortran.ofp.parser.java.FortranTokenStream;
 import fortran.ofp.parser.java.IFortranParser;
+import fortran.ofp.parser.java.IFortranStream;
 
 import org.antlr.runtime.*;
 
@@ -43,7 +45,7 @@ public class VerveineFrontEnd implements Callable<Boolean> {
 	private String path;
 	protected FortranParser parser;
 	protected FortranLexicalPrepass prepass;
-	protected FortranStream inputStream;
+	protected IFortranStream inputStream;
 	protected FortranTokenStream tokens;
 	private FortranLexer lexer;
 
@@ -89,14 +91,14 @@ public class VerveineFrontEnd implements Callable<Boolean> {
 
 				path = file.getAbsolutePath();
 
-				inputStream = new VerveineFortranStream(filename);
+				inputStream = new FortranFileStream(filename);
 				call(type, newArgs);
 			}
 		}
 		else {
 			filename = "-no-file-";
 			path = "/no/path";
-			inputStream = new VerveineFortranStream(fortranSource, VerveineFParser.FREE_FORM);
+			inputStream = new FortranStringStream(fortranSource, AbstractFortranStream.FREE_FORM);
 			
 			call(type, newArgs);
 		}
