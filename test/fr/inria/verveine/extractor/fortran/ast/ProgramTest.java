@@ -6,7 +6,6 @@ import java.util.Collection;
 
 import org.junit.Test;
 
-
 public class ProgramTest extends AbstractASTTest {
 
 	public static final String SOURCE_CODE = "PROGRAM LE_PROGRAMME\nEND PROGRAM\n";
