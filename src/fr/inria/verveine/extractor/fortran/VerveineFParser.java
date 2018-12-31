@@ -10,6 +10,8 @@ import java.util.Map;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import fortran.ofp.FrontEnd;
+import fortran.ofp.parser.java.IFortranParserAction;
 import fr.inria.verveine.extractor.fortran.ast.ASTNode;
 import fr.inria.verveine.extractor.fortran.ast.ParserActionAST;
 import fr.inria.verveine.extractor.fortran.ir.IRDictionary;
@@ -110,8 +112,16 @@ public class VerveineFParser  {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}*/
-		ast = ((ParserActionAST)ofpParser.getParser().getAction()).getAST();
-		runAllVisitors( dico, userProjectDir, ast);
+		IFortranParserAction action = ofpParser.getParser().getAction();
+		if (action instanceof ParserActionAST) {
+			ast = ((ParserActionAST)action).getAST();
+			runAllVisitors( dico, userProjectDir, ast);
+		}
+		else {
+			// should be a FortranParserActionNull
+			// there was an error
+			System.err.println("Parsing aborted");
+		}
 	}
 
 	protected VerveineFrontEnd createParser(String[] args) throws Exception {
@@ -153,7 +163,9 @@ public class VerveineFParser  {
 			else if (arg.startsWith("-D")) {
 				parseMacroDefinition(arg);
 			}
-			else if (arg.startsWith("--stdinput")) {
+			else if (arg.equals("--stdinput")) {
+			}
+			else if (arg.equals(VerveineFrontEnd.IGNORE_MISSING_INCLUDE_OPTION)) {
 			}
 			else if (arg.equals(ALLLOCALS_OPTION)) {
 				this.allLocals = true;
@@ -198,7 +210,8 @@ public class VerveineFParser  {
 		System.err.println("      -v: prints the version");
 		System.err.println("      -o <output-file-name>: changes the name of the output file (default: output.mse)");
 		System.err.println("      -D<macro>: defines a C/C++ macro");
-		System.err.println("      ["+ALLLOCALS_OPTION+"] Forces outputing all local variables, even those with primitive type (incompatible with \"-summary\"");
+		System.err.println("      ["+VerveineFrontEnd.IGNORE_MISSING_INCLUDE_OPTION+"] Tries to ignore missing include files by assuming they are empty");
+		System.err.println("      ["+ALLLOCALS_OPTION+"] Forces outputing all local variables");
 		System.err.println("      <Fortran project directory>: directory containing the Fortran project to export in MSE");
 		System.exit(0);
 	}

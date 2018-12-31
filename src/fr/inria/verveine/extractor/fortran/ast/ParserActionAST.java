@@ -13,6 +13,10 @@ public class ParserActionAST extends FortranParserActionNull {
 
 	protected ParsingContext parsingCtxt;
 	
+	protected String filename;
+	
+	protected int openedfiles;
+	
 	/**
 	 * Helper class for island grammar parsing: Allows to pop many entries from the parsingContext valuesStack
 	 */
@@ -58,6 +62,10 @@ public class ParserActionAST extends FortranParserActionNull {
 	
 	public ParserActionAST(String[] args, IFortranParser parser, String filename) {
 		super(args, parser, filename);
+		parsingCtxt = new ParsingContext();
+		parsingCtxt.pushValueStack( new ASTCompilationUnit(filename));
+		this.filename = filename;
+		openedfiles = 0;
 	}
 
 	public ASTNode getAST() {
@@ -82,17 +90,19 @@ public class ParserActionAST extends FortranParserActionNull {
 
 	@Override
 	public void start_of_file(String filename, String path) {
-		 parsingCtxt = new ParsingContext();
-		 parsingCtxt.pushValueStack( new ASTCompilationUnit(filename));
+		openedfiles++;
 	}
 
 	@Override
 	public void end_of_file(String filename, String path) {
-		IASTListNode<IASTNode> decls;
-		decls = parsingContextPopAll(new UntilTypeValidator(ASTCompilationUnit.class));
-		ASTCompilationUnit parentNode = (ASTCompilationUnit) parsingCtxt.topValueStack();
-		parentNode.setBody(decls);
-		decls.setParent(parentNode);
+		openedfiles--;
+		if (openedfiles == 0) {
+			IASTListNode<IASTNode> decls;
+			decls = parsingContextPopAll(new UntilTypeValidator(ASTCompilationUnit.class));
+			ASTCompilationUnit parentNode = (ASTCompilationUnit) parsingCtxt.topValueStack();
+			parentNode.setBody(decls);
+			decls.setParent(parentNode);
+		}
 	}
 
 
@@ -308,8 +318,6 @@ public class ParserActionAST extends FortranParserActionNull {
 	public void subroutine_subprogram(boolean hasExePart, boolean hasIntSubProg) {
 		ASTSubroutineSubprogramNode pcdNode = new ASTSubroutineSubprogramNode();
 		
-		ASTToken tk = (ASTToken) ((ASTEndSubroutineStmtNode) parsingCtxt.topValueStack()).getASTField(ASTEndSubroutineStmtNode.TEOS);
-
 		pcdNode.setEndSubroutineStmt((ASTEndSubroutineStmtNode) parsingCtxt.popValueStack());
 		if (hasIntSubProg) {
 			//fctNode.setInternalSubprograms((IASTListNode<IBodyConstruct>) parsingCtxt.valueStackPop());

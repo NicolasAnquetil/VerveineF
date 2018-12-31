@@ -39,6 +39,9 @@ import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
 public class VerveineFrontEnd implements Callable<Boolean> {
+
+	public static final String IGNORE_MISSING_INCLUDE_OPTION = "--ignoremissinginclude";
+	
 	private int sourceForm;
 	private  ArrayList<String> includeDirs;
 	private String filename;
@@ -48,6 +51,7 @@ public class VerveineFrontEnd implements Callable<Boolean> {
 	protected IFortranStream inputStream;
 	protected FortranTokenStream tokens;
 	private FortranLexer lexer;
+	protected boolean ignoreMissingIncludes = false;
 
 	public VerveineFrontEnd(String args[]) throws Exception {
 		this(args, "fortran.ofp.parser.java.FortranParserActionNull");
@@ -69,6 +73,9 @@ public class VerveineFrontEnd implements Callable<Boolean> {
 			else if (args[i].equals("--stdinput")) {
 				fortranSource = args[i+1];
 				i++;
+			}
+			else if (args[i].startsWith(IGNORE_MISSING_INCLUDE_OPTION)) {
+				ignoreMissingIncludes = true;
 			}
 			else {
 				newArgsList.add(args[i]);
@@ -224,6 +231,7 @@ public class VerveineFrontEnd implements Callable<Boolean> {
 
 	public Boolean call(String type, String[] args) throws Exception {
 		lexer = new FortranLexer(inputStream);
+		lexer.setIgnoreMissingincludes(ignoreMissingIncludes);
 
 		// Changes associated with antlr version 3.3 require that includeDirs
 		// be set here as the tokens are loaded by the constructor.
