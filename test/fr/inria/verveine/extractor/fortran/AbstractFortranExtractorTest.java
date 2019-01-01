@@ -17,7 +17,7 @@ public class AbstractFortranExtractorTest {
 		for (i=0; i<args.length; i++) {
 			newArgs[i] = args[i];
 		}
-		newArgs[i++] = "--stdinput";
+		newArgs[i++] = VerveineFParser.STRING_SOURCE_OPTION;
 		newArgs[i] = sourceCode;
 		
 		parseCode(newArgs);
@@ -26,7 +26,7 @@ public class AbstractFortranExtractorTest {
 	protected void parseCode(String[] args) {
 		parser = new VerveineFParser();
 		parser.setOptions(args);
-		parser.parse(args);
+		parser.parseSources();
 	}
 
 }

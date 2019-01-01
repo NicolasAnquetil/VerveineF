@@ -7,6 +7,8 @@ import java.util.Collection;
 import org.junit.Before;
 import org.junit.Test;
 
+import fr.inria.verveine.extractor.fortran.VerveineFParser;
+
 public class ScopeVisitorModuleTest extends AbstractIrTest {
 
 	public static final String SOURCE_CODE = "MODULE simpleModule\n" + 
@@ -29,7 +31,7 @@ public class ScopeVisitorModuleTest extends AbstractIrTest {
 		root = dico.getRoot();
 		
 		assertNotNull(root);
-		assertEquals("[-no-file-]", root.getName());
+		assertEquals("["+VerveineFParser.STRING_SOURCE_FILENAME+"]", root.getName());
 	}
 
 	@Test

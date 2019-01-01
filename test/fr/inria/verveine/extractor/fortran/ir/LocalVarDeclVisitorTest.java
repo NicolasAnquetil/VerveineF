@@ -34,7 +34,7 @@ public class LocalVarDeclVisitorTest extends AbstractIrTest {
 
 	@Test
 	public void testNumberLocalsVarDecl() {
-		parseCode( new String[] {VerveineFParser.ALLLOCALS_OPTION, "--stdinput", SOURCE_CODE} );
+		parseCode( new String[] {VerveineFParser.ALLLOCALS_OPTION}, SOURCE_CODE );
 		assertEquals(2, dico.allWithKind(IRKind.VARIABLE).size());
 	}
 
@@ -46,7 +46,7 @@ public class LocalVarDeclVisitorTest extends AbstractIrTest {
 	
 	@Test
 	public void testVarDeclNames() {
-		parseCode( new String[] {VerveineFParser.ALLLOCALS_OPTION, "--stdinput", SOURCE_CODE} );
+		parseCode( new String[] {VerveineFParser.ALLLOCALS_OPTION}, SOURCE_CODE );
 		for (IREntity var : dico.allWithKind(IRKind.VARIABLE)) {
 			assertEquals("i", var.getName());
 		}

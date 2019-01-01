@@ -48,7 +48,7 @@ public class VerveineFOptionsTest extends AbstractFortranExtractorTest {
 
 		deleteIfExist(ir);
 
-		parseCode(new String[] {"--stdinput", SOURCE_CODE});
+		parseCode(new String[] {VerveineFParser.STRING_SOURCE_OPTION, SOURCE_CODE});
 		assertTrue("Default output file not found",ir.exists());
 		assertTrue("Output file is empty", ir.length() > 0);
 		assertEquals(2, countLines(ir));
@@ -64,7 +64,7 @@ public class VerveineFOptionsTest extends AbstractFortranExtractorTest {
 		deleteIfExist(ir);
 		deleteIfExist(defaultIr);
 
-		parseCode(new String[] {"-o", "test.ir", "--stdinput", SOURCE_CODE});
+		parseCode(new String[] {"-o", "test.ir", VerveineFParser.STRING_SOURCE_OPTION, SOURCE_CODE});
 		assertFalse("Default output file found",defaultIr.exists());
 		assertTrue("Non-default output file not found",ir.exists());
 		assertTrue("Output file is empty", ir.length() > 0);

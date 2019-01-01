@@ -6,6 +6,8 @@ import java.util.Collection;
 
 import org.junit.Test;
 
+import fr.inria.verveine.extractor.fortran.VerveineFParser;
+
 public class ScopeVisitorProgramTest extends AbstractIrTest {
 
 	public static final String SOURCE_CODE = "PROGRAM LE_PROGRAMME\nEND PROGRAM\n";
@@ -18,7 +20,7 @@ public class ScopeVisitorProgramTest extends AbstractIrTest {
 		
 		assertNotNull(root);
 		assertEquals(IRKind.COMPILATION_UNIT, root.getKind());
-		assertEquals("[-no-file-]", root.getName());
+		assertEquals("["+VerveineFParser.STRING_SOURCE_FILENAME+"]", root.getName());
 	}
 
 	@Test
