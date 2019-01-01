@@ -1,2 +1,0 @@
-PROGRAM simpleProg
-END PROGRAM simpleProg
