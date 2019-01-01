@@ -4,6 +4,8 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Stack;
 
+import fr.inria.verveine.extractor.fortran.parser.ast.ASTListNode;
+import fr.inria.verveine.extractor.fortran.parser.ast.IASTListNode;
 import fr.inria.verveine.extractor.fortran.parser.ast.IASTNode;
 
 
@@ -49,6 +51,21 @@ public class ParsingContext {
 
 	public IASTNode popValueStack() {
 		return valueStack.pop();
+	}
+
+	/**
+	 * Helper method for island grammar parsing: Allows to pop many entries from the parsingContext valuesStack
+	 */
+	public IASTListNode<IASTNode> popAllValueStack(Validator valid) {
+		IASTListNode<IASTNode> poped = new ASTListNode<>();
+
+		IASTNode topNode = topValueStack();
+		while ( valid.validate(topNode) ) {
+			poped.add( topNode);
+			popValueStack();
+			topNode = topValueStack();
+		}
+		return poped;
 	}
 
 	public void valueSet(String key, Object value) {

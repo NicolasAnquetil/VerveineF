@@ -20,22 +20,6 @@ public class ParserActionAST extends FortranParserActionNull {
 	protected ParsingContext parsingCtxt;
 
 	protected int openedFiles;
-
-	/**
-	 * Helper method for island grammar parsing: Allows to pop many entries from the parsingContext valuesStack
-	 */
-	private IASTListNode<IASTNode> parsingContextPopAll(Validator valid) {
-		IASTListNode<IASTNode> poped = new ASTListNode<>();
-
-		IASTNode topNode = parsingCtxt.topValueStack();
-		while ( valid.validate(topNode) ) {
-			poped.add( topNode);
-			parsingCtxt.popValueStack();
-			topNode = parsingCtxt.topValueStack();
-		}
-		return poped;
-	}
-
 	
 	
 	public ParserActionAST(String[] args, IFortranParser parser, String filename) {
@@ -64,7 +48,7 @@ public class ParserActionAST extends FortranParserActionNull {
 		openedFiles--;
 		if (openedFiles == 0) {
 			IASTListNode<IASTNode> decls;
-			decls = parsingContextPopAll(new UntilTypeValidator(ASTCompilationUnit.class));
+			decls = parsingCtxt.popAllValueStack(new UntilTypeValidator(ASTCompilationUnit.class));
 			ASTCompilationUnit parentNode = (ASTCompilationUnit) parsingCtxt.topValueStack();
 			parentNode.setBody(decls);
 			decls.setParent(parentNode);
@@ -177,7 +161,7 @@ public class ParserActionAST extends FortranParserActionNull {
 		}
 		catch (ClassCastException e) {
 			// try to recover from error ...
-			parsingContextPopAll(new UntilTopEntityValidator());
+			parsingCtxt.popAllValueStack(new UntilTopEntityValidator());
 			ASTToken lastToken = (ASTToken) moduleNode.getEndModuleStmt().getASTField(ASTEndModuleStmtNode.TEOS);
 			System.err.println("Parsing error "+lastToken+", ignoring all since  " + parsingCtxt.topValueStack());
 			return;
@@ -240,7 +224,7 @@ public class ParserActionAST extends FortranParserActionNull {
 		}
 		catch (ClassCastException e) {
 			// try to recover from error ...
-			parsingContextPopAll(new UntilTopEntityValidator());
+			parsingCtxt.popAllValueStack(new UntilTopEntityValidator());
 			ASTToken lastToken = (ASTToken) fctNode.getEndFunctionStmt().getASTField(ASTEndFunctionStmtNode.TEOS);
 			System.err.println("Parsing error after "+lastToken+", ignoring all since  " + parsingCtxt.topValueStack());
 			return;
@@ -306,7 +290,7 @@ public class ParserActionAST extends FortranParserActionNull {
 		}
 		catch (ClassCastException e) {
 			// try to recover from error ...
-			parsingContextPopAll(new UntilTopEntityValidator());
+			parsingCtxt.popAllValueStack(new UntilTopEntityValidator());
 			IASTNode lastToken = pcdNode.getEndSubroutineStmt().getASTField(ASTEndSubroutineStmtNode.TEOS);
 			System.err.println("Parsing error after "+ lastToken+", ignoring all since  " + parsingCtxt.topValueStack());
 			return;
@@ -347,7 +331,7 @@ public class ParserActionAST extends FortranParserActionNull {
 	public void specification_part(int numUseStmts, int numImportStmts, int numImplStmts, int numDeclConstructs) {
 		// numImplStmts = 0
 		ASTListNode<IASTNode> specifications;
-		specifications = (ASTListNode<IASTNode>) parsingContextPopAll(new CountValidator(numDeclConstructs));
+		specifications = (ASTListNode<IASTNode>) parsingCtxt.popAllValueStack(new CountValidator(numDeclConstructs));
 		//specifications.addAll( parsingContextPopAll(new CountValidator(numImportStmts)));
 		//specifications.addAll( parsingContextPopAll(new CountValidator(numUseStmts)));
 		parsingCtxt.pushValueStack(specifications);
@@ -408,7 +392,7 @@ public class ParserActionAST extends FortranParserActionNull {
 	public void derived_type_def() {
 		ASTDerivedTypeDefNode derivedType = new ASTDerivedTypeDefNode();
 		// ignore everything in the derived_type_def 
-		parsingContextPopAll( new UntilTypeValidator(ASTDerivedTypeStmtNode.class));
+		parsingCtxt.popAllValueStack( new UntilTypeValidator(ASTDerivedTypeStmtNode.class));
 		derivedType.setDerivedTypeStmt((ASTDerivedTypeStmtNode) parsingCtxt.popValueStack());
 		parsingCtxt.pushValueStack(derivedType);
 	}
@@ -418,7 +402,7 @@ public class ParserActionAST extends FortranParserActionNull {
 	public void initialization(boolean hasExpr, boolean hasNullInit) {
 		// for now pruning expressions
 		if (hasExpr) {
-			parsingContextPopAll(new WhileTypeValidator(ASTVarOrFnRefNode.class));
+			parsingCtxt.popAllValueStack(new WhileTypeValidator(ASTVarOrFnRefNode.class));
 		}
 	}
 
@@ -505,7 +489,7 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 	public void execution_part(int execution_part_count) {
 		IASTListNode<IASTNode> exec_parts = new ASTListNode<>();
 		exec_parts.addAll(
-				parsingContextPopAll( new Validator() {
+				parsingCtxt.popAllValueStack( new Validator() {
 					@Override
 					public boolean validate(IASTNode node) {
 						return (node instanceof ASTVarOrFnRefNode) || (node instanceof ASTCallStmtNode);
@@ -530,7 +514,7 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 		ASTEntityDeclNode entityDecl = new ASTEntityDeclNode();
 		entityDecl.setObjectName(asttk(id));
 		if (hasArraySpec) {
-			parsingContextPopAll( new WhileTypeValidator(ASTVarOrFnRefNode.class));
+			parsingCtxt.popAllValueStack( new WhileTypeValidator(ASTVarOrFnRefNode.class));
 		}
 		parsingCtxt.pushValueStack( entityDecl);
 	}
@@ -538,7 +522,7 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 	@Override
 	public void entity_decl_list(int count) {
 		// should be IASTListNode<ASTEntityDeclNode> but this gives a compilation error in Eclipse for incompatible type ?!?!
-		IASTListNode<IASTNode> declList = parsingContextPopAll( new CountValidator(count));
+		IASTListNode<IASTNode> declList = parsingCtxt.popAllValueStack( new CountValidator(count));
 		parsingCtxt.pushValueStack( declList);
 	}
 
@@ -610,7 +594,7 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 				(type == IActionEnums.ArraySpecElement_expr_colon) ||
 				(type == IActionEnums.ArraySpecElement_expr_colon_expr) ||
 				(type == IActionEnums.ArraySpecElement_expr_colon_asterisk) ) {
-			parsingContextPopAll(new WhileTypeValidator(ASTVarOrFnRefNode.class));				
+			parsingCtxt.popAllValueStack(new WhileTypeValidator(ASTVarOrFnRefNode.class));				
 		}
 	}
 
