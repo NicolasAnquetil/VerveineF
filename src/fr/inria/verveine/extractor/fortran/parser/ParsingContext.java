@@ -37,14 +37,6 @@ public class ParsingContext {
 		valueStack.push(node);
 	}
 
-	public IASTNode valueStackTop(int i) {
-		assert(i < 0);
-		if (i == -1) {
-			return topValueStack(); // equivalent to valueStack.elementAt(valueStack.size()-1)
-		}
-		return valueStack.elementAt(valueStack.size()+i); // i is negative ...
-	}
-
 	public IASTNode topValueStack() {
 		return valueStack.peek();
 	}

@@ -1,6 +1,8 @@
 package fr.inria.verveine.extractor.fortran.parser.ast;
 
 
+import java.util.Collection;
+
 import org.antlr.runtime.Token;
 
 import fortran.ofp.parser.java.FortranLexer;
@@ -125,13 +127,9 @@ public class ParserActionAST extends FortranParserActionNull {
 	@Override
 	public void module_subprogram_part(int count) {
 		if (count > 0) {
-			// we skip count elements to fetch the count-1 element on top of the valueStack
-			// this must be a IASTListNode<IModuleBodyConstruct> pushed by specification_part
-			// we add to it all (count) module_subprograms
-			IASTListNode<IModuleBodyConstruct> moduleBody = (IASTListNode<IModuleBodyConstruct>) parsingCtxt.valueStackTop(-1 * (count+1));
-			for (int i=0; i<count; i++) {
-				moduleBody.add((IModuleBodyConstruct) parsingCtxt.popValueStack());
-			}
+			IASTListNode<IASTNode> lConstruct = parsingCtxt.popAllValueStack( new CountValidator(count));
+			IASTListNode<IModuleBodyConstruct> moduleBody = (IASTListNode<IModuleBodyConstruct>) parsingCtxt.topValueStack();
+			moduleBody.addAll((Collection<? extends IModuleBodyConstruct>) lConstruct);
 		}
 	}
 
