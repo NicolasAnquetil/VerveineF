@@ -12,7 +12,9 @@ import fortran.ofp.parser.java.IFortranParser;
 public class ParserActionAST extends FortranParserActionNull {
 
 	protected ParsingContext parsingCtxt;
-	
+
+	protected int openedFiles;
+
 	/**
 	 * Helper class for island grammar parsing: Allows to pop many entries from the parsingContext valuesStack
 	 */
@@ -54,16 +56,6 @@ public class ParserActionAST extends FortranParserActionNull {
 		boolean validate(IASTNode node) { return ! node.isTopLevelNode(); }
 	}
 
-	
-	
-	public ParserActionAST(String[] args, IFortranParser parser, String filename) {
-		super(args, parser, filename);
-	}
-
-	public ASTNode getAST() {
-		return (ASTNode) parsingCtxt.topValueStack();
-	}
-
 	/**
 	 * Helper method for island grammar parsing: Allows to pop many entries from the parsingContext valuesStack
 	 */
@@ -79,20 +71,39 @@ public class ParserActionAST extends FortranParserActionNull {
 		return poped;
 	}
 
+	
+	
+	public ParserActionAST(String[] args, IFortranParser parser, String filename) {
+		super(args, parser, filename);
+		openedFiles = 0;
+	}
+
+	public ASTNode getAST() {
+		return (ASTNode) parsingCtxt.topValueStack();
+	}
+
 
 	@Override
 	public void start_of_file(String filename, String path) {
-		 parsingCtxt = new ParsingContext();
-		 parsingCtxt.pushValueStack( new ASTCompilationUnit(filename));
+		if (! path.equals("ERROR_FILE_NOT_FOUND")) {
+			// if path == "ERROR_FILE_NOT_FOUND", this is a missing include file
+			// and it will not be "closed" with end_of_file()
+			openedFiles++;
+			parsingCtxt = new ParsingContext();
+			parsingCtxt.pushValueStack( new ASTCompilationUnit(filename));
+		}
 	}
 
 	@Override
 	public void end_of_file(String filename, String path) {
-		IASTListNode<IASTNode> decls;
-		decls = parsingContextPopAll(new UntilTypeValidator(ASTCompilationUnit.class));
-		ASTCompilationUnit parentNode = (ASTCompilationUnit) parsingCtxt.topValueStack();
-		parentNode.setBody(decls);
-		decls.setParent(parentNode);
+		openedFiles--;
+		if (openedFiles == 0) {
+			IASTListNode<IASTNode> decls;
+			decls = parsingContextPopAll(new UntilTypeValidator(ASTCompilationUnit.class));
+			ASTCompilationUnit parentNode = (ASTCompilationUnit) parsingCtxt.topValueStack();
+			parentNode.setBody(decls);
+			decls.setParent(parentNode);
+		}
 	}
 
 

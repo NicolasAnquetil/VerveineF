@@ -4,7 +4,6 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Stack;
 
-import org.antlr.runtime.Token;
 
 /**
  * Stores intermediary results of the parser to build the AST<br>

@@ -105,11 +105,6 @@ public class VerveineFParser  {
 			return;
 		}
 
-		try {
-			ofpParser.call();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 		ast = ((ParserActionAST)ofpParser.getParser().getAction()).getAST();
 		runAllVisitors( dico, userProjectDir, ast);
 	}
