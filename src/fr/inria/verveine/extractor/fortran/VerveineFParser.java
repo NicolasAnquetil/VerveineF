@@ -10,10 +10,10 @@ import java.util.Map;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import fr.inria.verveine.extractor.fortran.ast.ASTNode;
-import fr.inria.verveine.extractor.fortran.ast.ParserActionAST;
 import fr.inria.verveine.extractor.fortran.ir.IRDictionary;
 import fr.inria.verveine.extractor.fortran.ir.IREntity;
+import fr.inria.verveine.extractor.fortran.parser.ast.ASTNode;
+import fr.inria.verveine.extractor.fortran.parser.ast.ParserActionAST;
 import fr.inria.verveine.extractor.fortran.visitors.CommentVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.InvokAccessVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.ScopeDefVisitor;

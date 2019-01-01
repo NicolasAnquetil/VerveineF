@@ -1,21 +1,21 @@
 package fr.inria.verveine.extractor.fortran.visitors;
 
-import fr.inria.verveine.extractor.fortran.ast.ASTAttrSpecSeqNode;
-import fr.inria.verveine.extractor.fortran.ast.ASTCompilationUnit;
-import fr.inria.verveine.extractor.fortran.ast.ASTEndFunctionStmtNode;
-import fr.inria.verveine.extractor.fortran.ast.ASTEndModuleStmtNode;
-import fr.inria.verveine.extractor.fortran.ast.ASTEndProgramStmtNode;
-import fr.inria.verveine.extractor.fortran.ast.ASTEndSubroutineStmtNode;
-import fr.inria.verveine.extractor.fortran.ast.ASTEntityDeclNode;
-import fr.inria.verveine.extractor.fortran.ast.ASTFunctionSubprogramNode;
-import fr.inria.verveine.extractor.fortran.ast.ASTMainProgramNode;
-import fr.inria.verveine.extractor.fortran.ast.ASTModuleNode;
-import fr.inria.verveine.extractor.fortran.ast.ASTSubroutineSubprogramNode;
-import fr.inria.verveine.extractor.fortran.ast.ASTToken;
-import fr.inria.verveine.extractor.fortran.ast.ASTTypeDeclarationStmtNode;
 import fr.inria.verveine.extractor.fortran.ir.IRDictionary;
 import fr.inria.verveine.extractor.fortran.ir.IREntity;
 import fr.inria.verveine.extractor.fortran.ir.IRKind;
+import fr.inria.verveine.extractor.fortran.parser.ast.ASTAttrSpecSeqNode;
+import fr.inria.verveine.extractor.fortran.parser.ast.ASTCompilationUnit;
+import fr.inria.verveine.extractor.fortran.parser.ast.ASTEndFunctionStmtNode;
+import fr.inria.verveine.extractor.fortran.parser.ast.ASTEndModuleStmtNode;
+import fr.inria.verveine.extractor.fortran.parser.ast.ASTEndProgramStmtNode;
+import fr.inria.verveine.extractor.fortran.parser.ast.ASTEndSubroutineStmtNode;
+import fr.inria.verveine.extractor.fortran.parser.ast.ASTEntityDeclNode;
+import fr.inria.verveine.extractor.fortran.parser.ast.ASTFunctionSubprogramNode;
+import fr.inria.verveine.extractor.fortran.parser.ast.ASTMainProgramNode;
+import fr.inria.verveine.extractor.fortran.parser.ast.ASTModuleNode;
+import fr.inria.verveine.extractor.fortran.parser.ast.ASTSubroutineSubprogramNode;
+import fr.inria.verveine.extractor.fortran.parser.ast.ASTToken;
+import fr.inria.verveine.extractor.fortran.parser.ast.ASTTypeDeclarationStmtNode;
 
 public class VarDefVisitor extends AbstractDispatcherVisitor {
 

@@ -2,10 +2,10 @@ package fr.inria.verveine.extractor.fortran.visitors;
 
 import java.util.Stack;
 
-import fr.inria.verveine.extractor.fortran.ast.ASTVisitor;
-import fr.inria.verveine.extractor.fortran.ast.IASTNode;
 import fr.inria.verveine.extractor.fortran.ir.IRDictionary;
 import fr.inria.verveine.extractor.fortran.ir.IREntity;
+import fr.inria.verveine.extractor.fortran.parser.ast.ASTVisitor;
+import fr.inria.verveine.extractor.fortran.parser.ast.IASTNode;
 
 /**
  * The superclass of all visitors. These visitors visit an AST to create FAMIX entities.

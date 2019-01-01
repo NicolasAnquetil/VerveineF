@@ -3,7 +3,7 @@ package fr.inria.verveine.extractor.fortran.ir;
 import java.util.Hashtable;
 import java.util.Map;
 
-import fr.inria.verveine.extractor.fortran.ast.ASTNode;
+import fr.inria.verveine.extractor.fortran.parser.ast.ASTNode;
 
 public class IREntity {
 	// constants used to store data in the entity
