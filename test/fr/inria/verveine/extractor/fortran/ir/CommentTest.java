@@ -9,7 +9,7 @@ import java.util.Iterator;
 import org.junit.Before;
 import org.junit.Test;
 
-public class CommentTest extends AbstractIRTest {
+public class CommentTest extends AbstractIrTest {
 
 	public static final String SOURCE_CODE = "! This is a simple Module\n" + 
 			"! It has comments\n" + 

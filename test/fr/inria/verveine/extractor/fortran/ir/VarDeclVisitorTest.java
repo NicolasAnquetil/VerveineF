@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 
-public class VarDeclVisitorTest extends AbstractIRTest {
+public class VarDeclVisitorTest extends AbstractIrTest {
 
 	public static final String SOURCE_CODE = "MODULE simpleModule\n" + 
 			"  CHARACTER(LEN = 10), PARAMETER :: aString\n" + 

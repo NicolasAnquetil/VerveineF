@@ -7,7 +7,7 @@ import java.util.Collection;
 import org.junit.Before;
 import org.junit.Test;
 
-public class SubprgVisitorTest extends AbstractIRTest {
+public class SubprgVisitorTest extends AbstractIrTest {
 
 	public static final String SOURCE_CODE = "MODULE simpleModule\n" + 
 			"CONTAINS\n" + 

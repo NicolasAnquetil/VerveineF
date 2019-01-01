@@ -9,7 +9,7 @@ import java.util.Iterator;
 import org.junit.Before;
 import org.junit.Test;
 
-public class InvokAccessVisitorTest extends AbstractIRTest {
+public class InvokAccessVisitorTest extends AbstractIrTest {
 
 	public static final String SOURCE_CODE = "MODULE simpleModule\n" + 
 			"CONTAINS\n" + 

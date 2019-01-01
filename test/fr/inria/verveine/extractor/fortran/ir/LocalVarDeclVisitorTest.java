@@ -8,7 +8,7 @@ import org.junit.Test;
 import fr.inria.verveine.extractor.fortran.VerveineFParser;
 
 
-public class LocalVarDeclVisitorTest extends AbstractIRTest {
+public class LocalVarDeclVisitorTest extends AbstractIrTest {
 
 	public static final String SOURCE_CODE = "MODULE simpleModule\n" + 
 			"CONTAINS\n" + 

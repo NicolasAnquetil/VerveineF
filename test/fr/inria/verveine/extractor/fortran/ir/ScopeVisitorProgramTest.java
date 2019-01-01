@@ -6,7 +6,7 @@ import java.util.Collection;
 
 import org.junit.Test;
 
-public class ScopeVisitorProgramTest extends AbstractIRTest {
+public class ScopeVisitorProgramTest extends AbstractIrTest {
 
 	public static final String SOURCE_CODE = "PROGRAM LE_PROGRAMME\nEND PROGRAM\n";
 

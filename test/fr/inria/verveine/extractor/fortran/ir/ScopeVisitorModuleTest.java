@@ -7,7 +7,7 @@ import java.util.Collection;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ScopeVisitorModuleTest extends AbstractIRTest {
+public class ScopeVisitorModuleTest extends AbstractIrTest {
 
 	public static final String SOURCE_CODE = "MODULE simpleModule\n" + 
 			"  CHARACTER(LEN = 10), PARAMETER :: aString\n" + 
