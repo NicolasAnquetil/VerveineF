@@ -21,11 +21,18 @@ import fr.inria.verveine.extractor.fortran.visitors.SubprgDefVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.VarDefVisitor;
 
 public class VerveineFParser  {
+	public static final String DEFAULT_OUTPUT_FILENAME = "output.ir";
+
 	public static final String ALLLOCALS_OPTION = "--alllocals";
 
 	public static final String VERVEINEF_PARSER_ACTION = "fr.inria.verveine.extractor.fortran.parser.ast.ParserActionAST";
 
-	private static final String VERVEINEF_VERSION = "0.1.0_201801201-IR";
+	private static final String VERVEINEF_VERSION = "0.1.0_20190101-IR";
+
+	// possible forms of Fortran code
+	public static final int FIXED_FORM = 2;
+	public static final int FREE_FORM = 1;
+	public static final int UNKNOWN_SOURCE_FORM = -1;
 
 	/**
 	 * Directory where the project to analyze is located
@@ -52,16 +59,9 @@ public class VerveineFParser  {
 	private String outputFileName;
 
 	/**
-	 * Whether to output all local variables (even those with primitive type or not (default is not).<br>
-	 * Note: allLocals => not classSummary
+	 * Whether to output all local variables 
 	 */
 	private boolean allLocals;
-
-	public static final int FIXED_FORM = 2;
-
-	public static final int FREE_FORM = 1;
-
-	public static final int UNKNOWN_SOURCE_FORM = -1;
 
 	public static void main(String[] args) {
 		VerveineFParser parser = new VerveineFParser();
@@ -74,7 +74,7 @@ public class VerveineFParser  {
 		this.argDefined = new HashMap<String,String>();
 		includeDirs = new ArrayList<>();
 		userProjectDir = null;
-		outputFileName = "output.ir";
+		outputFileName = DEFAULT_OUTPUT_FILENAME;
 	}
 
 	protected void outputIR() {
