@@ -23,7 +23,7 @@ import fr.inria.verveine.extractor.fortran.visitors.VarDefVisitor;
 public class VerveineFParser  {
 	public static final String ALLLOCALS_OPTION = "--alllocals";
 
-	public static final String VERVEINEF_PARSER_ACTION = "fr.inria.verveine.extractor.fortran.ast.ParserActionAST";
+	public static final String VERVEINEF_PARSER_ACTION = "fr.inria.verveine.extractor.fortran.parser.ast.ParserActionAST";
 
 	private static final String VERVEINEF_VERSION = "0.1.0_201801201-IR";
 
