@@ -103,7 +103,7 @@ public class VerveineFParser  {
 			if (sourceIsString) {
 				VerveineFortranStream stream = null;
 				try {
-					stream = new VerveineFortranStream(src, FREE_FORM);
+					stream = new VerveineFortranStream(macros, src, FREE_FORM);
 				} catch (IOException e) {
 					// should not occur, there is no reason for VerveineFortranStream to fail on a string source
 				}
@@ -140,7 +140,7 @@ public class VerveineFParser  {
 		includeDirs.add(file.getParent());
 
 		try {
-			stream = new VerveineFortranStream(file.getAbsolutePath() );
+			stream = new VerveineFortranStream(macros, file.getAbsolutePath() );
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
