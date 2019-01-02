@@ -2,6 +2,7 @@ package fr.inria.verveine.extractor.fortran;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 import fortran.ofp.parser.java.FortranStream;
@@ -91,19 +92,29 @@ public class VerveineFortranStream extends FortranStream
 		for (; i < super.n; i++) {
 			if ( (col == 0) && matchPreprocessLine(i, data) ) {
 				String line = lineAsString(data,i);
-				String[] preprocTokens = line.split("[ =]+");
-				
-				if (preprocTokens[0].equals("#if")) {
-					if (! macroHasValue(preprocTokens[1], preprocTokens[2])) {
-						i = blankLinesUpToEndif(i+line.length());
-					}
-				}
+				i = blankThisIfMacro(i, line);
 			}
 			else if (data[i] == '\n') {
 				col=0;
 			}
 			else {
 				col++;
+			}
+		}
+		return i;
+	}
+
+	/**
+	 * checks that current line is a '#if' preprocessor statement.
+	 * If so, checks whether the macro has been defined with the correct value.
+	 * If not so blanks everything up to a corresponding '#endif' line
+	 */
+	protected int blankThisIfMacro(int i, String line) {
+		String[] preprocTokens = line.split("[ =]+");
+		
+		if (preprocTokens[0].equals("#if")) {
+			if (! macroHasValue(preprocTokens[1], preprocTokens[2])) {
+				i = blankLinesUpToEndif(i+line.length()+1);
 			}
 		}
 		return i;
@@ -123,15 +134,29 @@ public class VerveineFortranStream extends FortranStream
 	}
 
 	private int blankLinesUpToEndif(int i) {
-		boolean endifLine = false;
 		int col = 0;
-		while ((!endifLine) && (i < n)) {
-			if ( (col == 0) && lineAsString(data, i).startsWith("#endif")) {
-				endifLine = true;
+		while (i < n) {
+			if (col == 0) {
+				String line = lineAsString(data, i);
+				if (line.startsWith("#endif")) {
+					return i+line.length()+1;
+				}
+				else if ( line.startsWith("#if")) {
+					// recursive call to process inner #if instruction
+					// but before make sure no other macro will match in this process
+					Map<String, String> backup = macros;
+					macros = new HashMap<>();
+					i = blankThisIfMacro(i, line);
+					macros = backup;
+
+					// skip end of the loop to restart a new line
+					continue;
+				}
 			}
-			else if (data[i] == '\n') {
-					col=0;
-					i++;
+			
+			if (data[i] == '\n') {
+				col=0;
+				i++;
 			}
 			else {
 				data[i] = ' ';
