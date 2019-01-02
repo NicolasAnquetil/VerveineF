@@ -136,8 +136,13 @@ public class VerveineFParser  {
 			System.err.println("Not accepting directories as argument at this point");
 			return null;
 		}
-
-		includeDirs.add(file.getParent());
+		String parentDir = file.getParent();
+		if ( (parentDir == null) || parentDir.equals("") ) {
+			includeDirs.add(".");
+		}
+		else {
+			includeDirs.add(parentDir);
+		}
 
 		try {
 			stream = new VerveineFortranStream(macros, file.getAbsolutePath() );
