@@ -295,9 +295,10 @@ public class VerveineFortranStream extends FortranStream
 				}
 				newData[count++] = data[i];
 			}
-
-			// this line is to be continued
 			else {
+				// this line is to be continued
+				// put a space instead of the & to keep token start/stop-indexes right
+				newData[count++] = ' ';
 				col = 1;
 			}
 		}
