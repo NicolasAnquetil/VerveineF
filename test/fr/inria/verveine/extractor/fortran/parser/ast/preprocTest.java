@@ -45,7 +45,7 @@ public class preprocTest extends AbstractASTTest {
 
 	public static final String AND_CONDITION =
 			"module a_module\n" + 
-			"#if MACRO1==1 || MACRO2==1\n" + 
+			"#if MACRO1==1 && MACRO2==1\n" + 
 			"integer :: VAR1\n" + 
 			"#endif\n" + 
 			"integer :: VAR2\n" + 
@@ -135,6 +135,30 @@ public class preprocTest extends AbstractASTTest {
 	@Test
 	public void testOrFalse_False() {
 		parseCode(new String[] {"-DMACRO=2"} , NOTEQUAL_CONDITION);
+		assertEquals(1, ast.findAll(ASTTypeDeclarationStmtNode.class).size());
+	}
+
+	@Test
+	public void testAndUndefinedUndefined() {
+		parseCode(new String[] {} , AND_CONDITION);
+		assertEquals(1, ast.findAll(ASTTypeDeclarationStmtNode.class).size());
+	}
+
+	@Test
+	public void testAndDefinedUndefined() {
+		parseCode(new String[] {"-DMACRO1=1"} , AND_CONDITION);
+		assertEquals(1, ast.findAll(ASTTypeDeclarationStmtNode.class).size());
+	}
+
+	@Test
+	public void testAndWrongDefined() {
+		parseCode(new String[] {"-DMACRO1=0", "-DMACRO2=1"} , AND_CONDITION);
+		assertEquals(1, ast.findAll(ASTTypeDeclarationStmtNode.class).size());
+	}
+
+	@Test
+	public void testAndDefinedDefined() {
+		parseCode(new String[] {"-DMACRO1=1", "-DMACRO2=1"} , AND_CONDITION);
 		assertEquals(1, ast.findAll(ASTTypeDeclarationStmtNode.class).size());
 	}
 
