@@ -54,7 +54,6 @@ public interface IASTVisitor {
 	public void visitASTFunctionArgListNode(ASTFunctionArgListNode node);
 	public void visitASTSeparateModuleSubprogramNode(ASTSeparateModuleSubprogramNode node);
 	public void visitASTSubmoduleNode(ASTSubmoduleNode node);
-	public void visitASTUseNameNode(ASTUseNameNode node);
 	public void visitASTUseStmtNode(ASTUseStmtNode node);
 
 }
