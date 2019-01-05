@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-public class preprocTest extends AbstractASTTest {
+public class PreprocTest extends AbstractASTTest {
 
 	public static final String SIMPLE_CONDITION =
 			"module a_module\n" + 
