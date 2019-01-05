@@ -1,7 +1,8 @@
 package fr.inria.verveine.extractor.fortran.parser.ast;
 
 public class ASTSubroutineStmtNode extends ASTNode implements IActionStmt /* extends ASTNodeWithErrorRecoverySymbols*/ {
-	public static final int TSUBROUT =2 ;
+	public static final int TSUBROUT = 2;
+	public static final int TNAME =  3;
 	public static final int TLPAREN =4 ;
 	public static final int TRPAREN =6 ;
 	public static final int TBIND =7 ;
@@ -92,7 +93,7 @@ public class ASTSubroutineStmtNode extends ASTNode implements IActionStmt /* ext
         case 0:  return this.label;
         case 1:  return new ASTNullNode(); // this.prefixSpecList;
         case TSUBROUT:  return this.hiddenTSubroutine;
-        case 3:  return this.subroutineName;
+        case TNAME:  return this.subroutineName;
         case TLPAREN:  return this.hiddenTLparen;
         case 5:  return new ASTNullNode(); // this.subroutinePars;
         case TRPAREN:  return this.hiddenTRparen;
@@ -112,7 +113,7 @@ public class ASTSubroutineStmtNode extends ASTNode implements IActionStmt /* ext
         case 0:  this.label = (ASTToken)value; if (value != null) value.setParent(this); return;
         case 1:  return; // this.prefixSpecList = (IASTListNode<ASTPrefixSpecNode>)value; if (value != null) value.setParent(this); return;
         case TSUBROUT:  this.hiddenTSubroutine = (ASTToken)value; if (value != null) value.setParent(this); return;
-        case 3:  this.subroutineName = (ASTToken)value; if (value != null) value.setParent(this); return;
+        case TNAME:  this.subroutineName = (ASTToken)value; if (value != null) value.setParent(this); return;
         case TLPAREN:  this.hiddenTLparen = (ASTToken)value; if (value != null) value.setParent(this); return;
         case 5:  return; // this.subroutinePars = (IASTListNode<ASTSubroutineParNode>)value; if (value != null) value.setParent(this); return;
         case TRPAREN:  this.hiddenTRparen = (ASTToken)value; if (value != null) value.setParent(this); return;

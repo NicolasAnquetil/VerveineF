@@ -82,8 +82,6 @@ public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 		IREntity call = new IREntity(context.peek(), IRKind.SUBPRGCALL);
 		call.name(node.getSubroutineName().getText());
 		dico.addAnonymousEntity(call);
-
-		super.visitASTCallStmtNode(node);
 	}
 
 	@Override
@@ -91,8 +89,6 @@ public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 		IREntity ref = new IREntity(context.peek(), IRKind.NAMEREF);
 		ref.name(node.getName().getText());
 		dico.addAnonymousEntity(ref);
-
-		super.visitASTVarOrFnRefNode(node);
 	}
 /*
 	@Override

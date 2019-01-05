@@ -135,12 +135,19 @@ module_subprogram -> function_subprogram
 module_subprogram -> subroutine_subprogram
 module_subprogram -> separate_module_subprogram
 
+only -> generic_spec
+only -> rename
+
+only_list -> only [label="*"]
+
 proc_component_attr_spec -> access_spec
 
 proc_attr_spec -> access_spec
 proc_attr_spec -> proc_language_binding_spec
 proc_attr_spec -> intent_spec
 proc_attr_spec -> proc_attr_spec_extension
+
+rename_list -> rename [label="+"]
 
 separate_module_subprogram -> mp_subprogram_stmt [label="1"]
 separate_module_subprogram -> specification_part [label="2"]
@@ -167,6 +174,10 @@ type_attr_spec -> access_spec
 
 type_spec -> intrinsic_type_spec [color="red"]
 type_spec -> derived_type_spec
+
+use_stmt -> module_nature [label="1 ?"]
+use_stmt -> rename_list [label="2 ?"]
+use_stmt -> only_list [label="2 ?"]
 
 
 // -------------------------------------------------------------------

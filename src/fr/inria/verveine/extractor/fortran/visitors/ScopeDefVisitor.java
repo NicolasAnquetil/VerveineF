@@ -9,10 +9,7 @@ import fr.inria.verveine.extractor.fortran.parser.ast.ASTModuleNode;
 import fr.inria.verveine.extractor.fortran.parser.ast.ASTToken;
 
 /**
- * First Pass
- * 
  * Visitor walks through the AST and create top level Containers (Program and Modules)
- *
  */
 public class ScopeDefVisitor extends AbstractDispatcherVisitor {
 
@@ -37,7 +34,7 @@ public class ScopeDefVisitor extends AbstractDispatcherVisitor {
 	@Override
 	public void visitASTMainProgramNode(ASTMainProgramNode node) {
 		ASTToken tk = node.getProgramStmt().getProgramName();
-		
+
 		//Create the Famix Program from the ProgramNameNode which contains the name instead of using MainProgramNode
 		IREntity entity = dico.addEntity(mkKey(tk), IRKind.PROGRAM, /*parent*/context.peek());
 		entity.name(tk.getText());

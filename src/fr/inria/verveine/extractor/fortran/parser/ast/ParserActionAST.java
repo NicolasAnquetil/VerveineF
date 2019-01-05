@@ -266,8 +266,6 @@ public class ParserActionAST extends FortranParserActionNull {
 	public void subroutine_subprogram(boolean hasExePart, boolean hasIntSubProg) {
 		ASTSubroutineSubprogramNode pcdNode = new ASTSubroutineSubprogramNode();
 		
-		ASTToken tk = (ASTToken) ((ASTEndSubroutineStmtNode) parsingCtxt.topValueStack()).getASTField(ASTEndSubroutineStmtNode.TEOS);
-
 		pcdNode.setEndSubroutineStmt((ASTEndSubroutineStmtNode) parsingCtxt.popValueStack());
 		if (hasIntSubProg) {
 			//fctNode.setInternalSubprograms((IASTListNode<IBodyConstruct>) parsingCtxt.valueStackPop());
@@ -317,13 +315,10 @@ public class ParserActionAST extends FortranParserActionNull {
 		super.block_data();
 	}
 
-
-
 	@Override
 	public void interface_block() {
 		parsingCtxt.pushValueStack(new ASTInterfaceBodyNode());
 	}
-
 
 	@Override
 	public void specification_part(int numUseStmts, int numImportStmts, int numImplStmts, int numDeclConstructs) {
@@ -331,12 +326,25 @@ public class ParserActionAST extends FortranParserActionNull {
 		ASTListNode<IASTNode> specifications;
 		specifications = (ASTListNode<IASTNode>) parsingCtxt.popAllValueStack(new CountValidator(numDeclConstructs));
 		//specifications.addAll( parsingContextPopAll(new CountValidator(numImportStmts)));
-		//specifications.addAll( parsingContextPopAll(new CountValidator(numUseStmts)));
+		specifications.addAll( parsingCtxt.popAllValueStack(new CountValidator(numUseStmts)));
 		parsingCtxt.pushValueStack(specifications);
 	}
 
-	
-	
+
+	@Override
+	public void use_stmt(Token label, Token useKeyword, Token id, Token onlyKeyword, Token eos, boolean hasModuleNature,
+			boolean hasRenameList, boolean hasOnly) {
+		ASTUseStmtNode useStmt = new ASTUseStmtNode();
+
+		useStmt.setLabel(asttk(label));
+		useStmt.setName(asttk(id));
+		useStmt.setASTField(ASTUseStmtNode.TUSE, asttk(useKeyword));
+		useStmt.setASTField(ASTUseStmtNode.TEOS, asttk(eos));
+
+		parsingCtxt.pushValueStack(useStmt);
+	}
+
+
 	@Override
 	public void data_stmt(Token label, Token keyword, Token eos, int count) {
 		parsingCtxt.pushValueStack(new ASTNullNode());  // counts as a declaration_construct in specification_part(...)

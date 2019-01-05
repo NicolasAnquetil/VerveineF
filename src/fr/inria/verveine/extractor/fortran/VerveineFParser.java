@@ -28,6 +28,7 @@ import fr.inria.verveine.extractor.fortran.visitors.CommentVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.InvokAccessVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.ScopeDefVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.SubprgDefVisitor;
+import fr.inria.verveine.extractor.fortran.visitors.UseModuleVisitor;
 import fr.inria.verveine.extractor.fortran.visitors.VarDefVisitor;
 
 public class VerveineFParser  {
@@ -286,6 +287,7 @@ public class VerveineFParser  {
 
 		ast.accept(new CommentVisitor(dico, filename, allLocals));
 
+		ast.accept(new UseModuleVisitor(dico, filename, allLocals));
 		ast.accept(new InvokAccessVisitor(dico, filename, allLocals));
 	}
 
