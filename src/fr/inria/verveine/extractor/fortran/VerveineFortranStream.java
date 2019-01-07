@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringTokenizer;
+
+import org.antlr.runtime.tree.Tree;
 
 import fortran.ofp.parser.java.FortranStream;
 
@@ -18,6 +21,100 @@ public class VerveineFortranStream extends FortranStream
 	private int sourceForm;
 	protected Map<String,String> macros;
 
+	/**
+	 * A simple tree structure used to analyse the boolean expression in #if conditions.<br>
+	 * The constructor is responsible for doing a (simplified) parsing of the condition.
+	 * <ul>
+	 * <li>Only two levels of expressions: "&lt;comparison&gt;" (of a &lt;macro&gt; and a &lt;value&gt;), or
+	 * boolean expression: "&lt;comparison&gt; && &lt;comparison&gt;"
+	 * <li>Only "||" and "&&" boolean operators allowed
+	 * <li>There is no precedence between boolean operators
+	 * <li>Only "!=" and "==" comparisons allowed
+	 * <li>Comparisons are always &lt;macro&gt; &lt;comparison&gt; &lt;value&gt;
+	 * </ul>
+	 */
+	public static class StringTree {
+		final static int BOOLEAN = 1;
+		final static int COMPARISON = 2;
+		final static int TERM = 3;
+		private String node;
+		private StringTree left;
+		private StringTree right;
+		
+		StringTree(String expr) {
+			this(expr, BOOLEAN);
+		}
+
+		StringTree(String expr, int level) {
+			if (level == TERM) {
+				node = expr;
+			}
+			else if (level == COMPARISON) {
+				initializeAsComparison(expr);
+			}
+			else {
+				// level == BOOLEAN
+				initializeAsBooleanCondition(expr);
+			}
+		}
+
+		protected void initializeAsBooleanCondition(String expr) {
+			StringTokenizer tokenizer = new StringTokenizer(expr, "|&", /*returnDelims*/true);
+			String term = tokenizer.nextToken().trim();
+			if (tokenizer.hasMoreTokens()) {
+				// there may be many more ...
+				while (tokenizer.hasMoreTokens()) {
+					// node is actually a comparison, so decompose it and put it as left child
+					setLeft( new StringTree(term, COMPARISON));
+					// get the operator (in two separate tokens :-( )
+					node = tokenizer.nextToken().trim()+tokenizer.nextToken().trim();
+					// and parse the rest of the boolean expression
+					setRight( new StringTree(tokenizer.nextToken().trim(), BOOLEAN));
+				}
+			}
+			else {
+				initializeAsComparison(term);
+			}
+		}
+
+		protected void initializeAsComparison(String expr) {
+			StringTokenizer tokenizer = new StringTokenizer(expr, "!=", /*returnDelims*/true);
+			String macro = tokenizer.nextToken().trim();
+			if (tokenizer.hasMoreTokens()) {
+				// there is other tokens, so it is a comparison: <macro> <op> <value>
+				// tokenizer separates the two characters of operator in two tokens :-(
+				node = tokenizer.nextToken().trim()+tokenizer.nextToken().trim();
+				setLeft( new StringTree(macro, TERM));
+				setRight( new StringTree(tokenizer.nextToken().trim(), TERM));
+			}
+			else {
+				// no other tokens, it was just the macro alone
+				node = macro;
+			}
+		}
+
+		public String getValue() {
+			return node;
+		}
+
+		public StringTree getLeft() {
+			return left;
+		}
+
+		public void setLeft(StringTree left) {
+			this.left = left;
+		}
+
+		public StringTree getRight() {
+			return right;
+		}
+
+		public void setRight(StringTree right) {
+			this.right = right;
+		}
+		
+		
+	}
 
 	public VerveineFortranStream(Map<String,String> macros, String filename) throws IOException {
 		super(filename);
@@ -110,19 +207,42 @@ public class VerveineFortranStream extends FortranStream
 	 * If not so blanks everything up to a corresponding '#endif' line
 	 */
 	protected int blankThisIfMacro(int i, String line) {
-		String[] preprocTokens = line.split("[ =]+");
 		
-		if (preprocTokens[0].equals("#if")) {
-			if (! macroHasValue(preprocTokens[1], preprocTokens[2])) {
+		if (line.startsWith("#if")) {
+			StringTree expr = new StringTree(line.substring(3));  // line after the #if
+
+			if (! evaluateCondition(expr)) {
 				i = blankLinesUpToEndif(i+line.length()+1);
 			}
 		}
 		return i;
 	}
 
-	protected boolean macroHasValue(String macro, String expected) {
-		String actual = macros.get(macro);
-		return (actual != null) && actual.equals(expected);
+	protected boolean evaluateCondition(StringTree expr) {
+		if (expr.getValue().equals("&&")) {
+			return evaluateCondition(expr.getLeft()) && evaluateCondition(expr.getRight());
+		}
+		else if (expr.getValue().equals("||")) {
+			return evaluateCondition(expr.getLeft()) || evaluateCondition(expr.getRight());
+		}
+		else {
+			String macro = expr.getLeft().getValue();
+			String expected = expr.getRight().getValue();
+			String comparator = expr.getValue();
+			String actual = macros.get(macro);
+
+			if (actual == null) {
+				// macro is undefined, only true if comparator is "!="
+				return (comparator.equals("!="));
+			}
+			else if (comparator.equals("==")) {
+				return actual.equals(expected);			
+			}
+			else {
+				// (comparator.equals("!="))
+				return ! actual.equals(expected);			
+			}
+		}
 	}
 
 	private String lineAsString(char[] buf, int start) {

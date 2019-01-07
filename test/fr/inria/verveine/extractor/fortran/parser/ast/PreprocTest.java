@@ -116,25 +116,25 @@ public class PreprocTest extends AbstractASTTest {
 
 	@Test
 	public void testOrUndefined() {
-		parseCode(new String[] {} , NOTEQUAL_CONDITION);
+		parseCode(new String[] {} , OR_CONDITION);
 		assertEquals(1, ast.findAll(ASTTypeDeclarationStmtNode.class).size());
 	}
 
 	@Test
 	public void testOrTrue_False() {
-		parseCode(new String[] {"-DMACRO=0"} , NOTEQUAL_CONDITION);
+		parseCode(new String[] {"-DMACRO=0"} , OR_CONDITION);
 		assertEquals(2, ast.findAll(ASTTypeDeclarationStmtNode.class).size());
 	}
 
 	@Test
 	public void testOrFalse_True() {
-		parseCode(new String[] {"-DMACRO=1"} , NOTEQUAL_CONDITION);
+		parseCode(new String[] {"-DMACRO=1"} , OR_CONDITION);
 		assertEquals(2, ast.findAll(ASTTypeDeclarationStmtNode.class).size());
 	}
 
 	@Test
 	public void testOrFalse_False() {
-		parseCode(new String[] {"-DMACRO=2"} , NOTEQUAL_CONDITION);
+		parseCode(new String[] {"-DMACRO=2"} , OR_CONDITION);
 		assertEquals(1, ast.findAll(ASTTypeDeclarationStmtNode.class).size());
 	}
 
@@ -145,21 +145,21 @@ public class PreprocTest extends AbstractASTTest {
 	}
 
 	@Test
-	public void testAndDefinedUndefined() {
+	public void testAndTrueUndefined() {
 		parseCode(new String[] {"-DMACRO1=1"} , AND_CONDITION);
 		assertEquals(1, ast.findAll(ASTTypeDeclarationStmtNode.class).size());
 	}
 
 	@Test
-	public void testAndWrongDefined() {
+	public void testAndFalse_True() {
 		parseCode(new String[] {"-DMACRO1=0", "-DMACRO2=1"} , AND_CONDITION);
 		assertEquals(1, ast.findAll(ASTTypeDeclarationStmtNode.class).size());
 	}
 
 	@Test
-	public void testAndDefinedDefined() {
+	public void testAndTrue_True() {
 		parseCode(new String[] {"-DMACRO1=1", "-DMACRO2=1"} , AND_CONDITION);
-		assertEquals(1, ast.findAll(ASTTypeDeclarationStmtNode.class).size());
+		assertEquals(2, ast.findAll(ASTTypeDeclarationStmtNode.class).size());
 	}
 
 }
