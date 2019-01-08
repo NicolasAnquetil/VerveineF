@@ -51,6 +51,16 @@ public class PreprocTest extends AbstractASTTest {
 			"integer :: VAR2\n" + 
 			"end module\n";
 
+	public static final String IF_ELSE_ENDIF =
+			"module a_module\n" + 
+			"#if MACRO==1\n" + 
+			"integer :: VAR1\n" + 
+			"#else\n" + 
+			"integer :: VAR2\n" + 
+			"integer :: VAR3\n" +
+			"#endif\n" +
+			"end module\n";
+
 	@Test
 	public void testSimpleMacrosNotDefined() {
 		parseCode(SIMPLE_CONDITION);
@@ -160,6 +170,24 @@ public class PreprocTest extends AbstractASTTest {
 	public void testAndTrue_True() {
 		parseCode(new String[] {"-DMACRO1=1", "-DMACRO2=1"} , AND_CONDITION);
 		assertEquals(2, ast.findAll(ASTTypeDeclarationStmtNode.class).size());
+	}
+
+	@Test
+	public void testElseUndefined() {
+		parseCode(new String[] {} , IF_ELSE_ENDIF);
+		assertEquals(2, ast.findAll(ASTTypeDeclarationStmtNode.class).size());
+	}
+
+	@Test
+	public void testElseFalse() {
+		parseCode(new String[] {"-DMACRO=0"} , IF_ELSE_ENDIF);
+		assertEquals(2, ast.findAll(ASTTypeDeclarationStmtNode.class).size());
+	}
+
+	@Test
+	public void testElseTrue() {
+		parseCode(new String[] {"-DMACRO=1"} , IF_ELSE_ENDIF);
+		assertEquals(1, ast.findAll(ASTTypeDeclarationStmtNode.class).size());
 	}
 
 }

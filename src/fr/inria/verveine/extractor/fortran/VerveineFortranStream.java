@@ -215,6 +215,11 @@ public class VerveineFortranStream extends FortranStream
 				i = blankLinesUpToEndif(i+line.length()+1);
 			}
 		}
+		else if (line.startsWith("#else")) {
+			// we were not "blanking" the #if part, so we should blank the #else part
+			i = blankLinesUpToEndif(i+line.length()+1);
+		}
+
 		return i;
 	}
 
@@ -253,13 +258,16 @@ public class VerveineFortranStream extends FortranStream
 		return new String( Arrays.copyOfRange(data, start, eol) );
 	}
 
+	/* 
+	 * up to "#endif" or "#else"
+	 */
 	private int blankLinesUpToEndif(int i) {
 		int col = 0;
 		while (i < n) {
 			if (col == 0) {
 				String line = lineAsString(data, i);
-				if (line.startsWith("#endif")) {
-					return i+line.length()+1;
+				if (line.startsWith("#endif") || line.startsWith("#else")) {
+					return i+line.length();
 				}
 				else if ( line.startsWith("#if")) {
 					// recursive call to process inner #if instruction
