@@ -19,6 +19,8 @@ public abstract class AbstractDispatcherVisitor extends ASTVisitor {
 	protected  Stack<IREntity> context;
 
 	protected boolean allLocals;
+	
+	protected boolean silent;
 
 	// CONSTRUCTOR ==========================================================================================================================
 
@@ -27,10 +29,11 @@ public abstract class AbstractDispatcherVisitor extends ASTVisitor {
 		this.dico = dico;
 		this.filename = filename;
 		this.allLocals = allLocals;
+		this.silent = true;  // add argument to the main program
 
 		this.context = new Stack<IREntity>();
 
-		if (msgTrace() != null ) {
+		if ( (! silent) && (msgTrace() != null) ) {
 			System.out.println(msgTrace());
 		}
 	}
