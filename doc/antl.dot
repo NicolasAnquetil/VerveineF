@@ -304,6 +304,8 @@ designator_or_func_ref -> substring_range_or_arg_list [label="2a ?"]
 designator_or_func_ref -> char_literal_constant [label="1b"]
 designator_or_func_ref -> substring_range [label="2b"]
 
+equivalence_stmt -> substring [style=dotted]
+
 expr -> primary [style=dotted]
 
 literal_constant -> int_literal_constant

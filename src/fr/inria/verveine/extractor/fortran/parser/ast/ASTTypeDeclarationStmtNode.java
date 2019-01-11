@@ -2,14 +2,15 @@ package fr.inria.verveine.extractor.fortran.parser.ast;
 
 public class ASTTypeDeclarationStmtNode extends ASTNode  implements IBlockDataBodyConstruct, IBodyConstruct, IDeclarationConstruct, IHPField, IModuleBodyConstruct, ISpecificationPartConstruct // extends ASTNodeWithErrorRecoverySymbols
 {
-	private static final int TATTRSPECSEQ = 2;
+	public static final int T_TYPESPEC = 1;
+	public static final int TATTRSPECSEQ = 2;
 	public static final int TCOLON = 3;
 	public static final int TCOLON2 = 4;
 	public static final int TCOMMA = 5;
 	public static final int TEOS = 7;
 
 	ASTToken label;
-    //ASTTypeSpecNode typeSpec;
+    ASTTypeSpecNode typeSpec;
     IASTListNode<ASTAttrSpecSeqNode> attrSpecSeq;
     ASTToken hiddenTColon;
     ASTToken hiddenTColon2;
@@ -29,10 +30,10 @@ public class ASTTypeDeclarationStmtNode extends ASTNode  implements IBlockDataBo
 
     public void setLabel(ASTToken newValue)
     {
-        setASTField(0, newValue);
+        setASTField(T_TYPESPEC, newValue);
     }
 
-/*
+
     public ASTTypeSpecNode getTypeSpec()
     {
         return this.typeSpec;
@@ -43,7 +44,7 @@ public class ASTTypeDeclarationStmtNode extends ASTNode  implements IBlockDataBo
         this.typeSpec = newValue;
         if (newValue != null) newValue.setParent(this);
     }
-*/
+
 
     public IASTListNode<ASTAttrSpecSeqNode> getAttrSpecSeq()
     {
@@ -92,7 +93,7 @@ public class ASTTypeDeclarationStmtNode extends ASTNode  implements IBlockDataBo
         switch (index)
         {
         case 0:  return this.label;
-        case 1:  return new ASTNullNode(); //this.typeSpec;
+        case T_TYPESPEC:  return this.typeSpec;
         case TATTRSPECSEQ:  return this.attrSpecSeq;
         case TCOLON:  return this.hiddenTColon;
         case TCOLON2:  return this.hiddenTColon2;
@@ -108,7 +109,7 @@ public class ASTTypeDeclarationStmtNode extends ASTNode  implements IBlockDataBo
         switch (index)
         {
         case 0:  this.label = (ASTToken)value; if (value != null) value.setParent(this); return;
-        case 1:  return; //this.typeSpec = (ASTTypeSpecNode)value; if (value != null) value.setParent(this); return;
+        case T_TYPESPEC:  this.typeSpec = (ASTTypeSpecNode)value; if (value != null) value.setParent(this); return;
         case TATTRSPECSEQ:  this.attrSpecSeq = (IASTListNode<ASTAttrSpecSeqNode>)value; if (value != null) value.setParent(this); return;
         case TCOLON:  this.hiddenTColon = (ASTToken)value; if (value != null) value.setParent(this); return;
         case TCOLON2:  this.hiddenTColon2 = (ASTToken)value; if (value != null) value.setParent(this); return;

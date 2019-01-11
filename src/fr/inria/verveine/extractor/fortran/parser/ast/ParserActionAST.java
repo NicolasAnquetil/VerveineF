@@ -380,9 +380,26 @@ public class ParserActionAST extends FortranParserActionNull {
 			attrSpecSeq.setAttrSpec((ASTAttrSpecNode) parsingCtxt.popValueStack());
 			typeDecl.getAttrSpecSeq().add( attrSpecSeq);
 		}
-		//typeDecl.setASTField(, (ASTTypeSpecNode)parsingCtxt.valueStackPop());
-		
+		typeDecl.setTypeSpec( (ASTTypeSpecNode)parsingCtxt.popValueStack());
+
 		parsingCtxt.pushValueStack(typeDecl);
+	}
+
+	@Override
+	public void derived_type_spec(Token typeName, boolean hasTypeParamSpecList) {
+		ASTTypeSpecNode typeSpec = new ASTTypeSpecNode();
+		typeSpec.setTypeName(asttk(typeName));
+		parsingCtxt.pushValueStack(typeSpec);
+	}
+
+	@Override
+	public void intrinsic_type_spec(Token keyword1, Token keyword2, int type, boolean hasKindSelector) {
+		ASTTypeSpecNode typeSpec = new ASTTypeSpecNode();
+		if (hasKindSelector) {
+			parsingCtxt.popAllValueStack(new WhileTypeValidator(ASTVarOrFnRefNode.class));
+		}
+		typeSpec.setTypeName(asttk(keyword1));
+		parsingCtxt.pushValueStack(typeSpec);
 	}
 
 	@Override

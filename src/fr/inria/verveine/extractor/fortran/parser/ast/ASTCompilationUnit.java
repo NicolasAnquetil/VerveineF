@@ -64,4 +64,14 @@ public class ASTCompilationUnit extends ASTNode {
 		
 	}
 
+	@Override
+	public String toString() {
+    	return "ASTCompilationUnit(" + filename + ")";
+	}
+
+	@Override
+	public boolean isTopLevelNode() {
+		return true;
+	}
+    
 }
