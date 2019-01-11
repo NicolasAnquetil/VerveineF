@@ -50,26 +50,25 @@ public class SourceAnchorTest extends AbstractASTTest {
 */
 
 		for (ASTTypeDeclarationStmtNode decl : vars) {
-			ASTEntityDeclNode var = decl.getEntityDeclList().iterator().next();
-			switch (var.getObjectName().getText()) {
+			switch (decl.getEntityDeclList().iterator().next().getObjectName().getText()) {
 			case "VAR1" :
-				assertEquals(16, var.findFirstToken().getStartIndex());
-				assertEquals(30, var.findLastToken().getStopIndex());
+				assertEquals(16, decl.findFirstToken().getStartIndex());
+				assertEquals(31, decl.findLastToken().getStopIndex());
 				break;
 			case "VAR2" :
-				assertEquals(32, var.findFirstToken().getStartIndex());
+				assertEquals(32, decl.findFirstToken().getStartIndex());
 				// because line break after & was suppressed, indexes are -1, see VerveineFortranStream.convertFreeFormInputBuffer()
-				assertEquals(52, var.findLastToken().getStopIndex());
+				assertEquals(53, decl.findLastToken().getStopIndex());
 				// one line break extra after line to correct indexes, see VerveineFortranStream.convertFreeFormInputBuffer()
 				break;
 			case "VAR3" :
-				assertEquals(55, var.findFirstToken().getStartIndex());
-				assertEquals(69, var.findLastToken().getStopIndex());
+				assertEquals(55, decl.findFirstToken().getStartIndex());
+				assertEquals(70, decl.findLastToken().getStopIndex());
 				break;
 			case "VAR4" :
-				assertEquals(71, var.findFirstToken().getStartIndex());
+				assertEquals(71, decl.findFirstToken().getStartIndex());
 				// because line break after & was suppressed, indexes are -1 , see VerveineFortranStream.convertFreeFormInputBuffer()
-				assertEquals(91, var.findLastToken().getStopIndex());
+				assertEquals(92, decl.findLastToken().getStopIndex());
 				break;
 			}
 		}
