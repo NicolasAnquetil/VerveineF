@@ -38,6 +38,13 @@ public class IRDictionary implements Iterable<IREntity> {
 		return entity;
 	}
 	
+	/**
+	 * Adds an "anonymous" entity, i.e. entity with no key, that cannot, therefore, be recovered independently 
+	 */
+	public IREntity addAnonymousEntity( IRKind kind, IREntity parent) {
+		return addEntity( "_anonymous_" + (++anonymousCounter), kind, parent );
+	}
+	
 	public Collection<IREntity> allWithKind (IRKind kind) {
 		Collection<IREntity> selected = new ArrayList<IREntity>();
 		
@@ -47,13 +54,6 @@ public class IRDictionary implements Iterable<IREntity> {
 			}
 		}
 		return selected;
-	}
-
-	/**
-	 * Adds an "anonymous" entity, i.e. entity with no key, that cannot, therefore, be recovered independently 
-	 */
-	public void addAnonymousEntity(IREntity entity) {
-		addEntity( "_anonymous_" + (++anonymousCounter), entity );
 	}
 
 	@Override

@@ -3,20 +3,12 @@ package fr.inria.verveine.extractor.fortran.visitors;
 import fr.inria.verveine.extractor.fortran.ir.IRDictionary;
 import fr.inria.verveine.extractor.fortran.ir.IREntity;
 import fr.inria.verveine.extractor.fortran.ir.IRKind;
-import fr.inria.verveine.extractor.fortran.parser.ast.ASTCaseConstructNode;
-import fr.inria.verveine.extractor.fortran.parser.ast.ASTCaseStmtNode;
 import fr.inria.verveine.extractor.fortran.parser.ast.ASTCompilationUnit;
-import fr.inria.verveine.extractor.fortran.parser.ast.ASTElseIfConstructNode;
-import fr.inria.verveine.extractor.fortran.parser.ast.ASTEndFunctionStmtNode;
 import fr.inria.verveine.extractor.fortran.parser.ast.ASTEndModuleStmtNode;
 import fr.inria.verveine.extractor.fortran.parser.ast.ASTEndProgramStmtNode;
-import fr.inria.verveine.extractor.fortran.parser.ast.ASTEndSubroutineStmtNode;
 import fr.inria.verveine.extractor.fortran.parser.ast.ASTFunctionSubprogramNode;
-import fr.inria.verveine.extractor.fortran.parser.ast.ASTIfConstructNode;
-import fr.inria.verveine.extractor.fortran.parser.ast.ASTIfStmtNode;
 import fr.inria.verveine.extractor.fortran.parser.ast.ASTMainProgramNode;
 import fr.inria.verveine.extractor.fortran.parser.ast.ASTModuleNode;
-import fr.inria.verveine.extractor.fortran.parser.ast.ASTProperLoopConstructNode;
 import fr.inria.verveine.extractor.fortran.parser.ast.ASTSubroutineSubprogramNode;
 import fr.inria.verveine.extractor.fortran.parser.ast.ASTToken;
 import fr.inria.verveine.extractor.fortran.parser.ast.ASTUseStmtNode;
@@ -28,8 +20,8 @@ import fr.inria.verveine.extractor.fortran.parser.ast.ASTUseStmtNode;
  */
 public class UseModuleVisitor extends AbstractDispatcherVisitor {
 
-	public UseModuleVisitor(IRDictionary dico, String filename, boolean allLocals) {
-		super(dico, filename, allLocals);
+	public UseModuleVisitor(IRDictionary dico, String filename, boolean allLocals, int verbose) {
+		super(dico, filename, allLocals, verbose);
 	}
 
 	@Override
@@ -81,9 +73,10 @@ public class UseModuleVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	public void visitASTUseStmtNode(ASTUseStmtNode node) {
-		IREntity use = new IREntity(context.peek(), IRKind.USEMODULE);
+		IREntity use = dico.addAnonymousEntity( IRKind.USEMODULE, context.peek());
 		use.name(node.getName().getText());
-		dico.addAnonymousEntity(use);
+
+		traceEntityCreation(use);
 	}
 
 	@Override

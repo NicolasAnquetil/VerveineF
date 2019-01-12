@@ -19,8 +19,8 @@ import fr.inria.verveine.extractor.fortran.parser.ast.ASTTypeDeclarationStmtNode
 
 public class VarDefVisitor extends AbstractDispatcherVisitor {
 
-	public VarDefVisitor(IRDictionary dico, String filename, boolean allLocals) {
-		super(dico, filename, allLocals);
+	public VarDefVisitor(IRDictionary dico, String filename, boolean allLocals, int verbose) {
+		super(dico, filename, allLocals, verbose);
 	}
 
 	@Override
@@ -117,6 +117,8 @@ public class VarDefVisitor extends AbstractDispatcherVisitor {
 			entity.data(IREntity.IS_STUB, false);
 			entity.data( IREntity.DECLARED_PARAM, varIsDeclaredParameter( node));
 			entity.addSourceAnchor( filename, node);
+
+			traceEntityCreation(entity);
 		}
 	}
 

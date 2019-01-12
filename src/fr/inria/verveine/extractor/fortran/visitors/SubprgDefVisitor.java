@@ -27,8 +27,8 @@ import fr.inria.verveine.extractor.fortran.parser.ast.ASTToken;
  */
 public class SubprgDefVisitor extends AbstractDispatcherVisitor {
 
-	public SubprgDefVisitor(IRDictionary dico, String filename, boolean allLocals) {
-		super(dico, filename, allLocals);
+	public SubprgDefVisitor(IRDictionary dico, String filename, boolean allLocals, int verbose) {
+		super(dico, filename, allLocals, verbose);
 	}
 
 	@Override
@@ -85,7 +85,9 @@ public class SubprgDefVisitor extends AbstractDispatcherVisitor {
 		entity.data(IREntity.IS_STUB, false);	
 		entity.addSourceAnchor( filename, node);
 		entity.data(IREntity.CYCLOMATIC_COMPLEXITY, 1);
-		
+
+		traceEntityCreation(entity);
+
 		context.push(entity);
 		super.visitASTFunctionSubprogramNode(node);
 	}
@@ -103,6 +105,8 @@ public class SubprgDefVisitor extends AbstractDispatcherVisitor {
 		entity.data(IREntity.IS_STUB, false);
 		entity.addSourceAnchor( filename, node);
 		entity.data(IREntity.CYCLOMATIC_COMPLEXITY, 1);
+
+		traceEntityCreation(entity);
 
 		context.push(entity);
 		super.visitASTSubroutineSubprogramNode(node);

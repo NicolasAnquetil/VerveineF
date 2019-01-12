@@ -85,10 +85,17 @@ public class IREntity {
 		return data;
 	}
 
-	/**
-	 * for debug purposes
-	 */
+	// useful for debug
 	public String toString() {
-		return "IREntity " + key;
+		StringBuffer result = new StringBuffer("IREntity<");
+		result.append(kind).append(">");
+		if (getName() != null) {
+			result.append(" '").append(getName()).append("'");
+		}
+		if (getData(ANCHOR_START) != null) {
+			result.append(" @").append(getData(ANCHOR_START)).append(":").append(getData(ANCHOR_END));
+		}
+		return result.toString();
 	}
+
 }

@@ -33,23 +33,25 @@ import fr.inria.verveine.extractor.fortran.visitors.VarDefVisitor;
 
 public class VerveineFParser  {
 	public static final String STRING_SOURCE_PATH = "/no/path/";
-
 	public static final String STRING_SOURCE_FILENAME = "-source-from-string-";
 
 	public static final String STRING_SOURCE_OPTION = "--source";
-
 	public static final String DEFAULT_OUTPUT_FILENAME = "output.ir";
-
 	public static final String ALLLOCALS_OPTION = "--alllocals";
 
 	public static final String VERVEINEF_PARSER_ACTION = "fr.inria.verveine.extractor.fortran.parser.ast.ParserActionAST";
 
-	private static final String VERVEINEF_VERSION = "0.1.0_20190101-IR";
+	private static final String VERVEINEF_VERSION = "0.1.0_20191201-verbose";
 
 	// possible forms of Fortran code
 	public static final int FIXED_FORM = 2;
 	public static final int FREE_FORM = 1;
 	public static final int UNKNOWN_SOURCE_FORM = -1;
+
+	// levels of "verbosity"
+	public static final int TRACE_NOTHING = 0;
+	public static final int TRACE_VISITORS = 1;
+	public static final int TRACE_ENTITIES = 2;
 
 	/**
 	 * Directory where the project to analyze is located
@@ -71,6 +73,8 @@ public class VerveineFParser  {
 	protected Collection<String> includeDirs;
 
 	protected String outputFileName;
+
+	protected int verbose;
 	
 	/**
 	 * Whether to output all local variables 
@@ -95,6 +99,7 @@ public class VerveineFParser  {
 		this.dico = new IRDictionary();
 		this.allLocals = false;
 		this.ast = null;
+		this.verbose = TRACE_NOTHING;
 	}
 
 	public void parseSources() {
@@ -281,14 +286,14 @@ public class VerveineFParser  {
 
 
 	protected void runAllVisitors(String filename, ASTNode ast)  {
-		ast.accept(new ScopeDefVisitor(dico, filename, allLocals));
-		ast.accept(new SubprgDefVisitor(dico, filename, allLocals));
-		ast.accept(new VarDefVisitor(dico, filename, allLocals));
+		ast.accept(new ScopeDefVisitor(dico, filename, allLocals, verbose));
+		ast.accept(new SubprgDefVisitor(dico, filename, allLocals, verbose));
+		ast.accept(new VarDefVisitor(dico, filename, allLocals, verbose));
 
-		ast.accept(new CommentVisitor(dico, filename, allLocals));
+		ast.accept(new CommentVisitor(dico, filename, allLocals, verbose));
 
-		ast.accept(new UseModuleVisitor(dico, filename, allLocals));
-		ast.accept(new InvokAccessVisitor(dico, filename, allLocals));
+		ast.accept(new UseModuleVisitor(dico, filename, allLocals, verbose));
+		ast.accept(new InvokAccessVisitor(dico, filename, allLocals, verbose));
 	}
 
 	protected void outputIR() {
@@ -328,6 +333,16 @@ public class VerveineFParser  {
 					i++;
 				} else {
 					System.err.println("-o requires a filename");
+				}
+			}
+			else if (arg.equals("--verbose")) {
+				if (verbose < TRACE_ENTITIES) {
+					verbose++;
+				}
+			}
+			else if (arg.equals("--silent")) {
+				if (verbose > TRACE_NOTHING) {
+					verbose--;
 				}
 			}
 			else if (arg.startsWith("-I")) {
@@ -384,6 +399,8 @@ public class VerveineFParser  {
 		System.err.println("      -v: prints the version");
 		System.err.println("      -o <output-file-name>: changes the name of the output file (default: output.mse)");
 		System.err.println("      -D<macro>: defines a C/C++ macro");
+		System.err.println("      --verbose: increment verbosity level by 1: 0=silent; 1=advertise visitor execution; 2=advertise entity creation");
+		System.err.println("      --silent:  decrement verbosity level by 1: 0=silent; 1=advertise visitor execution; 2=advertise entity creation");
 		System.err.println("      ["+ALLLOCALS_OPTION+"] Forces outputing all local variables, even those with primitive type (incompatible with \"-summary\"");
 		System.err.println("      <Fortran project directory>: directory containing the Fortran project to export in MSE");
 		System.exit(0);

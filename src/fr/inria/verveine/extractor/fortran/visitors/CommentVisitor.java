@@ -12,8 +12,8 @@ import fr.inria.verveine.extractor.fortran.parser.ast.ASTNode;
 
 public class CommentVisitor extends AbstractDispatcherVisitor {
 
-	public CommentVisitor(IRDictionary dico, String filename, boolean allLocals) {
-		super(dico, filename, allLocals);
+	public CommentVisitor(IRDictionary dico, String filename, boolean allLocals, int verbose) {
+		super(dico, filename, allLocals, verbose);
 	}
 
 	@Override
@@ -56,7 +56,7 @@ public class CommentVisitor extends AbstractDispatcherVisitor {
 
 		context.pop();
 	}
-	/*
+/*
 	@Override
 	public void visitASTFunctionSubprogramNode(ASTFunctionSubprogramNode node) {
 		Function fmx = (Function) dico.getEntityByKey( mkKey(node.getNameToken()));
@@ -106,9 +106,8 @@ public class CommentVisitor extends AbstractDispatcherVisitor {
 		if (cmtStart >= 0) {
 			IREntity irCmt;
 
-			irCmt = new IREntity(entity, IRKind.COMMENT);
+			irCmt = dico.addAnonymousEntity(IRKind.COMMENT, entity);
 			irCmt.data(IREntity.COMMENT_CONTENT, cmtString);
-			dico.addAnonymousEntity( irCmt);
 
 			if (isEntityHeadComment) {
 				// adjusting start of parent entity, removing the comment from it 
@@ -117,6 +116,8 @@ public class CommentVisitor extends AbstractDispatcherVisitor {
 					entity.data(IREntity.ANCHOR_START, entStart - cmtString.length() ); 
 				}
 			}
+			
+			traceEntityCreation(irCmt);
 		}
 	}
 

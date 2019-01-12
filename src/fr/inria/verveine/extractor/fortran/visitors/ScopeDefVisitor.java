@@ -13,8 +13,8 @@ import fr.inria.verveine.extractor.fortran.parser.ast.ASTToken;
  */
 public class ScopeDefVisitor extends AbstractDispatcherVisitor {
 
-	public ScopeDefVisitor(IRDictionary dico, String filename, boolean allLocals) {
-		super(dico, filename, allLocals);
+	public ScopeDefVisitor(IRDictionary dico, String filename, boolean allLocals, int verbose) {
+		super(dico, filename, allLocals, verbose);
 	}
 
 	@Override
@@ -27,6 +27,8 @@ public class ScopeDefVisitor extends AbstractDispatcherVisitor {
 		IREntity entity = dico.addEntity(mkKey(node), IRKind.COMPILATION_UNIT, /*parent*/null);
 		entity.name(node.fullyQualifiedName());
 		context.push(entity);
+
+		traceEntityCreation(entity);
 
 		super.visitASTCompilationUnit(node);
 	}
@@ -41,6 +43,8 @@ public class ScopeDefVisitor extends AbstractDispatcherVisitor {
 		entity.data(IREntity.IS_STUB, false);
 		entity.addSourceAnchor( filename, node);
 
+		traceEntityCreation(entity);
+
 		super.visitASTMainProgramNode(node);
 	}
 
@@ -50,6 +54,8 @@ public class ScopeDefVisitor extends AbstractDispatcherVisitor {
 		entity.name(node.basename());
 		entity.data(IREntity.IS_STUB, false);
 		entity.addSourceAnchor( filename, node);
+
+		traceEntityCreation(entity);
 
 		super.visitASTModuleNode(node);
 	}

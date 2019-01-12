@@ -16,8 +16,8 @@ import fr.inria.verveine.extractor.fortran.parser.ast.ASTVarOrFnRefNode;
 
 public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 
-	public InvokAccessVisitor(IRDictionary dico, String filename, boolean allLocals) {
-		super(dico, filename, allLocals);
+	public InvokAccessVisitor(IRDictionary dico, String filename, boolean allLocals, int verbose) {
+		super(dico, filename, allLocals, verbose);
 	}
 
 	@Override
@@ -79,16 +79,18 @@ public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	public void visitASTCallStmtNode(ASTCallStmtNode node) {
-		IREntity call = new IREntity(context.peek(), IRKind.SUBPRGCALL);
+		IREntity call = dico.addAnonymousEntity(IRKind.SUBPRGCALL, context.peek());
 		call.name(node.getSubroutineName().getText());
-		dico.addAnonymousEntity(call);
+
+		traceEntityCreation(call);
 	}
 
 	@Override
 	public void visitASTVarOrFnRefNode(ASTVarOrFnRefNode node) {
-		IREntity ref = new IREntity(context.peek(), IRKind.NAMEREF);
+		IREntity ref = dico.addAnonymousEntity(IRKind.NAMEREF, context.peek());
 		ref.name(node.getName().getText());
-		dico.addAnonymousEntity(ref);
+		
+		traceEntityCreation(ref);
 	}
 /*
 	@Override
