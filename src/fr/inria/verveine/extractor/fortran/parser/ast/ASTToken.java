@@ -106,13 +106,17 @@ public class ASTToken implements Token, IASTNode
         return result;
     }
 
+    public FortranToken getActualToken() {
+    	return actualToken;
+    }
+    
     ///////////////////////////////////////////////////////////////////////////
     // IASTNode Implementation
     ///////////////////////////////////////////////////////////////////////////
 
     private IASTNode parent = null;
     
-    public IASTNode getParent()
+     public IASTNode getParent()
     {
         return parent;
     }

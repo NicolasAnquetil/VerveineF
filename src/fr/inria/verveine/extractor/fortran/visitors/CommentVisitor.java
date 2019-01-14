@@ -6,9 +6,15 @@ import fr.inria.verveine.extractor.fortran.ir.IREntity;
 import fr.inria.verveine.extractor.fortran.ir.IRKind;
 import fr.inria.verveine.extractor.fortran.parser.ast.ASTCompilationUnit;
 import fr.inria.verveine.extractor.fortran.parser.ast.ASTEndModuleStmtNode;
+import fr.inria.verveine.extractor.fortran.parser.ast.ASTEntityDeclNode;
+import fr.inria.verveine.extractor.fortran.parser.ast.ASTFunctionSubprogramNode;
 import fr.inria.verveine.extractor.fortran.parser.ast.ASTMainProgramNode;
 import fr.inria.verveine.extractor.fortran.parser.ast.ASTModuleNode;
 import fr.inria.verveine.extractor.fortran.parser.ast.ASTNode;
+import fr.inria.verveine.extractor.fortran.parser.ast.ASTSubroutineSubprogramNode;
+import fr.inria.verveine.extractor.fortran.parser.ast.ASTToken;
+import fr.inria.verveine.extractor.fortran.parser.ast.ASTTypeDeclarationStmtNode;
+import fr.inria.verveine.extractor.fortran.parser.ast.IASTNode;
 
 public class CommentVisitor extends AbstractDispatcherVisitor {
 
@@ -32,59 +38,58 @@ public class CommentVisitor extends AbstractDispatcherVisitor {
 	@Override
 	public void visitASTMainProgramNode(ASTMainProgramNode node) {
 		IREntity entity =  dico.getEntityByKey( mkKey(node.getProgramStmt().getProgramName()));
-		createCommentIfAny(node,entity, /*isEntityHeadComment*/true);
 
 		context.push(entity);
-		super.visitASTMainProgramNode(node);
+		super.visitASTMainProgramNode(node);  // visit children first to let them grab their tokens
+
+		IREntity cmt = createCommentIfAny(node,entity);
+		adjustStartAnchor(entity, cmt);
+		
 		context.pop();
 	}
 
 	@Override
 	public void visitASTModuleNode(ASTModuleNode node) {
 		IREntity entity = dico.getEntityByKey( mkKey(node));
-		createCommentIfAny(node, entity, /*isEntityHeadComment*/true);
 
 		context.push(entity);
 		super.visitASTModuleNode(node);
-	}
-
-	@Override
-	public void visitASTEndModuleStmtNode(ASTEndModuleStmtNode node) {
-		createCommentIfAny(node, context.peek(), /*isEntityHeadComment*/false);
-
-		super.visitASTEndModuleStmtNode(node);
-
 		context.pop();
+		
+		IREntity cmt = createCommentIfAny(node, entity);
+		adjustStartAnchor(entity, cmt);
 	}
-/*
+
 	@Override
 	public void visitASTFunctionSubprogramNode(ASTFunctionSubprogramNode node) {
-		Function fmx = (Function) dico.getEntityByKey( mkKey(node.getNameToken()));
-		createCommentIfNonBlank(node, fmx);
+		IREntity entity = dico.getEntityByKey( mkKey(node));
 
-		/*context.push(fmx);
+		context.push(entity);
 		super.visitASTFunctionSubprogramNode(node);
-		context.pop();* /
+		context.pop();
+
+		createCommentIfAny(node, entity);
 	}
 
 	@Override
 	public void visitASTSubroutineSubprogramNode(ASTSubroutineSubprogramNode node) {
-		Function fmx = (Function) dico.getEntityByKey( mkKey(node.getNameToken()));
-		createCommentIfNonBlank(node, fmx);
+		IREntity entity = dico.getEntityByKey( mkKey(node));
 
-		/*context.push(fmx);
+		context.push(entity);  // visit children first to let them grab their tokens
 		super.visitASTSubroutineSubprogramNode(node);
-		context.pop();* /
+		context.pop();
+
+		createCommentIfAny(node, entity);
 	}
+
 
 	@Override
 	public void visitASTTypeDeclarationStmtNode(ASTTypeDeclarationStmtNode node) {
-		GlobalVariable fmx;
 		for (ASTEntityDeclNode decl : node.getEntityDeclList()) {
 			// Because of AST visit pruning, here we should only have global variables
-			ASTToken tk = decl.getObjectName().getObjectName();
-			fmx= (GlobalVariable) dico.getEntityByKey( mkKey(tk));
-			createCommentIfNonBlank(node, fmx);
+			ASTToken tk = decl.getObjectName();
+			IREntity entity = dico.getEntityByKey( mkKey(tk));
+			createCommentIfAny(node, entity);
 		}
 	}
 
@@ -92,32 +97,51 @@ public class CommentVisitor extends AbstractDispatcherVisitor {
 	// UTILITIES
 
 	/**
-	 * Search for a comment  preceding <code>node<code>. If found, associates the comment with the <code>entity</code> entity. <br>
-	 * 
-	 * TODO Deal with #ifdef / #endif that are also "white"
+	 * Search for a comment inside or preceding <code>node<code>.<br>
+	 * If found, associates the comment with the <code>entity</code>.
+	 * @return 
 	 */
-	private void createCommentIfAny(ASTNode node, IREntity entity, boolean isEntityHeadComment) {
+	protected IREntity createCommentIfAny(ASTNode node, IREntity entity) {
+		IREntity irCmt = null;
+
 		if (entity == null) {
-			new EntityNotFoundException("Entity key not found: "+entity);
+			new EntityNotFoundException("Entity key not found");
 		}
 
-		String cmtString = node.findFirstToken().getWhiteBefore();
-		int cmtStart = cmtString.indexOf('!');
-		if (cmtStart >= 0) {
-			IREntity irCmt;
-
-			irCmt = dico.addAnonymousEntity(IRKind.COMMENT, entity);
-			irCmt.data(IREntity.COMMENT_CONTENT, cmtString);
-
-			if (isEntityHeadComment) {
-				// adjusting start of parent entity, removing the comment from it 
-				Integer entStart = (Integer) entity.getData(IREntity.ANCHOR_START);
-				if (entStart != null) {				
-					entity.data(IREntity.ANCHOR_START, entStart - cmtString.length() ); 
-				}
-			}
+		for ( ASTToken tk : node.findAll(ASTToken.class) ) {
+			String cmtString = tk.getWhiteBefore().trim();
 			
-			traceEntityCreation(irCmt);
+			if ( (cmtString.length() > 0) && (cmtString.charAt(0) == '!') ) {
+				if (irCmt == null) {
+					irCmt = createCommentForEntity(entity, tk.getWhiteBefore());
+				}
+				else {
+					createCommentForEntity(entity, tk.getWhiteBefore());
+				}
+				tk.setWhiteBefore("");  // "remove" whiteBefore so that this comment is not assigned to another entity
+			}
+
+		}
+		return irCmt;
+	}
+
+	protected IREntity createCommentForEntity(IREntity entity, String cmtString) {
+		IREntity irCmt;
+
+		irCmt = dico.addAnonymousEntity(IRKind.COMMENT, entity);
+		irCmt.data(IREntity.COMMENT_CONTENT, cmtString);
+
+		traceEntityCreation(irCmt);
+
+		return irCmt;
+	}
+
+	protected void adjustStartAnchor(IREntity entity, IREntity cmt) {
+		if (cmt != null) {
+			Integer entStart = (Integer) entity.getData(IREntity.ANCHOR_START);
+			if (entStart != null) {				
+				entity.data(IREntity.ANCHOR_START, entStart - ((String)cmt.getData(IREntity.COMMENT_CONTENT)).length() ); 
+			}
 		}
 	}
 

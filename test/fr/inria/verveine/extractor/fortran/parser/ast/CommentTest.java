@@ -38,7 +38,9 @@ public class CommentTest extends AbstractASTTest {
 		
 		comments = new ArrayList<>();
 		for (ASTToken tk: tokens ) {
-			String cmt = tk.getWhiteBefore();
+			tk.setWhiteBefore(null); // removes the empty comments introduced by CommentVisitor
+			// so that we have access to the comments stored in the actualToken. See ASTToken
+			String cmt = tk.getActualToken().getWhiteText();
 			if (cmt.indexOf('!') >= 0) {
 				comments.add(cmt);
 			}
