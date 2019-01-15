@@ -86,7 +86,6 @@ public class CommentVisitor extends AbstractDispatcherVisitor {
 	@Override
 	public void visitASTTypeDeclarationStmtNode(ASTTypeDeclarationStmtNode node) {
 		for (ASTEntityDeclNode decl : node.getEntityDeclList()) {
-			// Because of AST visit pruning, here we should only have global variables
 			ASTToken tk = decl.getObjectName();
 			IREntity entity = dico.getEntityByKey( mkKey(tk));
 			createCommentIfAny(node, entity);
@@ -102,27 +101,33 @@ public class CommentVisitor extends AbstractDispatcherVisitor {
 	 * @return 
 	 */
 	protected IREntity createCommentIfAny(ASTNode node, IREntity entity) {
-		IREntity irCmt = null;
+		IREntity firstCmt = null;
+		int posFirstCmt = -1;
 
 		if (entity == null) {
-			new EntityNotFoundException("Entity key not found");
+			// missing commented entity (e.g. a local var)
+			// we take its parent (e.g. a subprogram)
+			entity = context.peek();
 		}
 
 		for ( ASTToken tk : node.findAll(ASTToken.class) ) {
 			String cmtString = tk.getWhiteBefore().trim();
 			
 			if ( (cmtString.length() > 0) && (cmtString.charAt(0) == '!') ) {
-				if (irCmt == null) {
-					irCmt = createCommentForEntity(entity, tk.getWhiteBefore());
+				
+				// remember first comment for this entity (to return it)
+				IREntity tmpCmt = createCommentForEntity(entity, tk.getWhiteBefore());
+				if ( (posFirstCmt == -1) || (posFirstCmt > tk.getStartIndex()) ) {
+					posFirstCmt = tk.getStartIndex();
+					firstCmt = tmpCmt;
 				}
-				else {
-					createCommentForEntity(entity, tk.getWhiteBefore());
-				}
-				tk.setWhiteBefore("");  // "remove" whiteBefore so that this comment is not assigned to another entity
+
+				// "remove" whiteBefore so that this comment is not assigned to another entity
+				tk.setWhiteBefore("");
 			}
 
 		}
-		return irCmt;
+		return firstCmt;
 	}
 
 	protected IREntity createCommentForEntity(IREntity entity, String cmtString) {
