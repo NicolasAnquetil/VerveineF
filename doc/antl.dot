@@ -72,10 +72,6 @@ derived_type_def -> private_or_sequence [label="3"]
 derived_type_def -> component_def_stmt [label="4"]
 derived_type_def -> type_bound_procedure_part [label="5"]
 
-designator-> data_ref [color="red"]
-designator-> substring_range [label="2",color="red"]
-designator-> char_literal_constant [color="red"]
-
 entity_decl_list -> entity_decl [label="*",color="red"]
 entity_decl -> array_spec [label="1",color="red"]
 entity_decl -> coarray_spec [label="2"]
@@ -221,6 +217,9 @@ action_stmt -> assign_stmt
 action_stmt -> assigned_goto_stmt
 action_stmt -> pause_stmt
 
+assignment_stmt -> variable [label="1"]
+assignment_stmt -> expr [label="2"]
+
 call_stmt -> procedure_designator [label="1"]
 call_stmt -> actual_arg_spec_list [label="2",color="red"]
 
@@ -263,6 +262,7 @@ other_specification_stmt -> volatile_stmt
 other_specification_stmt -> value_stmt
 other_specification_stmt -> other_spec_stmt_extension
 
+variable -> designator
 
 // -------------------------------------------------------------------
 // |                      Expressions sub-trees                      |
@@ -298,6 +298,10 @@ data_stmt_value -> char_literal_constant
 data_stmt_value -> boz_literal_constant
 data_stmt_value -> structure_constructor
 data_stmt_value -> hollerith_literal_constant
+
+designator-> data_ref
+designator-> substring_range [label="2"]
+designator-> char_literal_constant
 
 designator_or_func_ref -> data_ref [label="1a"]
 designator_or_func_ref -> substring_range_or_arg_list [label="2a ?"]

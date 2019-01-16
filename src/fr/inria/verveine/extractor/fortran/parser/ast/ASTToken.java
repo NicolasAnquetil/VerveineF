@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.Token;
 
+import fortran.ofp.parser.java.FortranLexer;
 import fortran.ofp.parser.java.FortranToken;
 
 /**
@@ -40,6 +41,23 @@ public class ASTToken implements Token, IASTNode
      */
     protected String whiteAfter = ""; //$NON-NLS-1$
 
+    /**
+     * Utility static method to create an instance from a FortranToken<br>
+     * Will return <code>null</code> if the argument is <code>null</code> 
+     */
+	public static ASTToken with(Token tok) {
+		if (tok != null) {
+			if (tok.getType() == FortranLexer.EOF) {
+				tok = new FortranToken(tok) ;
+			}
+			return new ASTToken( (FortranToken) tok);
+		}
+		else {
+			return null;
+		}
+	}
+	
+    
     public ASTToken(FortranToken tok) {
     	actualToken = tok;
     }

@@ -178,4 +178,10 @@ public class ASTFunctionStmtNode extends ASTNode implements IActionStmt {  // ex
         default: throw new IllegalArgumentException("Invalid index");
         }
     }
+
+	@Override
+	public String toString() {
+		return "ASTFunctionStmtNode "+functionName;
+	}
+
 }

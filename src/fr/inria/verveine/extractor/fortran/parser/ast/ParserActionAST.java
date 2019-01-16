@@ -4,6 +4,7 @@ package fr.inria.verveine.extractor.fortran.parser.ast;
 import java.util.Collection;
 
 import org.antlr.runtime.Token;
+import org.antlr.stringtemplate.language.ASTExpr;
 
 import fortran.ofp.parser.java.FortranLexer;
 import fortran.ofp.parser.java.FortranParserActionNull;
@@ -62,10 +63,10 @@ public class ParserActionAST extends FortranParserActionNull {
 	public void	program_stmt(Token label, Token programKeyword, Token id, Token eos) {
 		ASTProgramStmtNode pgmStmt = new ASTProgramStmtNode();
 		
-		pgmStmt.setLabel( asttk(label));
-		pgmStmt.setASTField(ASTProgramStmtNode.TPROGRAM, asttk(programKeyword));
-		pgmStmt.setASTField(ASTProgramStmtNode.TEOS, asttk(eos));
-		pgmStmt.setProgramName( asttk(id));
+		pgmStmt.setLabel( ASTToken.with(label));
+		pgmStmt.setASTField(ASTProgramStmtNode.TPROGRAM, ASTToken.with(programKeyword));
+		pgmStmt.setASTField(ASTProgramStmtNode.TEOS, ASTToken.with(eos));
+		pgmStmt.setProgramName( ASTToken.with(id));
 
 		parsingCtxt.pushValueStack(pgmStmt);
 	}
@@ -74,11 +75,11 @@ public class ParserActionAST extends FortranParserActionNull {
 	public void	end_program_stmt(Token label, Token endKeyword, Token programKeyword, Token id, Token eos) {
 		ASTEndProgramStmtNode endPgmStmt = new ASTEndProgramStmtNode();
 		
-		endPgmStmt.setLabel(asttk(label));
-		endPgmStmt.setEndToken(asttk(endKeyword));
-		endPgmStmt.setASTField(ASTEndProgramStmtNode.TPROGRAM, asttk(programKeyword));
-		endPgmStmt.setEndName(asttk(id));
-		endPgmStmt.setASTField(ASTEndProgramStmtNode.TEOS, asttk(eos));
+		endPgmStmt.setLabel(ASTToken.with(label));
+		endPgmStmt.setEndToken(ASTToken.with(endKeyword));
+		endPgmStmt.setASTField(ASTEndProgramStmtNode.TPROGRAM, ASTToken.with(programKeyword));
+		endPgmStmt.setEndName(ASTToken.with(id));
+		endPgmStmt.setASTField(ASTEndProgramStmtNode.TEOS, ASTToken.with(eos));
 
 		parsingCtxt.pushValueStack(endPgmStmt);
 	}
@@ -114,12 +115,12 @@ public class ParserActionAST extends FortranParserActionNull {
 	public void	module_stmt(Token label, Token moduleKeyword, Token id, Token eos) {
 		ASTModuleStmtNode moduleStmt = new ASTModuleStmtNode();
 
-		moduleStmt.setLabel(asttk(label));
-		moduleStmt.setASTField(ASTModuleStmtNode.TMODULE, asttk(moduleKeyword));
-		moduleStmt.setASTField(ASTModuleStmtNode.TMODULE, asttk(moduleKeyword));
-		moduleStmt.setASTField(ASTModuleStmtNode.TEOS, asttk(eos));
+		moduleStmt.setLabel(ASTToken.with(label));
+		moduleStmt.setASTField(ASTModuleStmtNode.TMODULE, ASTToken.with(moduleKeyword));
+		moduleStmt.setASTField(ASTModuleStmtNode.TMODULE, ASTToken.with(moduleKeyword));
+		moduleStmt.setASTField(ASTModuleStmtNode.TEOS, ASTToken.with(eos));
 
-		moduleStmt.setModuleName(asttk(id));
+		moduleStmt.setModuleName(ASTToken.with(id));
 		
 		parsingCtxt.pushValueStack(moduleStmt);
 	}
@@ -137,11 +138,11 @@ public class ParserActionAST extends FortranParserActionNull {
 	public void	end_module_stmt(Token label, Token endKeyword, Token moduleKeyword, Token id, Token eos) {
 		ASTEndModuleStmtNode endModule = new ASTEndModuleStmtNode();
 
-		endModule.setLabel(asttk(label));
-		endModule.setASTField(ASTEndModuleStmtNode.TEND, asttk(endKeyword));
-		endModule.setASTField(ASTEndModuleStmtNode.TENDMODULE, asttk(moduleKeyword));
-		endModule.setEndName(asttk(id));
-		endModule.setASTField(ASTEndModuleStmtNode.TEOS, asttk(eos));
+		endModule.setLabel(ASTToken.with(label));
+		endModule.setASTField(ASTEndModuleStmtNode.TEND, ASTToken.with(endKeyword));
+		endModule.setASTField(ASTEndModuleStmtNode.TENDMODULE, ASTToken.with(moduleKeyword));
+		endModule.setEndName(ASTToken.with(id));
+		endModule.setASTField(ASTEndModuleStmtNode.TEOS, ASTToken.with(eos));
 
 		parsingCtxt.pushValueStack(endModule);
 	}
@@ -172,11 +173,11 @@ public class ParserActionAST extends FortranParserActionNull {
 	public void function_stmt(Token label, Token keyword, Token name, Token eos, boolean hasGenericNameList, boolean hasSuffix) {
 		ASTFunctionStmtNode fctStmt = new ASTFunctionStmtNode();
 		
-		fctStmt.setLabel(asttk(label));
-		fctStmt.setASTField(ASTFunctionStmtNode.TFUNCTION, asttk(keyword));
-		fctStmt.setASTField(ASTFunctionStmtNode.TEOS, asttk(eos));
+		fctStmt.setLabel(ASTToken.with(label));
+		fctStmt.setASTField(ASTFunctionStmtNode.TFUNCTION, ASTToken.with(keyword));
+		fctStmt.setASTField(ASTFunctionStmtNode.TEOS, ASTToken.with(eos));
 		
-		fctStmt.setFunctionName(asttk(name));
+		fctStmt.setFunctionName(ASTToken.with(name));
 
 		parsingCtxt.pushValueStack(fctStmt);
 	}
@@ -185,15 +186,15 @@ public class ParserActionAST extends FortranParserActionNull {
 	public void end_function_stmt(Token label, Token keyword1, Token keyword2, Token name, Token eos) {
 		ASTEndFunctionStmtNode endFct = new ASTEndFunctionStmtNode();
 
-		endFct.setLabel(asttk(label));
+		endFct.setLabel(ASTToken.with(label));
 		if ( ((FortranToken)keyword1).getTokenIndex() == FortranLexer.T_ENDFUNCTION) {
-			endFct.setASTField(ASTEndFunctionStmtNode.TENDFUNCTION, asttk(keyword1));
+			endFct.setASTField(ASTEndFunctionStmtNode.TENDFUNCTION, ASTToken.with(keyword1));
 		}
 		else {
-			endFct.setASTField(ASTEndFunctionStmtNode.TEND, asttk(keyword1));
+			endFct.setASTField(ASTEndFunctionStmtNode.TEND, ASTToken.with(keyword1));
 		}
-		endFct.setASTField(ASTEndFunctionStmtNode.TFUNCTION, asttk(keyword2));
-		endFct.setASTField(ASTEndFunctionStmtNode.TEOS, asttk(eos));
+		endFct.setASTField(ASTEndFunctionStmtNode.TFUNCTION, ASTToken.with(keyword2));
+		endFct.setASTField(ASTEndFunctionStmtNode.TEOS, ASTToken.with(eos));
 		
 		parsingCtxt.pushValueStack(endFct);
 	}
@@ -236,11 +237,11 @@ public class ParserActionAST extends FortranParserActionNull {
 	public void subroutine_stmt(Token label, Token keyword, Token name, Token eos, boolean hasPrefix, boolean hasDummyArgList, boolean hasBindingSpec, boolean hasArgSpecifier) {
 		ASTSubroutineStmtNode pcdStmt = new ASTSubroutineStmtNode();
 		
-		pcdStmt.setLabel(asttk(label));
-		pcdStmt.setASTField(ASTSubroutineStmtNode.TSUBROUT, asttk(keyword));
-		pcdStmt.setASTField(ASTSubroutineStmtNode.TEOS, asttk(eos));
+		pcdStmt.setLabel(ASTToken.with(label));
+		pcdStmt.setASTField(ASTSubroutineStmtNode.TSUBROUT, ASTToken.with(keyword));
+		pcdStmt.setASTField(ASTSubroutineStmtNode.TEOS, ASTToken.with(eos));
 		
-		pcdStmt.setSubroutineName(asttk(name));
+		pcdStmt.setSubroutineName(ASTToken.with(name));
 		
 		parsingCtxt.pushValueStack( pcdStmt);
 	}
@@ -249,15 +250,15 @@ public class ParserActionAST extends FortranParserActionNull {
 	public void end_subroutine_stmt(Token label, Token keyword1, Token keyword2, Token name, Token eos) {
 		ASTEndSubroutineStmtNode endPcd = new ASTEndSubroutineStmtNode();
 		
-		endPcd.setLabel(asttk(label));
+		endPcd.setLabel(ASTToken.with(label));
 		if ( ((FortranToken)keyword1).getTokenIndex() == FortranLexer.T_ENDSUBROUTINE) {
-			endPcd.setASTField(ASTEndSubroutineStmtNode.TENDSUBROUT, asttk(keyword1));
+			endPcd.setASTField(ASTEndSubroutineStmtNode.TENDSUBROUT, ASTToken.with(keyword1));
 		}
 		else {
-			endPcd.setASTField(ASTEndSubroutineStmtNode.TEND, asttk(keyword1));
+			endPcd.setASTField(ASTEndSubroutineStmtNode.TEND, ASTToken.with(keyword1));
 		}
-		endPcd.setASTField(ASTEndSubroutineStmtNode.TSUBROUT, asttk(keyword2));
-		endPcd.setASTField(ASTEndSubroutineStmtNode.TEOS, asttk(eos));
+		endPcd.setASTField(ASTEndSubroutineStmtNode.TSUBROUT, ASTToken.with(keyword2));
+		endPcd.setASTField(ASTEndSubroutineStmtNode.TEOS, ASTToken.with(eos));
 		
 		parsingCtxt.pushValueStack(endPcd);
 	}
@@ -336,10 +337,10 @@ public class ParserActionAST extends FortranParserActionNull {
 			boolean hasRenameList, boolean hasOnly) {
 		ASTUseStmtNode useStmt = new ASTUseStmtNode();
 
-		useStmt.setLabel(asttk(label));
-		useStmt.setName(asttk(id));
-		useStmt.setASTField(ASTUseStmtNode.TUSE, asttk(useKeyword));
-		useStmt.setASTField(ASTUseStmtNode.TEOS, asttk(eos));
+		useStmt.setLabel(ASTToken.with(label));
+		useStmt.setName(ASTToken.with(id));
+		useStmt.setASTField(ASTUseStmtNode.TUSE, ASTToken.with(useKeyword));
+		useStmt.setASTField(ASTUseStmtNode.TEOS, ASTToken.with(eos));
 
 		parsingCtxt.pushValueStack(useStmt);
 	}
@@ -368,8 +369,8 @@ public class ParserActionAST extends FortranParserActionNull {
 	public void type_declaration_stmt(Token label, int numAttributes, Token eos) {
 		ASTTypeDeclarationStmtNode typeDecl = new ASTTypeDeclarationStmtNode();
 		
-		typeDecl.setLabel(asttk(label));
-		typeDecl.setASTField(ASTTypeDeclarationStmtNode.TEOS, asttk(eos));
+		typeDecl.setLabel(ASTToken.with(label));
+		typeDecl.setASTField(ASTTypeDeclarationStmtNode.TEOS, ASTToken.with(eos));
 
 		IASTListNode<ASTEntityDeclNode> typeMembers = (IASTListNode<ASTEntityDeclNode>) parsingCtxt.popValueStack();
 		typeDecl.setEntityDeclList( typeMembers);
@@ -388,7 +389,7 @@ public class ParserActionAST extends FortranParserActionNull {
 	@Override
 	public void derived_type_spec(Token typeName, boolean hasTypeParamSpecList) {
 		ASTTypeSpecNode typeSpec = new ASTTypeSpecNode();
-		typeSpec.setTypeName(asttk(typeName));
+		typeSpec.setTypeName(ASTToken.with(typeName));
 		parsingCtxt.pushValueStack(typeSpec);
 	}
 
@@ -398,15 +399,15 @@ public class ParserActionAST extends FortranParserActionNull {
 		if (hasKindSelector) {
 			parsingCtxt.popAllValueStack(new WhileTypeValidator(ASTVarOrFnRefNode.class));
 		}
-		typeSpec.setTypeName(asttk(keyword1));
+		typeSpec.setTypeName(ASTToken.with(keyword1));
 		parsingCtxt.pushValueStack(typeSpec);
 	}
 
 	@Override
 	public void derived_type_stmt(Token label, Token keyword, Token id, Token eos, boolean hasTypeAttrSpecList, boolean hasGenericNameList) {
 		ASTDerivedTypeStmtNode typeStmt = new ASTDerivedTypeStmtNode();
-		typeStmt.setLabel(asttk(label));
-		typeStmt.setTypeName(asttk(id));
+		typeStmt.setLabel(ASTToken.with(label));
+		typeStmt.setTypeName(ASTToken.with(id));
 		
 		parsingCtxt.pushValueStack(typeStmt);
 	}
@@ -535,7 +536,7 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 	@Override
 	public void entity_decl(Token id, boolean hasArraySpec, boolean hasCoarraySpec, boolean hasCharLength, boolean hasInitialization) {
 		ASTEntityDeclNode entityDecl = new ASTEntityDeclNode();
-		entityDecl.setObjectName(asttk(id));
+		entityDecl.setObjectName(ASTToken.with(id));
 		if (hasArraySpec) {
 			parsingCtxt.popAllValueStack( new WhileTypeValidator(ASTVarOrFnRefNode.class));
 		}
@@ -556,7 +557,7 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 		ASTToken tk = null;
 
 		if (attrKeyword != null) {
-			tk = asttk(attrKeyword);
+			tk = ASTToken.with(attrKeyword);
 		}
 		
 		switch (attr) {
@@ -589,8 +590,8 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 	@Override
 	public void access_stmt(Token label, Token eos, boolean hasList) {
 		ASTAccessStmtNode accessStmt = new ASTAccessStmtNode();
-		accessStmt.setLabel(asttk(label));
-		accessStmt.setASTField(ASTAccessStmtNode.T_EOS,asttk(eos));
+		accessStmt.setLabel(ASTToken.with(label));
+		accessStmt.setASTField(ASTAccessStmtNode.T_EOS,ASTToken.with(eos));
 		
 		accessStmt.setAccessSpec((ASTAccessSpecNode) parsingCtxt.popValueStack());
 		
@@ -602,9 +603,9 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 	public void intent_spec(Token intentKeyword1, Token intentKeyword2, int intent) {
 		ASTIntentSpecNode intent_spec = new ASTIntentSpecNode();
 		switch (intent) {
-		case IActionEnums.IntentSpec_IN: intent_spec.setIsIntentIn(asttk(intentKeyword1)); break;
-		case IActionEnums.IntentSpec_OUT: intent_spec.setIsIntentOut(asttk(intentKeyword1)); break;
-		case IActionEnums.IntentSpec_INOUT: intent_spec.setIsIntentInOut(asttk(intentKeyword1)); break;
+		case IActionEnums.IntentSpec_IN: intent_spec.setIsIntentIn(ASTToken.with(intentKeyword1)); break;
+		case IActionEnums.IntentSpec_OUT: intent_spec.setIsIntentOut(ASTToken.with(intentKeyword1)); break;
+		case IActionEnums.IntentSpec_INOUT: intent_spec.setIsIntentInOut(ASTToken.with(intentKeyword1)); break;
 		default:
 			System.err.println("Unknown intent_spec:"+intent+"("+intentKeyword1+")");
 		}
@@ -625,8 +626,8 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 	public void access_spec(Token keyword, int type) {
 		ASTAccessSpecNode accessSpec = new ASTAccessSpecNode();
 		switch (type) {
-		case IActionEnums.AttrSpec_PUBLIC: accessSpec.setIsPublic(asttk(keyword)); break;
-		case IActionEnums.AttrSpec_PRIVATE: accessSpec.setIsPrivate(asttk(keyword)); break;
+		case IActionEnums.AttrSpec_PUBLIC: accessSpec.setIsPublic(ASTToken.with(keyword)); break;
+		case IActionEnums.AttrSpec_PRIVATE: accessSpec.setIsPrivate(ASTToken.with(keyword)); break;
 		default:
 			System.err.println("Unknown access_spec:"+type+"("+keyword+")");
 		}
@@ -637,42 +638,50 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 	public void call_stmt(Token label, Token callKeyword, Token eos, boolean hasActualArgSpecList) {
 		ASTCallStmtNode call = new ASTCallStmtNode();
 		
-		call.setLabel( asttk(label));
-		call.setASTField( ASTCallStmtNode.TCALL, asttk(callKeyword));
-		call.setSubroutineName( asttk((Token) parsingCtxt.valueGet("part_ref.id")) );
-		call.setASTField( ASTCallStmtNode.TEOS, asttk(eos));
+		call.setLabel( ASTToken.with(label));
+		call.setASTField( ASTCallStmtNode.TCALL, ASTToken.with(callKeyword));
+		call.setSubroutineName( (ASTToken) parsingCtxt.popValueStack() );
+		call.setASTField( ASTCallStmtNode.TEOS, ASTToken.with(eos));
 
 		parsingCtxt.pushValueStack(call);
 	}
 
 	@Override
 	public void designator_or_func_ref() {
-		ASTVarOrFnRefNode invok = new ASTVarOrFnRefNode();
+		ASTVarOrFnRefNode ref = new ASTVarOrFnRefNode();
 		
-		invok.setName(asttk((Token) parsingCtxt.valueRetreive("part_ref.id")));   // TODO change for valueStack
+		ref.setName( (ASTToken) parsingCtxt.popValueStack());
 		
-		parsingCtxt.pushValueStack(invok);
+		parsingCtxt.pushValueStack(ref);
 	}
 	
 	@Override
 	public void part_ref(Token id, boolean hasSectionSubscriptList, boolean hasImageSelector) {
-		parsingCtxt.valueSet("part_ref.id",id);
+		parsingCtxt.pushValueStack(ASTToken.with(id));
 	}
-	
+
+	@Override
+	public void variable() {
+		ASTVariableNameNode var = new ASTVariableNameNode();
+		var.setVariableName((ASTToken) parsingCtxt.popValueStack());
+		parsingCtxt.pushValueStack(var);
+	}
+
+	@Override
+	public void assignment_stmt(Token label, Token eos) {
+		ASTAssignmentStmtNode assign = new ASTAssignmentStmtNode();
+		IASTListNode<IASTNode> members = parsingCtxt.popAllValueStack(new UntilTypeValidator(ASTVariableNameNode.class));
+		ASTWaterExprNode exprMembers = new ASTWaterExprNode();
+
+		exprMembers.setExprMembers(members);
+		assign.setLhsVariable((ASTVariableNameNode) parsingCtxt.popValueStack());
+		assign.setRhs((IExpr) exprMembers);
+		parsingCtxt.pushValueStack(assign);
+	}
+
 	// UTILITIES ---
 
-	protected ASTToken asttk(Token tok) {
-		if (tok != null) {
-			if (tok.getType() == FortranLexer.EOF) {
-				tok = new FortranToken(tok) ;
-			}
-			return new ASTToken( (FortranToken) tok);
-		}
-		else {
-			return null;
-		}
-	}
-	
+
 	/**
 	 * helps debugging ClassCastException bugs when poping nodes from the context stack<br>
 	 * For this, there should always be a breakpoint set inside the if
