@@ -512,11 +512,15 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 	@Override
 	public void execution_part(int execution_part_count) {
 		IASTListNode<IASTNode> exec_parts = new ASTListNode<>();
+		// grab everything that could appear in a body and make a list with it
 		exec_parts.addAll(
 				parsingCtxt.popAllValueStack( new Validator() {
 					@Override
 					public boolean validate(IASTNode node) {
-						return (node instanceof ASTVarOrFnRefNode) || (node instanceof ASTCallStmtNode);
+						return (node instanceof ASTVarOrFnRefNode) ||
+								(node instanceof ASTCallStmtNode) ||
+								(node instanceof ASTToken) ||
+								(node instanceof ASTAssignmentStmtNode);
 					}
 				})
 			);

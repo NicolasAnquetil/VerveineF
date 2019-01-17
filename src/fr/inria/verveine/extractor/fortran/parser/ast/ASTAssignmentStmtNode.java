@@ -197,19 +197,19 @@ public class ASTAssignmentStmtNode extends ASTNode/*WithErrorRecoverySymbols*/ i
         case 1:  return this.lhsVariable;
         case 2:  return this.hiddenTLparen;
         case 3:  return new ASTNullNode();  // this.lhsNameList;
-        case 4:  return new ASTNullNode();  // thisthis.lhsExprList;
+        case 4:  return new ASTNullNode();  // this.lhsExprList;
         case 5:  return this.hiddenTRparen;
-        case 6:  return new ASTNullNode();  // thisthis.imageSelector;
+        case 6:  return new ASTNullNode();  // this.imageSelector;
         case 7:  return this.hiddenTPercent;
-        case 8:  return new ASTNullNode();  // thisthis.derivedTypeComponentRef;
+        case 8:  return new ASTNullNode();  // this.derivedTypeComponentRef;
         case 9:  return this.hiddenLparen2;
-        case 10: return new ASTNullNode();  // thisthis.componentSectionSubscriptList;
+        case 10: return new ASTNullNode();  // this.componentSectionSubscriptList;
         case 11: return this.hiddenRparen2;
-        case 12: return new ASTNullNode();  // thisthis.substringRange;
+        case 12: return new ASTNullNode();  // this.substringRange;
         case 13: return this.isPointerAssignment;
-        case 14: return new ASTNullNode();  // thisthis.target;
+        case 14: return new ASTNullNode();  // this.target;
         case 15: return this.hiddenTEquals;
-        case 16: return new ASTNullNode();  // thisthis.rhs;
+        case 16: return this.rhs;
         case 17: return this.hiddenTEos;
         default: throw new IllegalArgumentException("Invalid index");
         }
@@ -235,10 +235,17 @@ public class ASTAssignmentStmtNode extends ASTNode/*WithErrorRecoverySymbols*/ i
         case 13: this.isPointerAssignment = (ASTToken)value; if (value != null) value.setParent(this); return;
         case 14: return; // this.target = (ASTTargetNode)value; if (value != null) value.setParent(this); return;
         case 15: this.hiddenTEquals = (ASTToken)value; if (value != null) value.setParent(this); return;
-        case 16: return; // this.rhs = (IExpr)value; if (value != null) value.setParent(this); return;
+        case 16: this.rhs = (IExpr)value; if (value != null) value.setParent(this); return;
         case 17: this.hiddenTEos = (ASTToken)value; if (value != null) value.setParent(this); return;
         default: throw new IllegalArgumentException("Invalid index");
         }
     }
+
+    @Override
+    public String toString() {
+    	// for debug purposes
+    	return "ASTAssignmentStmtNode " + lhsVariable.getVariableName();
+    }
+
 }
 
