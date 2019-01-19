@@ -1,0 +1,189 @@
+* subroutines
+
+DATE_AND_TIME(date, time, zone, values)
+SYSTEM_CLOCK(COUNT, COUNT_RATE, COUNT_MAX)
+MVBITS(FROM, FROMPOS, LEN, TO, TOPOS)
+RANDOM_NUMBER(HARVEST)
+RANDOM_SEED(size, put, get)
+	CALL RANDOM_SEED                    ! Initializing
+	CALL RANDOM SEED (SIZE=K)           ! Sets K = N
+	CALL RANDOM_SEED (PUT = SEED (1:K)) ! Uses the starting value
+                                            !     given by the user
+	CALL RANDOM_SEED (GET = OLD(1:K))   ! Returns  the  present
+                                            !     starting value
+
+
+* functions
+
+PRESENT(A)
+ABS(x)
+AIMAG(x)
+AINT(x, kind)
+AMAX0(x)
+AMAX1(x)
+AMIN0(x)
+AMIN1(x)
+AMOD(x)
+ANINT(x, kind)
+CABS(x)
+CEILING(x)
+CMPLX(x, kind)
+CONJG(x)
+DABS(x)
+DBLE(x)
+DDIM(x)
+DINT(x)
+DIM(x,y)
+DMAX1(x)
+DMIN1(x)
+DMOD(x)
+DNINT(x)
+DPROD(x,y)
+DSIGN(x)
+FLOAT(x)
+FLOOR(x)
+IABS(x)
+IDIM(x)
+IDINT(x)
+IDNINT(x)
+IFIX(x)
+INT(x, kind)
+ISIGN(x)
+MAX(x,y ...)
+MAX0(x)
+MAX1(x)
+MIN(x,y ...)
+MIN0(x)
+MIN1(x)
+MOD(x,y)
+MODULO(x)
+NINT(x, kind)
+REAL(x, kind)
+SIGN(x,y)
+SNGL(x)
+
+ACOS
+DACOS
+ASIN
+DASIN
+ATAN
+DATAN
+ATAN2
+DATAN2
+COS
+DCOS
+CCOS
+COSH
+DCOSH
+EXP
+DEXP
+CEXP
+LOG
+ALOG
+DLOG
+CLOG
+LOG10
+ALOG10
+DLOG10
+SIN
+DSIN
+CSIN
+SINH
+DSINH
+SQRT
+DSQRT
+CSQRT
+TAN
+DTAN
+TANH
+DTANH
+
+ACHAR(I)          Returns the ASCII character which has number I
+ADJUSTL(STRING)   Adjusts to the left
+ADJUSTR(STRING)   Adjusts to the right
+CHAR(I, kind)     Returns the character that has the number I
+IACHAR(C)         Returns the ASCII number of the character C
+ICHAR(C)          Returns the number of character C
+INDEX(STRING, SUBSTRING, back)  Returns the starting position for a substring within  a  string
+LEN_TRIM(STRING)  Returns the length of the string without the possibly trailing blanks.
+LGE(STRING_A, STRING_B)  compare two strings
+LGT(STRING-A, STRING_B)  compare two strings
+LLE(STRING_A, STRING_B)  compare two strings
+LLT(STRING_A, STRING_B)  compare two strings
+REPEAT(STRING, NCOPIES)    Concatenates a character string NCOPIES times with itself.
+SCAN(STRING, SET, back)    Returns the position of the first occurrence of any character
+TRIM(STRING)               Returns the character string STRING without trailing blanks.
+VERIFY(STRING, SET, back)  Returns the position of the first character in STRING which is not in SET.
+LEN(STRING) returns the length of a character string
+
+KIND(X)
+SELECTED_INT_KIND(R)
+SELECTED_REAL_KIND(p, r)
+
+LOGICAL(L, kind)
+
+DIGITS(X)       The number of significant digits
+EPSILON(X)      The  least  positive  number  that added to 1 returns a number that is greater than 1
+HUGE(X)         The largest positive number
+MAXEXPONENT(X)  The largest exponent
+MINEXPONENT     The smallest exponent
+PRECISION(X)    The decimal precision
+RADIX(X)        The base in the model
+RANGE(X)        The decimal exponent
+TINY(X)         The smallest positive number
+
+BIT_SIZE(I)
+
+BTEST(I, POS)         .TRUE. if the position number POS of I is 1
+IAND(I, J)            logical  addition  of  the  bit characters in variables I and J
+IBCLR(I, POS)         puts a zero in the bit in position POS
+IBITS(I, POS, LEN)    uses LEN bits of the word I with beginning in position POS
+IBSET(I, POS)         puts the bit in position POS to 1
+IEOR(I, J)            performs logical exclusive OR
+IOR(I, J)             performs logical OR
+ISHIFT(I, SHIFT)      performs logical shift
+ISHIFTC(I, SHIFT, size) performs  logical  shift  a  number  of  steps
+NOT(I)                returns a logical complement
+
+TRANSFER(SOURCE, MOULD, size)
+
+EXPONENT(X)         exponent of the number
+FRACTION(X)         the fractional part of the number
+NEAREST(X, S)       returns the next representable number in the direction of the sign of S
+RRSPACING(X)        returns the inverted value of the distance between the two nearest possible numbers 
+SCALE(X, I)         multiplies X by the base to the power I
+SET_EXPONENT(X, I)  returns the number that has the fractional part of X and the exponent I
+SPACING(X)          the distance between the two nearest possible numbers 
+
+DOT_PRODUCT(VECTOR_A, VECTOR_B)
+MATMUL(MATRIX_A, MATRIX_B)
+
+ALL(MASK, dim)
+ANY(MASK, dim)
+COUNT(MASK, dim)
+MAXVAL(ARRAY, dim, mask)
+MINVAL(ARRAY, dim, mask)
+PRODUCT(ARRAY, dim, mask)
+SUM (ARRAY, dim, mask)
+
+ALLOCATED(ARRAY)
+LBOUND(ARRAY, dim)
+SHAPE(SOURCE)
+SIZE(ARRAY, dim)
+UBOUND(ARRAY, dim)
+
+MERGE(TSOURCE, FSOURCE, MASK)
+PACK(ARRAY, MASK, vector)
+SPREAD(SOURCE, DIM, NCOPIES)
+UNPACK(VECTOR, MASK, ARRAY)
+
+RESHAPE(SOURCE, SHAPE, pad, order)
+
+CSHIFT(ARRAY, SHIFT, dim)
+EOSHIFT(ARRAY, SHIFT, boundary, dim)
+TRANSPOSE (MATRIX)
+
+MAXLOC(ARRAY, mask)
+MINLOC(ARRAY, mask)
+
+ASSOCIATED(POINTER, target)

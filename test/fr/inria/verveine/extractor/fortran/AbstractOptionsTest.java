@@ -43,7 +43,7 @@ public abstract class AbstractOptionsTest extends AbstractFortranExtractorTest {
 	
 	@Before
 	public void setup() {
-		ir = new File(VerveineFParser.DEFAULT_OUTPUT_FILENAME);
+		ir = new File(Options.DEFAULT_OUTPUT_FILENAME);
 		deleteIfExist(ir);
 	}
 

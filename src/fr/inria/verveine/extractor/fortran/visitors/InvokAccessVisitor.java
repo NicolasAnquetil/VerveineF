@@ -1,5 +1,6 @@
 package fr.inria.verveine.extractor.fortran.visitors;
 
+import fr.inria.verveine.extractor.fortran.Options;
 import fr.inria.verveine.extractor.fortran.ir.IRDictionary;
 import fr.inria.verveine.extractor.fortran.ir.IREntity;
 import fr.inria.verveine.extractor.fortran.ir.IRKind;
@@ -16,8 +17,8 @@ import fr.inria.verveine.extractor.fortran.parser.ast.ASTVarOrFnRefNode;
 
 public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 
-	public InvokAccessVisitor(IRDictionary dico, String filename, boolean allLocals, int verbose) {
-		super(dico, filename, allLocals, verbose);
+	public InvokAccessVisitor(IRDictionary dico, String filename, Options options) {
+		super(dico, filename, options);
 	}
 
 	@Override

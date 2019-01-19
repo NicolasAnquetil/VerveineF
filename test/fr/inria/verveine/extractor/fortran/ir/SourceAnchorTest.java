@@ -6,9 +6,6 @@ import java.util.Collection;
 
 import org.junit.Test;
 
-import fr.inria.verveine.extractor.fortran.parser.ast.ASTModuleNode;
-
-
 public class SourceAnchorTest extends AbstractIrTest {
 
 	public static final String SOURCE_CODE = "module a_module\n" +	// '\n' at pos 15

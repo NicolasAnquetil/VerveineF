@@ -17,7 +17,7 @@ public class AbstractFortranExtractorTest {
 		for (i=0; i<args.length; i++) {
 			newArgs[i] = args[i];
 		}
-		newArgs[i] = VerveineFParser.STRING_SOURCE_OPTION;
+		newArgs[i] = Options.STRING_SOURCE_OPTION;
 		i++;
 		newArgs[i] = sourceCode;
 		

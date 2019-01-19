@@ -35,81 +35,38 @@ public class VerveineFParser  {
 	public static final String STRING_SOURCE_PATH = "/no/path/";
 	public static final String STRING_SOURCE_FILENAME = "-source-from-string-";
 
-	public static final String STRING_SOURCE_OPTION = "--source";
-	public static final String DEFAULT_OUTPUT_FILENAME = "output.ir";
-	public static final String ALLLOCALS_OPTION = "--alllocals";
-
 	public static final String VERVEINEF_PARSER_ACTION = "fr.inria.verveine.extractor.fortran.parser.ast.ParserActionAST";
 
-	private static final String VERVEINEF_VERSION = "0.1.0_20191201-verbose";
-
-	// possible forms of Fortran code
-	public static final int FIXED_FORM = 2;
-	public static final int FREE_FORM = 1;
-	public static final int UNKNOWN_SOURCE_FORM = -1;
-
-	// levels of "verbosity"
-	public static final int TRACE_NOTHING = 0;
-	public static final int TRACE_VISITORS = 1;
-	public static final int TRACE_ENTITIES = 2;
-
-	/**
-	 * Directory where the project to analyze is located
-	 */
-	protected String[] sourcesToParse;
-	
-	protected boolean sourceIsString;
+	private static final String VERVEINEF_VERSION = "0.1.0_20190119-withintrinsics";
 
 	protected IRDictionary dico;
-
-	/**
-	 * Temporary variable to gather macros defined from the command line
-	 */
-	protected Map<String,String> macros;
-
-	/**
-	 * Temporary variable to gather include dirs defined from the command line
-	 */
-	protected Collection<String> includeDirs;
-
-	protected String outputFileName;
-
-	protected int verbose;
-	
-	/**
-	 * Whether to output all local variables 
-	 */
-	protected boolean allLocals;
-
 	protected ASTNode ast;
+	protected Options options;
 
 	public static void main(String[] args) {
-		VerveineFParser verveine = new VerveineFParser();
-		verveine.setOptions(args);
-		verveine.parseSources();
-		verveine.outputIR();
+		new VerveineFParser().run(args);
 	}
 
 	public VerveineFParser() {
-		this.macros = new HashMap<String,String>();
-		this.includeDirs = new ArrayList<>();
-		this.sourcesToParse = null;
-		this.sourceIsString = false;
-		this.outputFileName = DEFAULT_OUTPUT_FILENAME;
 		this.dico = new IRDictionary();
-		this.allLocals = false;
 		this.ast = null;
-		this.verbose = TRACE_NOTHING;
+		options = new Options();
+	}
+
+	protected void run(String[] args) {
+		setOptions(args);
+		parseSources();
+		outputIR();
 	}
 
 	public void parseSources() {
 		String filename = null;
 
-		for (String src : sourcesToParse) {
-			if (sourceIsString) {
+		for (String src : options.getSourcesToParse()) {
+			if (options.sourceIsString()) {
 				VerveineFortranStream stream = null;
 				try {
-					stream = new VerveineFortranStream(macros, src, FREE_FORM);
+					stream = new VerveineFortranStream(options.getMacros(), src, options.FREE_FORM);
 				} catch (IOException e) {
 					// should not occur, there is no reason for VerveineFortranStream to fail on a string source
 				}
@@ -127,8 +84,6 @@ public class VerveineFParser  {
 
 	}
 
-
-	
 	/**
 	 * Parses one file
 	 */
@@ -144,14 +99,14 @@ public class VerveineFParser  {
 		}
 		String parentDir = file.getParent();
 		if ( (parentDir == null) || parentDir.equals("") ) {
-			includeDirs.add(".");
+			options.addIncludeDirs(".");
 		}
 		else {
-			includeDirs.add(parentDir);
+			options.addIncludeDirs(parentDir);
 		}
 
 		try {
-			stream = new VerveineFortranStream(macros, file.getAbsolutePath() );
+			stream = new VerveineFortranStream(options.getMacros(), file.getAbsolutePath() );
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
@@ -177,7 +132,7 @@ public class VerveineFParser  {
 
 		// Changes associated with antlr version 3.3 require that includeDirs
 		// be set here as the tokens are loaded by the constructor.
-		lexer.setIncludeDirs((ArrayList<String>) includeDirs);
+		lexer.setIncludeDirs((ArrayList<String>) options.getIncludeDirs());
 		tokens = new FortranTokenStream(lexer);
 
 		parser = new FortranParser2008(tokens);
@@ -286,14 +241,14 @@ public class VerveineFParser  {
 
 
 	protected void runAllVisitors(String filename, ASTNode ast)  {
-		ast.accept(new ScopeDefVisitor(dico, filename, allLocals, verbose));
-		ast.accept(new SubprgDefVisitor(dico, filename, allLocals, verbose));
-		ast.accept(new VarDefVisitor(dico, filename, allLocals, verbose));
+		ast.accept(new ScopeDefVisitor(dico, filename, options));
+		ast.accept(new SubprgDefVisitor(dico, filename, options));
+		ast.accept(new VarDefVisitor(dico, filename, options));
 
-		ast.accept(new CommentVisitor(dico, filename, allLocals, verbose));
+		ast.accept(new CommentVisitor(dico, filename, options));
 
-		ast.accept(new UseModuleVisitor(dico, filename, allLocals, verbose));
-		ast.accept(new InvokAccessVisitor(dico, filename, allLocals, verbose));
+		ast.accept(new UseModuleVisitor(dico, filename, options));
+		ast.accept(new InvokAccessVisitor(dico, filename, options));
 	}
 
 	protected void outputIR() {
@@ -302,7 +257,7 @@ public class VerveineFParser  {
 		Gson gsonSerializer = gsonBldr.create();
 		
 		try {
-			FileWriter fout = new FileWriter(outputFileName);
+			FileWriter fout = new FileWriter(options.getOutputFileName());
 			for (IREntity ent : dico) {
 				fout.append(gsonSerializer.toJson(ent));
 				fout.append('\n');
@@ -313,97 +268,8 @@ public class VerveineFParser  {
 		}
 	}
 
-
 	protected void setOptions(String[] args) {
-		this.sourceIsString = false;  // default is to parse files
-
-		int i = 0;
-		while (i < args.length && (! sourceIsString) && args[i].trim().startsWith("-")) {
-		    String arg = args[i++].trim();
-
-			if (arg.equals("-h")) {
-				usage();
-			}
-			else if (arg.equals("-v")) {
-				version();
-			}
-			else if (arg.equals("-o")) {
-				if (i < args.length) {
-					outputFileName = args[i];
-					i++;
-				} else {
-					System.err.println("-o requires a filename");
-				}
-			}
-			else if (arg.equals("--verbose")) {
-				if (verbose < TRACE_ENTITIES) {
-					verbose++;
-				}
-			}
-			else if (arg.equals("--silent")) {
-				if (verbose > TRACE_NOTHING) {
-					verbose--;
-				}
-			}
-			else if (arg.startsWith("-I")) {
-				includeDirs.add(arg.substring(2));   // remove -I from argument, the rest is the include dir
-			}
-			else if (arg.startsWith("-D")) {
-				parseMacroDefinition(arg.substring(2));
-			}
-			else if (arg.equals(STRING_SOURCE_OPTION)) {
-				this.sourceIsString = true;
-				// after this option, everything should be Fortran source code
-			}
-			else if (arg.equals(ALLLOCALS_OPTION)) {
-				this.allLocals = true;
-			}
-			else {
-				System.err.println("** Unrecognized option: " + arg);
-				usage();
-			}
-		}
-
-		sourcesToParse = new String[args.length - i];
-		for (int j=0 ; i < args.length; j++, i++) {
-			sourcesToParse[j] = args[i];
-		}
-		
-		if (sourcesToParse == null) {
-			System.err.println("Nos project directory set");
-			usage();
-		}
-	}
-
-	protected void parseMacroDefinition(String arg) {
-		int i;
-		String macro;
-		String value;
-
-		i = arg.indexOf('=');
-		if (i < 0) {
-			macro=arg;
-			value = "";
-		}
-		else {
-			macro = arg.substring(0, i);
-			value = arg.substring(i+1);
-		}
-		macros.put(macro, value);
-	}
-
-	protected void usage() {
-		System.err.println("Usage: VerveineF [options] <Fortran project directory>");
-		System.err.println("Recognized options:");
-		System.err.println("      -h: prints this message");
-		System.err.println("      -v: prints the version");
-		System.err.println("      -o <output-file-name>: changes the name of the output file (default: output.mse)");
-		System.err.println("      -D<macro>: defines a C/C++ macro");
-		System.err.println("      --verbose: increment verbosity level by 1: 0=silent; 1=advertise visitor execution; 2=advertise entity creation");
-		System.err.println("      --silent:  decrement verbosity level by 1: 0=silent; 1=advertise visitor execution; 2=advertise entity creation");
-		System.err.println("      ["+ALLLOCALS_OPTION+"] Forces outputing all local variables, even those with primitive type (incompatible with \"-summary\"");
-		System.err.println("      <Fortran project directory>: directory containing the Fortran project to export in MSE");
-		System.exit(0);
+		options.setOptions(args);
 	}
 
 	protected void version() {

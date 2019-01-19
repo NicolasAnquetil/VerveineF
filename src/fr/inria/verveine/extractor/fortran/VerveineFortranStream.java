@@ -176,7 +176,7 @@ public class VerveineFortranStream extends FortranStream
 
 		data = newData;
 
-		if (this.sourceForm == VerveineFParser.FIXED_FORM) {
+		if (this.sourceForm == Options.FIXED_FORM) {
 			convertFixedFormInputBuffer();
 		}
 		else {

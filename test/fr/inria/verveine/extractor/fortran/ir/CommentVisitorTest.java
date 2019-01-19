@@ -6,10 +6,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import fr.inria.verveine.extractor.fortran.VerveineFParser;
+import fr.inria.verveine.extractor.fortran.Options;
 
 public class CommentVisitorTest extends AbstractIrTest {
 
@@ -31,7 +30,7 @@ public class CommentVisitorTest extends AbstractIrTest {
 		int subCmt = 0;
 		int varCmt = 0;
 
-		parseCode(new String[] {VerveineFParser.ALLLOCALS_OPTION}, SOURCE_CODE);
+		parseCode(new String[] {Options.ALLLOCALS_OPTION}, SOURCE_CODE);
 
 		Collection<IREntity> allCmts = dico.allWithKind(IRKind.COMMENT);
 		assertEquals(4, allCmts.size());
@@ -78,7 +77,7 @@ public class CommentVisitorTest extends AbstractIrTest {
 	public void testCommentContent() {
 		boolean commentFound = false;
 
-		parseCode(new String[] {VerveineFParser.ALLLOCALS_OPTION}, SOURCE_CODE);
+		parseCode(new String[] {Options.ALLLOCALS_OPTION}, SOURCE_CODE);
 
 		for (IREntity cmt : dico.allWithKind(IRKind.COMMENT) ) {
 			commentFound =  true;

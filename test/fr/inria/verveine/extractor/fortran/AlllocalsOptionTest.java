@@ -23,7 +23,7 @@ public class AlllocalsOptionTest extends AbstractOptionsTest {
 
 	@Test
 	public void allLocalsTest() {
-		parseCode(new String[] {VerveineFParser.ALLLOCALS_OPTION}, SOURCE_CODE);
+		parseCode(new String[] {Options.ALLLOCALS_OPTION}, SOURCE_CODE);
 
 		assertTrue("Output file not found",ir.exists());
 		assertTrue("Output file is empty", ir.length() > 0);

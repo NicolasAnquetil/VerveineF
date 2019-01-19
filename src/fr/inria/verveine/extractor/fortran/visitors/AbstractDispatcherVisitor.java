@@ -2,7 +2,7 @@ package fr.inria.verveine.extractor.fortran.visitors;
 
 import java.util.Stack;
 
-import fr.inria.verveine.extractor.fortran.VerveineFParser;
+import fr.inria.verveine.extractor.fortran.Options;
 import fr.inria.verveine.extractor.fortran.ir.IRDictionary;
 import fr.inria.verveine.extractor.fortran.ir.IREntity;
 import fr.inria.verveine.extractor.fortran.parser.ast.ASTVisitor;
@@ -19,21 +19,18 @@ public abstract class AbstractDispatcherVisitor extends ASTVisitor {
 	
 	protected  Stack<IREntity> context;
 
-	protected boolean allLocals;
-	
-	protected int verbose;
+	protected Options options;
 
 
-	public AbstractDispatcherVisitor(IRDictionary dico, String filename, boolean allLocals, int verbose) {
+	public AbstractDispatcherVisitor(IRDictionary dico, String filename, Options options) {
 		super();
 		this.dico = dico;
 		this.filename = filename;
-		this.allLocals = allLocals;
-		this.verbose = verbose;
+		this.options = options;
 
 		this.context = new Stack<IREntity>();
 
-		if ( (verbose > VerveineFParser.TRACE_NOTHING) && (msgTrace() != null) ) {
+		if ( (options.getVerbose() > Options.TRACE_NOTHING) && (msgTrace() != null) ) {
 			System.out.println(msgTrace());
 		}
 	}
@@ -45,7 +42,7 @@ public abstract class AbstractDispatcherVisitor extends ASTVisitor {
 	}
 
 	protected void traceEntityCreation(IREntity entity) {
-		if (verbose >= VerveineFParser.TRACE_ENTITIES) {
+		if (options.getVerbose() > Options.TRACE_ENTITIES) {
 			System.out.println(" ++"+entity.toString());
 		}
 	}

@@ -1,5 +1,6 @@
 package fr.inria.verveine.extractor.fortran.visitors;
 
+import fr.inria.verveine.extractor.fortran.Options;
 import fr.inria.verveine.extractor.fortran.ir.IRDictionary;
 import fr.inria.verveine.extractor.fortran.ir.IREntity;
 import fr.inria.verveine.extractor.fortran.ir.IRKind;
@@ -19,8 +20,8 @@ import fr.inria.verveine.extractor.fortran.parser.ast.ASTTypeDeclarationStmtNode
 
 public class VarDefVisitor extends AbstractDispatcherVisitor {
 
-	public VarDefVisitor(IRDictionary dico, String filename, boolean allLocals, int verbose) {
-		super(dico, filename, allLocals, verbose);
+	public VarDefVisitor(IRDictionary dico, String filename, Options options) {
+		super(dico, filename, options);
 	}
 
 	@Override
@@ -71,7 +72,7 @@ public class VarDefVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	public void visitASTFunctionSubprogramNode(ASTFunctionSubprogramNode node) {
-		if (allLocals) {
+		if (options.withAllLocals()) {
 			IREntity entity = dico.getEntityByKey( mkKey(node) );
 			
 			context.push(entity);
@@ -83,14 +84,14 @@ public class VarDefVisitor extends AbstractDispatcherVisitor {
 	@Override
 	public void visitASTEndFunctionStmtNode(ASTEndFunctionStmtNode node) {
 		super.visitASTEndFunctionStmtNode(node);
-		if (allLocals) {
+		if (options.withAllLocals()) {
 			context.pop();
 		}
 	}
 
 	@Override
 	public void visitASTSubroutineSubprogramNode(ASTSubroutineSubprogramNode node) {
-		if (allLocals) {
+		if (options.withAllLocals()) {
 			IREntity entity = dico.getEntityByKey( mkKey(node) );
 
 			context.push(entity);
@@ -102,7 +103,7 @@ public class VarDefVisitor extends AbstractDispatcherVisitor {
 	@Override
 	public void visitASTEndSubroutineStmtNode(ASTEndSubroutineStmtNode node) {
 		super.visitASTEndSubroutineStmtNode(node);
-		if (allLocals) {
+		if (options.withAllLocals()) {
 			context.pop();
 		}
 	}
