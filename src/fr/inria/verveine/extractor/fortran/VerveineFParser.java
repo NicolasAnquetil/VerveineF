@@ -4,9 +4,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.antlr.runtime.RecognitionException;
 
@@ -66,7 +63,7 @@ public class VerveineFParser  {
 			if (options.sourceIsString()) {
 				VerveineFortranStream stream = null;
 				try {
-					stream = new VerveineFortranStream(options.getMacros(), src, options.FREE_FORM);
+					stream = new VerveineFortranStream(options.getMacros(), src, FortranLanguage.FREE_FORM);
 				} catch (IOException e) {
 					// should not occur, there is no reason for VerveineFortranStream to fail on a string source
 				}

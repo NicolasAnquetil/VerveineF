@@ -15,12 +15,6 @@ public class Options {
 	public static final String ALLLOCALS_OPTION = "--alllocals";
 	public static final String WITHINTRINSICS_OPTION = "--withintrinsics";
 
-
-	// possible forms of Fortran code
-	public static final int FIXED_FORM = 2;
-	public static final int FREE_FORM = 1;
-	public static final int UNKNOWN_SOURCE_FORM = -1;
-
 	// levels of "verbosity"
 	public static final int TRACE_NOTHING = 0;
 	public static final int TRACE_VISITORS = 1;

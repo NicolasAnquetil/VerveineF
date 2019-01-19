@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.antlr.runtime.tree.Tree;
-
 import fortran.ofp.parser.java.FortranStream;
 
 /**
@@ -176,7 +174,7 @@ public class VerveineFortranStream extends FortranStream
 
 		data = newData;
 
-		if (this.sourceForm == Options.FIXED_FORM) {
+		if (this.sourceForm == FortranLanguage.FIXED_FORM) {
 			convertFixedFormInputBuffer();
 		}
 		else {
@@ -452,7 +450,6 @@ public class VerveineFortranStream extends FortranStream
 		char[] newData = new char[super.n];
 		int count = 0;
 		int col   = 1;    // 1 based 
-		int line  = 1;    // 1 based
 
 		for (int i = 0; i < super.n; i++) {
 			int ii;

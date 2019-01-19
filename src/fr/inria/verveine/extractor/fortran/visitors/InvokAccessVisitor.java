@@ -1,5 +1,6 @@
 package fr.inria.verveine.extractor.fortran.visitors;
 
+import fr.inria.verveine.extractor.fortran.FortranLanguage;
 import fr.inria.verveine.extractor.fortran.Options;
 import fr.inria.verveine.extractor.fortran.ir.IRDictionary;
 import fr.inria.verveine.extractor.fortran.ir.IREntity;
@@ -80,19 +81,31 @@ public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	public void visitASTCallStmtNode(ASTCallStmtNode node) {
+		String name = node.getSubroutineName().getText();
+
+		if ( FortranLanguage.isIntrinsicSubroutine(name) && (! options.withIntrinsics()))  {
+			return;
+		}
+
 		IREntity call = dico.addAnonymousEntity(IRKind.SUBPRGCALL, context.peek());
-		call.name(node.getSubroutineName().getText());
+		call.name(name);
 
 		traceEntityCreation(call);
 	}
 
 	@Override
 	public void visitASTVarOrFnRefNode(ASTVarOrFnRefNode node) {
+		String name = node.getName().getText();
+
+		if ( FortranLanguage.isIntrinsicFunction(name) && (! options.withIntrinsics()))  {
+			return;
+		}
 		IREntity ref = dico.addAnonymousEntity(IRKind.NAMEREF, context.peek());
-		ref.name(node.getName().getText());
+		ref.name(name);
 		
 		traceEntityCreation(ref);
 	}
+
 /*
 	@Override
 	public void visitASTAssignmentStmtNode(ASTAssignmentStmtNode node) {
