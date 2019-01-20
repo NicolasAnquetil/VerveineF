@@ -9,6 +9,7 @@ public class IREntity {
 	// constants used to store data in the entity
 	public static final String ENTITY_NAME = "name";
 	public static final String DECLARED_PARAM = "declaredParam";
+	public static final String DECLARED_TYPENAME = "declaredTypeName";
 	public static final String CYCLOMATIC_COMPLEXITY = "cyclomaticComplexity";
 	public static final String COMMENT_CONTENT = "content";
 	public static final String ANCHOR_FILE = "anchorfile";

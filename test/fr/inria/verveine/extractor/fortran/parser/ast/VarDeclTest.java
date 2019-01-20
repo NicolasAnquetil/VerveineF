@@ -60,6 +60,25 @@ public class VarDeclTest extends AbstractASTTest {
 
 
 	@Test
+	public void testVarDeclTypes() {
+		for (ASTTypeDeclarationStmtNode declStmt : ast.findAll(ASTTypeDeclarationStmtNode.class)) {
+			assertEquals(1, declStmt.getEntityDeclList().size());
+			String name = declStmt.getEntityDeclList().iterator().next().getObjectName().getText();
+			String typName = declStmt.getTypeSpec().getTypeName().getText();
+
+			switch (name) {
+			case "aString": assertEquals("CHARACTER", typName); break;
+			case "anInt":   assertEquals("INTEGER", typName);   break;
+			case "aBool":   assertEquals("LOGICAL", typName);   break;
+			case "aReal":   assertEquals("REAL", typName);      break;
+			case "dimVar":  assertEquals("integer", typName);   break;
+			default: fail("Unknown declared variable: "+name);
+			}
+		}
+	}
+
+
+	@Test
 	public void testAttrSpecParameter() {
 		Iterator<ASTAttrSpecSeqNode> iter;
 		for (ASTTypeDeclarationStmtNode decls : ast.findAll(ASTTypeDeclarationStmtNode.class)) {

@@ -8,6 +8,8 @@ import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 
+import fr.inria.verveine.extractor.fortran.parser.ast.ASTTypeDeclarationStmtNode;
+
 
 public class VarDeclVisitorTest extends AbstractIrTest {
 
@@ -56,17 +58,31 @@ public class VarDeclVisitorTest extends AbstractIrTest {
 
 
 	@Test
+	public void testVarDeclTypes() {
+		for (IREntity var :  dico.allWithKind(IRKind.VARIABLE)) {
+			switch (var.getName()) {
+			case "aString": assertEquals("CHARACTER", var.getData(IREntity.DECLARED_TYPENAME)); break;
+			case "anInt":   assertEquals("INTEGER", var.getData(IREntity.DECLARED_TYPENAME));   break;
+			case "aBool":   assertEquals("LOGICAL", var.getData(IREntity.DECLARED_TYPENAME));   break;
+			case "aReal":   assertEquals("REAL", var.getData(IREntity.DECLARED_TYPENAME));      break;
+			case "dimVar":  assertEquals("integer", var.getData(IREntity.DECLARED_TYPENAME));   break;
+			default: fail("Unknown declared variable: "+var.getName());
+			}
+		}
+	}
+
+	@Test
 	public void testAttrSpecParameter() {
 		for (IREntity var : dico.allWithKind(IRKind.VARIABLE)) {
 			switch (var.getName()) {
 			case "aString": 
 			case "aBool":
-				assertTrue( (Boolean)var.getData("declaredParam"));
+				assertTrue( (Boolean)var.getData(IREntity.DECLARED_PARAM));
 				break;
 			
 			case "anInt":
 			case "aReal":
-				assertFalse( (Boolean)var.getData("declaredParam"));
+				assertFalse( (Boolean)var.getData(IREntity.DECLARED_PARAM));
 				break;
 				
 			default:

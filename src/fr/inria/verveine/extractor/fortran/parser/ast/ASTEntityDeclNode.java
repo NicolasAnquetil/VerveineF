@@ -13,23 +13,23 @@ public class ASTEntityDeclNode extends ASTNode {
 	public static final int TSLASH2 = 14;
 	public static final int TRPAREN2 = 15;
 	
-	ASTToken objectName; // in ASTEntityDeclNode
-    ASTToken hiddenAsterisk2; // in ASTEntityDeclNode
-    //ASTCharLengthNode initialCharLength; // in ASTEntityDeclNode
-    ASTToken hiddenLparen2; // in ASTEntityDeclNode
-    ASTToken hiddenTLparen; // in ASTEntityDeclNode
-    //ASTArraySpecNode arraySpec; // in ASTEntityDeclNode
-    ASTToken hiddenTRparen; // in ASTEntityDeclNode
-    ASTToken hiddenTLbracket; // in ASTEntityDeclNode
-    //ASTCoarraySpecNode coarraySpec; // in ASTEntityDeclNode
-    ASTToken hiddenTRbracket; // in ASTEntityDeclNode
-    ASTToken hiddenTAsterisk; // in ASTEntityDeclNode
-    //ASTCharLengthNode charLength; // in ASTEntityDeclNode
-    ASTToken hiddenTSlash; // in ASTEntityDeclNode
-    //IASTListNode<ASTDataStmtValueNode> dataStmtValueList; // in ASTEntityDeclNode
-    ASTToken hiddenTSlash2; // in ASTEntityDeclNode
-    ASTToken hiddenRparen2; // in ASTEntityDeclNode
-    //ASTInitializationNode initialization; // in ASTEntityDeclNode
+	ASTToken objectName;
+    ASTToken hiddenAsterisk2;
+    //ASTCharLengthNode initialCharLength;
+    ASTToken hiddenLparen2;
+    ASTToken hiddenTLparen;
+    //ASTArraySpecNode arraySpec;
+    ASTToken hiddenTRparen;
+    ASTToken hiddenTLbracket;
+    //ASTCoarraySpecNode coarraySpec;
+    ASTToken hiddenTRbracket;
+    ASTToken hiddenTAsterisk;
+    //ASTCharLengthNode charLength;
+    ASTToken hiddenTSlash;
+    //IASTListNode<ASTDataStmtValueNode> dataStmtValueList;
+    ASTToken hiddenTSlash2;
+    ASTToken hiddenRparen2;
+    //ASTInitializationNode initialization;
 
     public ASTToken getObjectName()
     {

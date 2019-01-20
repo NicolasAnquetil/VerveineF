@@ -117,6 +117,7 @@ public class VarDefVisitor extends AbstractDispatcherVisitor {
 			entity.name( tk.getText());
 			entity.data(IREntity.IS_STUB, false);
 			entity.data( IREntity.DECLARED_PARAM, varIsDeclaredParameter( node));
+			entity.data( IREntity.DECLARED_TYPENAME, node.getTypeSpec().getTypeName().getText());
 			entity.addSourceAnchor( filename, node);
 
 			traceEntityCreation(entity);
