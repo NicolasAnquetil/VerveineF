@@ -12,8 +12,8 @@ public class BodyTest extends AbstractASTTest {
 
 	public static final String SOURCE_CODE =
 		"PROGRAM aProgram\n"+
-		"  IMPLICIT NONE\n"+
-		"  integer ( kind = 4 ) ntryh(4)\n" + 
+		//"  IMPLICIT NONE\n"+
+		"  INTEGER, DIMENSION(1:someVar()%otherVar) :: ntryh\n" + 
 		"  save ntryh\n" + 
 		"  data ntryh / 4, 2, 3, 5 /\n" + 
 		"  var1 = 6\n" +

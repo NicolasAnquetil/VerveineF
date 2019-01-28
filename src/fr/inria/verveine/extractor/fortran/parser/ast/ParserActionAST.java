@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import org.antlr.runtime.Token;
 import org.antlr.stringtemplate.language.ASTExpr;
+import org.hamcrest.core.IsInstanceOf;
 
 import fortran.ofp.parser.java.FortranLexer;
 import fortran.ofp.parser.java.FortranParserActionNull;
@@ -351,7 +352,6 @@ public class ParserActionAST extends FortranParserActionNull {
 		typeMembers.setParent(typeDecl);
 		for (int i=0; i < numAttributes; i++ ) {
 			ASTAttrSpecSeqNode attrSpecSeq  = new ASTAttrSpecSeqNode();
-			bugLocator(ASTVarOrFnRefNode.class);
 			attrSpecSeq.setAttrSpec((ASTAttrSpecNode) parsingCtxt.popValueStack());
 			typeDecl.getAttrSpecSeq().add( attrSpecSeq);
 		}
@@ -564,6 +564,13 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 			System.err.println("Unknown attr_spec:"+attr+"("+attrKeyword+")");
 		}
 
+		// "water" to ignore
+		parsingCtxt.popAllValueStack(new Validator() {
+			@Override
+			public boolean validate(IASTNode node) {
+				return (node instanceof ASTVarOrFnRefNode) || (node instanceof ASTToken) ;
+			}
+		});
 		parsingCtxt.pushValueStack(attrSpec);
 	}
 
@@ -681,18 +688,6 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 	protected void traceSubprogramErrorAndRecover(IASTNode lastToken) {
 		parsingCtxt.popAllValueStack(new UntilTopEntityValidator());
 		System.err.println("Parsing error after "+ lastToken+", ignoring all since  " + parsingCtxt.topValueStack());
-	}
-
-
-	/**
-	 * helps debugging ClassCastException bugs when poping nodes from the context stack<br>
-	 * For this, there should always be a breakpoint set inside the if
-	 */
-	private void bugLocator(Class<? extends IASTNode> clazz) {
-		IASTNode top = parsingCtxt.topValueStack();
-		if (clazz.isInstance(top)) {
-			System.out.println();
-		}
 	}
 
 }
