@@ -564,11 +564,10 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 			System.err.println("Unknown attr_spec:"+attr+"("+attrKeyword+")");
 		}
 
-		// "water" to ignore
+		// "parsing water": ignore anything that is not ASTTypeSpecNode or ASTAttrSpecNode
 		parsingCtxt.popAllValueStack(new Validator() {
-			@Override
 			public boolean validate(IASTNode node) {
-				return (node instanceof ASTVarOrFnRefNode) || (node instanceof ASTToken) ;
+				return ! (node instanceof ASTAttrSpecNode) && ! (node instanceof ASTTypeSpecNode) ;
 			}
 		});
 		parsingCtxt.pushValueStack(attrSpec);
