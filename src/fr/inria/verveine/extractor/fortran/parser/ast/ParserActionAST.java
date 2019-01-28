@@ -298,9 +298,7 @@ public class ParserActionAST extends FortranParserActionNull {
 
 	@Override
 	public void specification_part(int numUseStmts, int numImportStmts, int numImplStmts, int numDeclConstructs) {
-		// numImplStmts = 0
-		ASTListNode<IASTNode> specifications;
-		specifications = (ASTListNode<IASTNode>) parsingCtxt.popAllValueStack(new CountValidator(numDeclConstructs));
+		ASTListNode<IASTNode> specifications = (ASTListNode<IASTNode>) parsingCtxt.popAllValueStack(new CountValidator(numDeclConstructs));
 		//specifications.addAll( parsingContextPopAll(new CountValidator(numImportStmts)));
 		specifications.addAll( parsingCtxt.popAllValueStack(new CountValidator(numUseStmts)));
 		parsingCtxt.pushValueStack(specifications);
@@ -323,6 +321,7 @@ public class ParserActionAST extends FortranParserActionNull {
 
 	@Override
 	public void data_stmt(Token label, Token keyword, Token eos, int count) {
+		parsingCtxt.popAllValueStack(new WhileTypeValidator(ASTVariableNameNode.class));
 		parsingCtxt.pushValueStack(new ASTNullNode());  // counts as a declaration_construct in specification_part(...)
 	}
 
@@ -469,9 +468,8 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 		listDeclarationConstruct = (ASTListNode<ASTNode>)parsingCtxt.valueStackTop();
 		listDeclarationConstruct.add( typeDecl);
 	}
-*/
 
-	/*
+
 	@Override
 	public void executable_construct() {
 		if (parsingCtxt.valueStackTop() instanceof ASTVarOrFnRefNode) {
@@ -482,12 +480,22 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 			parsingCtxt.valueStackPush(new ASTNullNode());
 		}
 	}
+
+	
+	@Override
+	public void execution_part_construct(boolean is_executable_construct) {
+		if (! is_executable_construct) {
+			parsingCtxt.valueStackPush(new ASTNullNode());
+		}
+	}
 */
 
 	@Override
 	public void execution_part(int execution_part_count) {
 		IASTListNode<IASTNode> exec_parts = new ASTListNode<>();
-		// grab everything that could appear in a body and make a list with it
+		// grab everything that could appear in a body and make a list of it
+		// because we do not built full AST, execution_part_count is not useful
+		// there are typically more elements in the context stack than statements as indicated by execution_part_count
 		exec_parts.addAll(
 				parsingCtxt.popAllValueStack( new Validator() {
 					@Override
@@ -504,14 +512,6 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 		parsingCtxt.pushValueStack(exec_parts);
 	}
 
-/*
-	@Override
-	public void execution_part_construct(boolean is_executable_construct) {
-		if (! is_executable_construct) {
-			parsingCtxt.valueStackPush(new ASTNullNode());
-		}
-	}
-*/
 
 	@Override
 	public void entity_decl(Token id, boolean hasArraySpec, boolean hasCoarraySpec, boolean hasCharLength, boolean hasInitialization) {
@@ -661,7 +661,12 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 
 	// UTILITIES ---
 
-
+/**
+ * Pops the body of a subprogram/program and put it in a IASTListNode
+ * <p>
+ * If hasExecutionPart, then the stack contains ExecutionPart+SpecificationPart
+ * otherwise, only SpecificationPart
+ */
 	protected IASTListNode<IBodyConstruct> popBodyAsList(boolean hasExecutionPart) {
 		IASTListNode<IBodyConstruct> specifications = (IASTListNode<IBodyConstruct>) parsingCtxt.popValueStack();
 		if (hasExecutionPart) {
