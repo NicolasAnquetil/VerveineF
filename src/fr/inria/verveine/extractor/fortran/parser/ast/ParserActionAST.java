@@ -92,17 +92,11 @@ public class ParserActionAST extends FortranParserActionNull {
 		if (hasInternalSubprogramPart) {
 			//mainPgm.setInternalSubprograms((IASTListNode<IBodyConstruct>) parsingCtxt.valueStackPop());
 		}
-		IASTListNode<IBodyConstruct> specifications;
-		if (hasExecutionPart) {
-			IASTListNode<IBodyConstruct> execList = (IASTListNode<IBodyConstruct>) parsingCtxt.popValueStack();
-			specifications = (IASTListNode<IBodyConstruct>) parsingCtxt.popValueStack();
-			specifications.addAll(execList);
-		}
-		else {
-			specifications = (IASTListNode<IBodyConstruct>) parsingCtxt.popValueStack();
-		}
+
+		IASTListNode<IBodyConstruct> specifications = popBodyAsList(hasExecutionPart);
 		mainPgm.setBody(specifications);
 		specifications.setParent(mainPgm);
+
 		if (hasProgramStmt) {
 			mainPgm.setProgramStmt((ASTProgramStmtNode) parsingCtxt.popValueStack());
 		}
@@ -207,25 +201,16 @@ public class ParserActionAST extends FortranParserActionNull {
 		if (hasIntSubProg) {
 			//fctNode.setInternalSubprograms((IASTListNode<IBodyConstruct>) parsingCtxt.valueStackPop());
 		}
-		IASTListNode<IBodyConstruct> specifications;
-		if (hasExePart) {
-			IASTListNode<IBodyConstruct> execList = (IASTListNode<IBodyConstruct>) parsingCtxt.popValueStack();
-			specifications = (IASTListNode<IBodyConstruct>) parsingCtxt.popValueStack();
-			specifications.addAll(execList);
-		}
-		else {
-			specifications = (IASTListNode<IBodyConstruct>) parsingCtxt.popValueStack();
-		}
+
+		IASTListNode<IBodyConstruct> specifications = popBodyAsList(hasExePart);
 		fctNode.setBody(specifications);
 		specifications.setParent(fctNode);
+
 		try {
 			fctNode.setFunctionStmt((ASTFunctionStmtNode) parsingCtxt.popValueStack());
 		}
 		catch (ClassCastException e) {
-			// try to recover from error ...
-			parsingCtxt.popAllValueStack(new UntilTopEntityValidator());
-			ASTToken lastToken = (ASTToken) fctNode.getEndFunctionStmt().getASTField(ASTEndFunctionStmtNode.TEOS);
-			System.err.println("Parsing error after "+lastToken+", ignoring all since  " + parsingCtxt.topValueStack());
+			traceSubprogramErrorAndRecover( fctNode.getEndFunctionStmt().getASTField(ASTEndSubroutineStmtNode.TEOS));
 			return;
 		}
 
@@ -271,31 +256,21 @@ public class ParserActionAST extends FortranParserActionNull {
 		if (hasIntSubProg) {
 			//fctNode.setInternalSubprograms((IASTListNode<IBodyConstruct>) parsingCtxt.valueStackPop());
 		}
-		IASTListNode<IBodyConstruct> specifications;
-		if (hasExePart) {
-			IASTListNode<IBodyConstruct> execList = (IASTListNode<IBodyConstruct>) parsingCtxt.popValueStack();
-			specifications = (IASTListNode<IBodyConstruct>) parsingCtxt.popValueStack();
-			specifications.addAll(execList);
-		}
-		else {
-			specifications = (IASTListNode<IBodyConstruct>) parsingCtxt.popValueStack();
-		}
+
+		IASTListNode<IBodyConstruct> specifications = popBodyAsList(hasExePart);
 		pcdNode.setBody(specifications);
 		specifications.setParent(pcdNode);
+
 		try {
 			pcdNode.setSubroutineStmt((ASTSubroutineStmtNode) parsingCtxt.popValueStack());
 		}
 		catch (ClassCastException e) {
-			// try to recover from error ...
-			parsingCtxt.popAllValueStack(new UntilTopEntityValidator());
-			IASTNode lastToken = pcdNode.getEndSubroutineStmt().getASTField(ASTEndSubroutineStmtNode.TEOS);
-			System.err.println("Parsing error after "+ lastToken+", ignoring all since  " + parsingCtxt.topValueStack());
+			traceSubprogramErrorAndRecover( pcdNode.getEndSubroutineStmt().getASTField(ASTEndSubroutineStmtNode.TEOS));
 			return;
 		}
 
 		parsingCtxt.pushValueStack(pcdNode);
 	}
-
 
 	@Override
 	public void block_data_stmt(Token label, Token blockKeyword, Token dataKeyword, Token id, Token eos) {
@@ -520,6 +495,7 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 						return (node instanceof ASTVarOrFnRefNode) ||
 								(node instanceof ASTCallStmtNode) ||
 								(node instanceof ASTToken) ||
+								(node instanceof ASTVariableNameNode) ||
 								(node instanceof ASTAssignmentStmtNode);
 					}
 				})
@@ -684,6 +660,23 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 	}
 
 	// UTILITIES ---
+
+
+	protected IASTListNode<IBodyConstruct> popBodyAsList(boolean hasExecutionPart) {
+		IASTListNode<IBodyConstruct> specifications = (IASTListNode<IBodyConstruct>) parsingCtxt.popValueStack();
+		if (hasExecutionPart) {
+			specifications.addAll((Collection<IBodyConstruct>) parsingCtxt.popValueStack());
+		}
+		return specifications;
+	}
+
+	/**
+	 * Trace error and try recovering by going back to previous Subprogram/Module/... entity
+	 */
+	protected void traceSubprogramErrorAndRecover(IASTNode lastToken) {
+		parsingCtxt.popAllValueStack(new UntilTopEntityValidator());
+		System.err.println("Parsing error after "+ lastToken+", ignoring all since  " + parsingCtxt.topValueStack());
+	}
 
 
 	/**
