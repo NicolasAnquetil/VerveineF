@@ -16,6 +16,8 @@ public class IREntity {
 	public static final String ANCHOR_START = "anchorstart";
 	public static final String ANCHOR_END = "anchorend";
 	public static final String IS_STUB = "isstub";
+	public static final String IS_WRITE = "iswrite";
+	public static final String ALLOC_VAR = "alloc_var";
 
 	protected String key;
 	protected IREntity parent;

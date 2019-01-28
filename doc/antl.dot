@@ -217,11 +217,24 @@ action_stmt -> assign_stmt
 action_stmt -> assigned_goto_stmt
 action_stmt -> pause_stmt
 
+allocate_stmt -> type_spec [label="1?"]
+allocate_stmt -> allocation_list [label="2"]
+allocate_stmt -> alloc_opt_list [label="3?"]
+
+allocation_list -> allocation [label="+"]
+
 assignment_stmt -> variable [label="1"]
 assignment_stmt -> expr [label="2"]
 
 call_stmt -> procedure_designator [label="1"]
 call_stmt -> actual_arg_spec_list [label="2",color="red"]
+
+deallocate_stmt -> allocate_object_list [label="1"]
+deallocate_stmt -> dealloc_opt_list [label="2?"]
+
+dealloc_opt -> designator
+
+dealloc_opt_list -> dealloc_opt [label="+"]
 
 executable_construct -> action_stmt
 executable_construct -> associate_construct

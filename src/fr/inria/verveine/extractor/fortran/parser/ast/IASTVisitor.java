@@ -59,5 +59,7 @@ public interface IASTVisitor {
 	public void visitASTAssignmentStmtNode(ASTAssignmentStmtNode node);
 	public void visitASTVariableNameNode(ASTVariableNameNode node);
 	public void visitASTWaterExprNode(ASTWaterExprNode node);
+	public void visitASTAllocateStmtNode(ASTAllocateStmtNode node);
+	public void visitASTDeallocateStmtNode(ASTDeallocateStmtNode node);
 
 }

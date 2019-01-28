@@ -502,6 +502,8 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 					public boolean validate(IASTNode node) {
 						return (node instanceof ASTVarOrFnRefNode) ||
 								(node instanceof ASTCallStmtNode) ||
+								(node instanceof ASTAllocateStmtNode) ||
+								(node instanceof ASTDeallocateStmtNode) ||
 								(node instanceof ASTToken) ||
 								(node instanceof ASTVariableNameNode) ||
 								(node instanceof ASTAssignmentStmtNode);
@@ -630,6 +632,85 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 		call.setASTField( ASTCallStmtNode.TEOS, ASTToken.with(eos));
 
 		parsingCtxt.pushValueStack(call);
+	}
+
+	
+	@Override
+	public void allocate_stmt(Token label, Token allocateKeyword, Token eos, boolean hasTypeSpec, boolean hasAllocOptList) {
+		ASTAllocateStmtNode alloc = new ASTAllocateStmtNode();
+		
+		alloc.setLabel( ASTToken.with(label));
+		alloc.setASTField( ASTAllocateStmtNode.TALLOC, ASTToken.with(allocateKeyword));
+		alloc.setASTField( ASTCallStmtNode.TEOS, ASTToken.with(eos));
+
+		parsingCtxt.pushValueStack(alloc);
+	}
+
+	@Override
+	public void alloc_opt(Token allocOpt) {
+		// TODO Auto-generated method stub
+		super.alloc_opt(allocOpt);
+	}
+
+	@Override
+	public void alloc_opt_list__begin() {
+		// TODO Auto-generated method stub
+		super.alloc_opt_list__begin();
+	}
+
+	@Override
+	public void alloc_opt_list(int count) {
+		// TODO Auto-generated method stub
+		super.alloc_opt_list(count);
+	}
+
+	@Override
+	public void allocation(boolean hasAllocateShapeSpecList, boolean hasAllocateCoarraySpec) {
+		// TODO Auto-generated method stub
+		super.allocation(hasAllocateShapeSpecList, hasAllocateCoarraySpec);
+	}
+
+	@Override
+	public void allocation_list__begin() {
+		// TODO Auto-generated method stub
+		super.allocation_list__begin();
+	}
+
+	@Override
+	public void allocation_list(int count) {
+		// TODO Auto-generated method stub
+		super.allocation_list(count);
+	}
+
+
+	@Override
+	public void deallocate_stmt(Token label, Token deallocateKeyword, Token eos, boolean hasDeallocOptList) {
+		ASTDeallocateStmtNode dealloc = new ASTDeallocateStmtNode();
+		
+		dealloc.setLabel( ASTToken.with(label));
+		dealloc.setASTField( ASTDeallocateStmtNode.TDEALLOC, ASTToken.with(deallocateKeyword));
+		dealloc.setASTField( ASTCallStmtNode.TEOS, ASTToken.with(eos));
+		
+		parsingCtxt.pushValueStack(dealloc);
+	}
+
+
+	@Override
+	public void dealloc_opt(Token id) {
+		// TODO Auto-generated method stub
+		super.dealloc_opt(id);
+	}
+
+	@Override
+	public void dealloc_opt_list__begin() {
+		// TODO Auto-generated method stub
+		super.dealloc_opt_list__begin();
+	}
+
+	@Override
+	public void dealloc_opt_list(int count) {
+		// TODO Auto-generated method stub
+		super.dealloc_opt_list(count);
 	}
 
 	@Override

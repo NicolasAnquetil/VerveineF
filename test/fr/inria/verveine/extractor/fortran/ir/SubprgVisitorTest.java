@@ -1,11 +1,16 @@
 package fr.inria.verveine.extractor.fortran.ir;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import fr.inria.verveine.extractor.fortran.parser.ast.ASTCallStmtNode;
+import fr.inria.verveine.extractor.fortran.parser.ast.ASTVarOrFnRefNode;
 
 public class SubprgVisitorTest extends AbstractIrTest {
 
@@ -51,6 +56,24 @@ public class SubprgVisitorTest extends AbstractIrTest {
 		assertEquals("blah", sub.getName());
 		assertEquals(1, sub.getData("cyclomaticComplexity"));
 		assertEquals(IRKind.MODULE, sub.getParent().getKind());
+	}
+
+	@Test
+	public void testCallStmt() {
+		Collection<IREntity> calls = dico.allWithKind(IRKind.SUBPRGCALL);
+		assertEquals(1, calls.size());
+
+		IREntity stmt = calls.iterator().next(); 
+		assertEquals("blah", stmt.getName());
+	}
+
+	@Test
+	public void testVarOrFunctionRef() {
+		Collection<IREntity> calls = dico.allWithKind(IRKind.NAMEREF);
+		assertEquals(2, calls.size());
+
+		Iterator<IREntity> iter = calls.iterator(); 
+		assertTrue( iter.next().getName().equals("blih") || iter.next().getName().equals("blih"));
 	}
 
 }
