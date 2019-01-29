@@ -646,8 +646,12 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 		alloc.setLabel( ASTToken.with(label));
 		alloc.setASTField( ASTAllocateStmtNode.TALLOC, ASTToken.with(allocateKeyword));
 		alloc.setASTField( ASTCallStmtNode.TEOS, ASTToken.with(eos));
+		
 		if (hasAllocOptList) {
-			alloc.setStatusVariable((ASTVariableNode) parsingCtxt.popValueStack());
+			// ofp grammar says there can be a list of "IDENT = Expr" in allocate_stmt
+			// but other grammars consider it is only one "STAT= variable"
+			// -> go with variable
+			alloc.setStatusVariable((ASTDataRefNode) parsingCtxt.popValueStack());
 		}
 		alloc.setAllocationList( (IASTListNode<ASTAllocationNode>) parsingCtxt.popValueStack());
 		
@@ -655,32 +659,17 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 	}
 
 	@Override
-	public void alloc_opt(Token allocOpt) {
-
-	}
-
-	@Override
-	public void alloc_opt_list__begin() {
-		parsingCtxt.pushValueStack(new ASTWaterExprNode());
-		// used as a marker to delimit possible expression
-		// see void alloc_opt_list(int count)
-	}
-
-	@Override
-	public void alloc_opt_list(int count) {
-		IASTListNode<IASTNode> water = parsingCtxt.popAllValueStack(new UntilTypeValidator(ASTWaterExprNode.class));
-		((ASTWaterExprNode)parsingCtxt.topValueStack()).setExprMembers(water);
-	}
-
-	@Override
 	public void allocation(boolean hasAllocateShapeSpecList, boolean hasAllocateCoarraySpec) {
-		// TODO Auto-generated method stub
-		super.allocation(hasAllocateShapeSpecList, hasAllocateCoarraySpec);
+		ASTAllocationNode alloc = new ASTAllocationNode();
+		alloc.setAllocateObject((ASTDataRefNode) parsingCtxt.popValueStack());
+		parsingCtxt.pushValueStack(alloc);
 	}
 
 	@Override
 	public void allocation_list(int count) {
-		super.allocation_list(count);
+		// could do all this in void allocate_stmt(...)
+		IASTListNode<IASTNode> allocs = parsingCtxt.popAllValueStack(new WhileTypeValidator(ASTAllocationNode.class));
+		parsingCtxt.pushValueStack(allocs);
 	}
 
 
@@ -692,26 +681,22 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 		dealloc.setASTField( ASTDeallocateStmtNode.TDEALLOC, ASTToken.with(deallocateKeyword));
 		dealloc.setASTField( ASTCallStmtNode.TEOS, ASTToken.with(eos));
 		
+		if (hasDeallocOptList) {
+			// ofp grammar says there can be a list of "IDENT = Expr" in deallocate_stmt
+			// but other grammars consider it is only one "STAT= variable"
+			// -> go with variable
+			dealloc.setStatusVariable((ASTDataRefNode) parsingCtxt.popValueStack());
+		}
+		dealloc.setAllocateObjectList( (IASTListNode<ASTDataRefNode>) parsingCtxt.popValueStack());
+		
 		parsingCtxt.pushValueStack(dealloc);
 	}
 
-
 	@Override
-	public void dealloc_opt(Token id) {
-		// TODO Auto-generated method stub
-		super.dealloc_opt(id);
-	}
-
-	@Override
-	public void dealloc_opt_list__begin() {
-		// TODO Auto-generated method stub
-		super.dealloc_opt_list__begin();
-	}
-
-	@Override
-	public void dealloc_opt_list(int count) {
-		// TODO Auto-generated method stub
-		super.dealloc_opt_list(count);
+	public void allocate_object_list(int arg0) {
+		// could do all this in void deallocate_stmt(...)
+		IASTListNode<IASTNode> allocs = parsingCtxt.popAllValueStack(new WhileTypeValidator(ASTDataRefNode.class));
+		parsingCtxt.pushValueStack(allocs);
 	}
 
 	@Override

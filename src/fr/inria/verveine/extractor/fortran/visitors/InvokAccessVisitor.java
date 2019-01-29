@@ -29,7 +29,7 @@ public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 	protected String msgTrace() {
 		return "Creating variable accesses and subprograms calls";
 	}
-	
+
 	@Override
 	public void visitASTCompilationUnit(ASTCompilationUnit node) {
 		IREntity entity = dico.getEntityByKey(mkKey(node));
@@ -41,7 +41,7 @@ public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 	@Override
 	public void visitASTMainProgramNode(ASTMainProgramNode node) {
 		ASTToken tk = node.getProgramStmt().getProgramName();
-		
+
 		IREntity entity = dico.getEntityByKey( mkKey(tk) );
 
 		context.push(entity);
@@ -57,7 +57,7 @@ public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 	@Override
 	public void visitASTFunctionSubprogramNode(ASTFunctionSubprogramNode node) {
 		IREntity entity = dico.getEntityByKey( mkKey(node) );
-		
+
 		context.push(entity);
 		super.visitASTFunctionSubprogramNode(node);
 	}
@@ -102,8 +102,10 @@ public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 		call.name(IREntity.ALLOCATE_NAME);
 
 		traceEntityCreation(call);
-		
+
+		context.push(call);
 		super.visitASTAllocateStmtNode(node);
+		context.pop();
 	}
 
 
@@ -114,8 +116,10 @@ public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 
 		traceEntityCreation(call);
 
+		context.push(call);
 		super.visitASTDeallocateStmtNode(node);
-}
+		context.pop();
+	}
 
 
 	@Override
@@ -127,7 +131,7 @@ public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 		}
 		IREntity ref = dico.addAnonymousEntity(IRKind.NAMEREF, context.peek());
 		ref.name(name);
-		
+
 		traceEntityCreation(ref);
 	}
 
@@ -137,9 +141,9 @@ public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 		IREntity ref = dico.addAnonymousEntity(IRKind.VARREF, context.peek());
 		ref.data(IREntity.ASSIGN_LHS, node.getLhsVariable().fortranNameToString());
 		ref.data(IREntity.IS_WRITE, "true");
-		
+
 		traceEntityCreation(ref);
-		
+
 		node.getRhs().accept(this);
 	}
 
@@ -155,6 +159,6 @@ public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 			}			
 		}
 	}
-*/
+	 */
 
 }

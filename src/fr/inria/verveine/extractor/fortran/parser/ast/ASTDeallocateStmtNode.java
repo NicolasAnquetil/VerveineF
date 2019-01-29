@@ -24,10 +24,10 @@ public class ASTDeallocateStmtNode extends ASTNode implements IActionStmt
 	ASTToken label;
     ASTToken hiddenTDeallocate;
     ASTToken hiddenTLparen;
-    //IASTListNode<IASTListNode<ASTAllocateObjectNode>> allocateObjectList;
+    IASTListNode<ASTDataRefNode> allocateObjectList;  // was:  IASTListNode<IASTListNode<ASTAllocateObjectNode>> allocateObjectList;
     ASTToken hiddenTComma;
     ASTToken hiddenTStateq;
-    //ASTVariableNode statusVariable;
+    ASTDataRefNode statusVariable; // was: ASTVariableNode statusVariable
     ASTToken hiddenTRparen;
     ASTToken hiddenTEos;
 
@@ -42,30 +42,30 @@ public class ASTDeallocateStmtNode extends ASTNode implements IActionStmt
         if (newValue != null) newValue.setParent(this);
     }
 
-/*
-    public IASTListNode<IASTListNode<ASTAllocateObjectNode>> getAllocateObjectList()
+
+    public IASTListNode<ASTDataRefNode> getAllocateObjectList()
     {
         return this.allocateObjectList;
     }
 
-    public void setAllocateObjectList(IASTListNode<IASTListNode<ASTAllocateObjectNode>> newValue)
+    public void setAllocateObjectList(IASTListNode<ASTDataRefNode> newValue)
     {
         this.allocateObjectList = newValue;
         if (newValue != null) newValue.setParent(this);
     }
 
 
-    public ASTVariableNode getStatusVariable()
+    public ASTDataRefNode getStatusVariable()
     {
         return this.statusVariable;
     }
 
-    public void setStatusVariable(ASTVariableNode newValue)
+    public void setStatusVariable(ASTDataRefNode newValue)
     {
         this.statusVariable = newValue;
         if (newValue != null) newValue.setParent(this);
     }
-*/
+
 
     @Override
     public void accept(IASTVisitor visitor)
@@ -87,10 +87,10 @@ public class ASTDeallocateStmtNode extends ASTNode implements IActionStmt
         case 0:  return this.label;
         case TDEALLOC:  return this.hiddenTDeallocate;
         case 2:  return this.hiddenTLparen;
-        case 3:  return new ASTNullNode(); // this.allocateObjectList;
+        case 3:  return this.allocateObjectList;
         case 4:  return this.hiddenTComma;
         case 5:  return this.hiddenTStateq;
-        case 6:  return new ASTNullNode(); // return this.statusVariable;
+        case 6:  return this.statusVariable;
         case 7:  return this.hiddenTRparen;
         case TEOS:  return this.hiddenTEos;
         default: throw new IllegalArgumentException("Invalid index");
@@ -104,10 +104,10 @@ public class ASTDeallocateStmtNode extends ASTNode implements IActionStmt
         case 0:  this.label = (ASTToken)value; if (value != null) value.setParent(this); return;
         case TDEALLOC:  this.hiddenTDeallocate = (ASTToken)value; if (value != null) value.setParent(this); return;
         case 2:  this.hiddenTLparen = (ASTToken)value; if (value != null) value.setParent(this); return;
-        case 3:  return; // this.allocateObjectList = (IASTListNode<IASTListNode<ASTAllocateObjectNode>>)value; if (value != null) value.setParent(this); return;
+        case 3:  this.allocateObjectList = (IASTListNode<ASTDataRefNode>)value; if (value != null) value.setParent(this); return;
         case 4:  this.hiddenTComma = (ASTToken)value; if (value != null) value.setParent(this); return;
         case 5:  this.hiddenTStateq = (ASTToken)value; if (value != null) value.setParent(this); return;
-        case 6:  return; // this.statusVariable = (ASTVariableNode)value; if (value != null) value.setParent(this); return;
+        case 6:  this.statusVariable = (ASTDataRefNode)value; if (value != null) value.setParent(this); return;
         case 7:  this.hiddenTRparen = (ASTToken)value; if (value != null) value.setParent(this); return;
         case TEOS:  this.hiddenTEos = (ASTToken)value; if (value != null) value.setParent(this); return;
         default: throw new IllegalArgumentException("Invalid index");

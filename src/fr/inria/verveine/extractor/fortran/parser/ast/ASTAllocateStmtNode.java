@@ -27,7 +27,7 @@ public class ASTAllocateStmtNode extends ASTNode /*ASTNodeWithErrorRecoverySymbo
     IASTListNode<ASTAllocationNode> allocationList;
     ASTToken hiddenTComma;
     ASTToken hiddenTStateq;
-    ASTVariableNode statusVariable;
+    ASTDataRefNode statusVariable;   // was: ASTVariableNode statusVariable;
     ASTToken hiddenTRparen;
     ASTToken hiddenTEos;
 
@@ -53,15 +53,15 @@ public class ASTAllocateStmtNode extends ASTNode /*ASTNodeWithErrorRecoverySymbo
         if (newValue != null) newValue.setParent(this);
     }
 
-    public ASTVariableNode getStatusVariable()
+    public ASTDataRefNode getStatusVariable()
     {
         return this.statusVariable;
     }
 
-    public void setStatusVariable(ASTVariableNode newValue)
+    public void setStatusVariable(ASTDataRefNode astDataRefNode)
     {
-        this.statusVariable = newValue;
-        if (newValue != null) newValue.setParent(this);
+        this.statusVariable = astDataRefNode;
+        if (astDataRefNode != null) astDataRefNode.setParent(this);
     }
 
     @Override
@@ -84,10 +84,10 @@ public class ASTAllocateStmtNode extends ASTNode /*ASTNodeWithErrorRecoverySymbo
         case 0:  return this.label;
         case TALLOC:  return this.hiddenTAllocate;
         case 2:  return this.hiddenTLparen;
-        case 3:  return new ASTNullNode(); // this.allocationList;
+        case 3:  return this.allocationList;
         case 4:  return this.hiddenTComma;
         case 5:  return this.hiddenTStateq;
-        case 6:  return new ASTNullNode(); // this.statusVariable;
+        case 6:  return this.statusVariable;
         case 7:  return this.hiddenTRparen;
         case TEOS:  return this.hiddenTEos;
         default: throw new IllegalArgumentException("Invalid index");
@@ -101,10 +101,10 @@ public class ASTAllocateStmtNode extends ASTNode /*ASTNodeWithErrorRecoverySymbo
         case 0:  this.label = (ASTToken)value; if (value != null) value.setParent(this); return;
         case TALLOC:  this.hiddenTAllocate = (ASTToken)value; if (value != null) value.setParent(this); return;
         case 2:  this.hiddenTLparen = (ASTToken)value; if (value != null) value.setParent(this); return;
-        case 3:  return; // this.allocationList = (IASTListNode<ASTAllocationNode>)value; if (value != null) value.setParent(this); return;
+        case 3:  this.allocationList = (IASTListNode<ASTAllocationNode>)value; if (value != null) value.setParent(this); return;
         case 4:  this.hiddenTComma = (ASTToken)value; if (value != null) value.setParent(this); return;
         case 5:  this.hiddenTStateq = (ASTToken)value; if (value != null) value.setParent(this); return;
-        case 6:  return; // this.statusVariable = (ASTVariableNode)value; if (value != null) value.setParent(this); return;
+        case 6:  this.statusVariable = (ASTDataRefNode)value; if (value != null) value.setParent(this); return;
         case 7:  this.hiddenTRparen = (ASTToken)value; if (value != null) value.setParent(this); return;
         case TEOS:  this.hiddenTEos = (ASTToken)value; if (value != null) value.setParent(this); return;
         default: throw new IllegalArgumentException("Invalid index");

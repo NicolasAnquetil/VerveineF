@@ -18,7 +18,7 @@ import java.util.List;
 @SuppressWarnings("all")
 public class ASTAllocationNode extends ASTNode
 {
-    IASTListNode<ASTDataRefNode> allocateObject;   // was: IASTListNode<ASTAllocateObjectNode> allocateObject;
+    ASTDataRefNode allocateObject;   // was: IASTListNode<ASTAllocateObjectNode> allocateObject;
     ASTToken hasAllocatedShape;
     //IASTListNode<ASTSectionSubscriptNode> sectionSubscriptList;
     ASTToken hiddenTRparen;
@@ -26,12 +26,12 @@ public class ASTAllocationNode extends ASTNode
     //ASTAllocateCoarraySpecNode allocateCoarraySpec;
     ASTToken hiddenTRbracket;
 
-    public IASTListNode<ASTDataRefNode> getAllocateObject()
+    public ASTDataRefNode getAllocateObject()
     {
         return this.allocateObject;
     }
 
-    public void setAllocateObject(IASTListNode<ASTDataRefNode> newValue)
+    public void setAllocateObject(ASTDataRefNode newValue)
     {
         this.allocateObject = newValue;
         if (newValue != null) newValue.setParent(this);
@@ -105,7 +105,7 @@ public class ASTAllocationNode extends ASTNode
     {
         switch (index)
         {
-        case 0:  this.allocateObject = (IASTListNode<ASTDataRefNode>)value; if (value != null) value.setParent(this); return;
+        case 0:  this.allocateObject = (ASTDataRefNode)value; if (value != null) value.setParent(this); return;
         case 1:  this.hasAllocatedShape = (ASTToken)value; if (value != null) value.setParent(this); return;
         case 2:  return; // this.sectionSubscriptList = (IASTListNode<ASTSectionSubscriptNode>)value; if (value != null) value.setParent(this); return;
         case 3:  this.hiddenTRparen = (ASTToken)value; if (value != null) value.setParent(this); return;
