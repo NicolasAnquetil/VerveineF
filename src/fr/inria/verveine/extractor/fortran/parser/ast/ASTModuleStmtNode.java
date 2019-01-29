@@ -29,6 +29,7 @@ public class ASTModuleStmtNode extends ASTNode {
     public void setModuleName(ASTToken astToken)
     {
         this.moduleName = astToken;
+        if (astToken != null) astToken.setParent(this);
     }
 
 

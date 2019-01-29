@@ -10,14 +10,14 @@ public class ASTCallStmtNode extends ASTNode implements IActionStmt
 	public static final int TCALL = 1;
     public static final int TEOS = 7;
     
-	ASTToken label; // in ASTCallStmtNode
-    ASTToken hiddenTCall; // in ASTCallStmtNode
-    ASTToken subroutineName; // in ASTCallStmtNode
-    //IASTListNode<ASTDerivedTypeQualifiersNode> derivedTypeQualifiers; // in ASTCallStmtNode
-    //ASTToken hiddenTLparen; // in ASTCallStmtNode
-    //IASTListNode<ASTSubroutineArgNode> argList; // in ASTCallStmtNode
-    //ASTToken hiddenTRparen; // in ASTCallStmtNode
-    ASTToken hiddenTEos; // in ASTCallStmtNode
+	ASTToken label;
+    ASTToken hiddenTCall;
+    ASTToken subroutineName;
+    //IASTListNode<ASTDerivedTypeQualifiersNode> derivedTypeQualifiers;
+    //ASTToken hiddenTLparen;
+    //IASTListNode<ASTSubroutineArgNode> argList;
+    //ASTToken hiddenTRparen;
+    ASTToken hiddenTEos;
 
     public ASTToken getLabel()
     {

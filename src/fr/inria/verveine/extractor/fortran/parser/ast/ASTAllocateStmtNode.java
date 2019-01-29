@@ -24,10 +24,10 @@ public class ASTAllocateStmtNode extends ASTNode /*ASTNodeWithErrorRecoverySymbo
 	ASTToken label;
     ASTToken hiddenTAllocate;
     ASTToken hiddenTLparen;
-    //IASTListNode<ASTAllocationNode> allocationList;
+    IASTListNode<ASTAllocationNode> allocationList;
     ASTToken hiddenTComma;
     ASTToken hiddenTStateq;
-    //ASTVariableNode statusVariable;
+    ASTVariableNode statusVariable;
     ASTToken hiddenTRparen;
     ASTToken hiddenTEos;
 
@@ -42,7 +42,6 @@ public class ASTAllocateStmtNode extends ASTNode /*ASTNodeWithErrorRecoverySymbo
         if (newValue != null) newValue.setParent(this);
     }
 
-/*
     public IASTListNode<ASTAllocationNode> getAllocationList()
     {
         return this.allocationList;
@@ -54,7 +53,6 @@ public class ASTAllocateStmtNode extends ASTNode /*ASTNodeWithErrorRecoverySymbo
         if (newValue != null) newValue.setParent(this);
     }
 
-
     public ASTVariableNode getStatusVariable()
     {
         return this.statusVariable;
@@ -65,7 +63,6 @@ public class ASTAllocateStmtNode extends ASTNode /*ASTNodeWithErrorRecoverySymbo
         this.statusVariable = newValue;
         if (newValue != null) newValue.setParent(this);
     }
-*/
 
     @Override
     public void accept(IASTVisitor visitor)

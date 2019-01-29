@@ -223,6 +223,10 @@ allocate_stmt -> alloc_opt_list [label="3?"]
 
 allocation_list -> allocation [label="+"]
 
+alloc_opt_list -> alloc_opt [label="+"]
+
+alloc_opt -> expr [color="red"]
+
 assignment_stmt -> variable [label="1"]
 assignment_stmt -> expr [label="2"]
 

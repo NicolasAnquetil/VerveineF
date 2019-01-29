@@ -10,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import fr.inria.verveine.extractor.fortran.parser.ast.ASTCallStmtNode;
-import fr.inria.verveine.extractor.fortran.parser.ast.ASTVarOrFnRefNode;
 
 public class SubprgVisitorTest extends AbstractIrTest {
 

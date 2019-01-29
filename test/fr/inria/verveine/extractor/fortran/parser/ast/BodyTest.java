@@ -27,20 +27,20 @@ public class BodyTest extends AbstractASTTest {
 
 	@Test
 	public void testVariableName() {
-		Collection<ASTVariableNameNode> vars = ast.findAll(ASTVariableNameNode.class);
+		Collection<ASTVariableNode> vars = ast.findAll(ASTVariableNode.class);
 		assertEquals(2, vars.size());
-		ASTVariableNameNode var;
+		ASTVariableNode var;
 		var = vars.iterator().next();
-		assertTrue( var.getVariableName().getText().equals("var1") ||
-					var.getVariableName().getText().equals("var3") );
+		assertTrue( var.fortranNameToString().equals("var1") ||
+					var.fortranNameToString().equals("var2%var3") );
 		var = vars.iterator().next();
-		assertTrue( var.getVariableName().getText().equals("var1") ||
-					var.getVariableName().getText().equals("var3") );
+		assertTrue( var.fortranNameToString().equals("var1") ||
+					var.fortranNameToString().equals("var2%var3") );
 
 		Collection<ASTAssignmentStmtNode> asss = ast.findAll(ASTAssignmentStmtNode.class);
 		assertEquals(1, asss.size());
 		ASTAssignmentStmtNode ass = asss.iterator().next();
-		assertEquals( "var1", ass.getLhsVariable().getVariableName().getText() );
+		assertEquals( "var1", ass.getLhsVariable().fortranNameToString() );
 		assertEquals(ASTWaterExprNode.class, ass.getRhs().getClass());
 		assertEquals(0, ((ASTWaterExprNode)ass.getRhs()).getExprMembers().size());
 	}
@@ -51,7 +51,7 @@ public class BodyTest extends AbstractASTTest {
 		assertEquals(1, pgms.size());
 		ASTMainProgramNode pgm = pgms.iterator().next();
 
-		assertEquals(3+3, pgm.getBody().size());  // SpecificationPart=3 + ExecutionPart=3
+		assertEquals(3+2, pgm.getBody().size());  // SpecificationPart=3 + ExecutionPart=2
 	}
 
 }

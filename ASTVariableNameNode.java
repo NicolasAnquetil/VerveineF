@@ -19,7 +19,9 @@ import java.util.List;
 public class ASTVariableNameNode extends ASTNode //implements IBindEntity
 {
     ASTToken variableName;
-
+    public ASTVariableNameNode() {
+		variableName=null;
+	}
     public ASTToken getVariableName()
     {
         return this.variableName;

@@ -4,8 +4,8 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="lib" path="lib/antlr-3.4-complete.jar" sourcepath="/Users/lionel/git/antlr3"/>
+	<classpathentry kind="lib" path="lib/OpenFortranParser-20190129.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="lib/gson-2.8.5.jar"/>
-	<classpathentry kind="lib" path="lib/OpenFortranParser-20190128.jar" sourcepath="/open-fortran-parser"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -19,7 +19,7 @@ import java.util.List;
 public class ASTAssignmentStmtNode extends ASTNode/*WithErrorRecoverySymbols*/ implements IActionStmt, IBodyConstruct, ICaseBodyConstruct, IExecutableConstruct, IExecutionPartConstruct //, IForallBodyConstruct, IWhereBodyConstruct
 {
     ASTToken label;
-    ASTVariableNameNode lhsVariable;
+    ASTVariableNode lhsVariable;  // was ASTNameNode
     ASTToken hiddenTLparen;
     //IASTListNode<ASTSFDummyArgNameListNode> lhsNameList;
     //IASTListNode<ASTSFExprListNode> lhsExprList;
@@ -49,15 +49,15 @@ public class ASTAssignmentStmtNode extends ASTNode/*WithErrorRecoverySymbols*/ i
     }
 
 
-    public ASTVariableNameNode getLhsVariable()
+    public ASTVariableNode getLhsVariable()
     {
         return this.lhsVariable;
     }
 
-    public void setLhsVariable(ASTVariableNameNode newValue)
+    public void setLhsVariable(ASTVariableNode astVariableNode)
     {
-        this.lhsVariable = newValue;
-        if (newValue != null) newValue.setParent(this);
+        this.lhsVariable = astVariableNode;
+        if (astVariableNode != null) astVariableNode.setParent(this);
     }
 
 /*
@@ -220,7 +220,7 @@ public class ASTAssignmentStmtNode extends ASTNode/*WithErrorRecoverySymbols*/ i
         switch (index)
         {
         case 0:  this.label = (ASTToken)value; if (value != null) value.setParent(this); return;
-        case 1:  this.lhsVariable = (ASTVariableNameNode)value; if (value != null) value.setParent(this); return;
+        case 1:  this.lhsVariable = (ASTVariableNode)value; if (value != null) value.setParent(this); return;
         case 2:  this.hiddenTLparen = (ASTToken)value; if (value != null) value.setParent(this); return;
         case 3:  return; // this.lhsNameList = (IASTListNode<ASTSFDummyArgNameListNode>)value; if (value != null) value.setParent(this); return;
         case 4:  return; // this.lhsExprList = (IASTListNode<ASTSFExprListNode>)value; if (value != null) value.setParent(this); return;
@@ -244,7 +244,7 @@ public class ASTAssignmentStmtNode extends ASTNode/*WithErrorRecoverySymbols*/ i
     @Override
     public String toString() {
     	// for debug purposes
-    	return "ASTAssignmentStmtNode " + lhsVariable.getVariableName();
+    	return "ASTAssignmentStmtNode " + lhsVariable.getDataRef().getName();
     }
 
 }

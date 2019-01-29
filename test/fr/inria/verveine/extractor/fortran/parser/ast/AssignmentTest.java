@@ -25,7 +25,7 @@ public class AssignmentTest extends AbstractASTTest {
 		assertEquals(2, assigns.size());
 
 		for (ASTAssignmentStmtNode assg : assigns) {
-			String varName = assg.getLhsVariable().getVariableName().getText();
+			String varName = assg.getLhsVariable().fortranNameToString();
 			if ( varName.equals("someVar")) {
 				assertEquals(0, ((ASTWaterExprNode)assg.getRhs()).getExprMembers().size());
 			}

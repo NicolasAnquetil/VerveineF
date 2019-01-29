@@ -5,8 +5,12 @@ import fr.inria.verveine.extractor.fortran.Options;
 import fr.inria.verveine.extractor.fortran.ir.IRDictionary;
 import fr.inria.verveine.extractor.fortran.ir.IREntity;
 import fr.inria.verveine.extractor.fortran.ir.IRKind;
+import fr.inria.verveine.extractor.fortran.parser.ast.ASTAllocateStmtNode;
+import fr.inria.verveine.extractor.fortran.parser.ast.ASTAssignmentStmtNode;
 import fr.inria.verveine.extractor.fortran.parser.ast.ASTCallStmtNode;
 import fr.inria.verveine.extractor.fortran.parser.ast.ASTCompilationUnit;
+import fr.inria.verveine.extractor.fortran.parser.ast.ASTDataRefNode;
+import fr.inria.verveine.extractor.fortran.parser.ast.ASTDeallocateStmtNode;
 import fr.inria.verveine.extractor.fortran.parser.ast.ASTEndFunctionStmtNode;
 import fr.inria.verveine.extractor.fortran.parser.ast.ASTEndProgramStmtNode;
 import fr.inria.verveine.extractor.fortran.parser.ast.ASTEndSubroutineStmtNode;
@@ -14,7 +18,6 @@ import fr.inria.verveine.extractor.fortran.parser.ast.ASTFunctionSubprogramNode;
 import fr.inria.verveine.extractor.fortran.parser.ast.ASTMainProgramNode;
 import fr.inria.verveine.extractor.fortran.parser.ast.ASTSubroutineSubprogramNode;
 import fr.inria.verveine.extractor.fortran.parser.ast.ASTToken;
-import fr.inria.verveine.extractor.fortran.parser.ast.ASTVarOrFnRefNode;
 
 public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 
@@ -94,7 +97,29 @@ public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 	}
 
 	@Override
-	public void visitASTVarOrFnRefNode(ASTVarOrFnRefNode node) {
+	public void visitASTAllocateStmtNode(ASTAllocateStmtNode node) {
+		IREntity call = dico.addAnonymousEntity(IRKind.SUBPRGCALL, context.peek());
+		call.name(IREntity.ALLOCATE_NAME);
+
+		traceEntityCreation(call);
+		
+		super.visitASTAllocateStmtNode(node);
+	}
+
+
+	@Override
+	public void visitASTDeallocateStmtNode(ASTDeallocateStmtNode node) {
+		IREntity call = dico.addAnonymousEntity(IRKind.SUBPRGCALL, context.peek());
+		call.name(IREntity.DEALLOCATE_NAME);
+
+		traceEntityCreation(call);
+
+		super.visitASTDeallocateStmtNode(node);
+}
+
+
+	@Override
+	public void visitASTDataRefNode(ASTDataRefNode node) {
 		String name = node.getName().getText();
 
 		if ( FortranLanguage.isIntrinsicFunction(name) && (! options.withIntrinsics()))  {
@@ -106,21 +131,19 @@ public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 		traceEntityCreation(ref);
 	}
 
-/*
 	@Override
 	public void visitASTAssignmentStmtNode(ASTAssignmentStmtNode node) {
 		// actually, here we know it is an access and not an invocation
-		ASTNameNode lhs = node.getLhsVariable();
-		if (lhs != null) {
-			Access acc = (Access) invokOrAccessFromNode(lhs.getName());
-			if (acc != null) {
-				acc.setIsWrite(true);
-			}
-		}
-
-		super.visitASTAssignmentStmtNode(node);
+		IREntity ref = dico.addAnonymousEntity(IRKind.VARREF, context.peek());
+		ref.data(IREntity.ASSIGN_LHS, node.getLhsVariable().fortranNameToString());
+		ref.data(IREntity.IS_WRITE, "true");
+		
+		traceEntityCreation(ref);
+		
+		node.getRhs().accept(this);
 	}
 
+	/*
 	@Override
 	public void visitASTProperLoopConstructNode(ASTProperLoopConstructNode node) {
 		// actually, here we know it is an access and not an invocation

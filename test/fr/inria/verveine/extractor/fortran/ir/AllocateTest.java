@@ -1,7 +1,7 @@
 package fr.inria.verveine.extractor.fortran.ir;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.Collection;
 
@@ -14,8 +14,8 @@ public class AllocateTest extends AbstractIrTest {
 			"PROGRAM aProgram\n"+
 			"  allocate(var1)\n" + 
 			"  allocate(var2, stat=erreur)\n" + 
-			"  deallocate(var1)\n" + 
-			"  deallocate(var2)\n" + 
+			"  deallocate(var3)\n" + 
+			"  deallocate(var4)\n" + 
 			"END PROGRAM\n";
 
 	@Before
@@ -24,31 +24,56 @@ public class AllocateTest extends AbstractIrTest {
 	}
 
 	@Test
-	public void testAllocate() {
+	public void testAllocateCalls() {
 		int nbAlloc = 0;
 		int nbDealloc = 0;
+		String name;
 
-		Collection<IREntity> allocs = dico.allWithKind(IRKind.SUBPRGCALL);
-		assertEquals(4, allocs.size());
+		Collection<IREntity> calls = dico.allWithKind(IRKind.SUBPRGCALL);
+		assertEquals(4, calls.size());
 
-		for (IREntity call : allocs) {
-			String varName = call.getName();
-			String alloc_var = null;
+		for (IREntity alloc : calls) {
+			name = alloc.getName();
 
-			if (varName.equals("allocate")) {
+			if (name.equals(IREntity.ALLOCATE_NAME)) {
 				nbAlloc++;
-				alloc_var = (String) call.getData(IREntity.ALLOC_VAR);
-				assertTrue( alloc_var.equals("var1") || alloc_var.equals("var2") );
 			}
-			else if (varName.equals("deallocate")) {
+			else if (name.equals(IREntity.DEALLOCATE_NAME)) {
 				nbDealloc++;
-				alloc_var = (String) call.getData(IREntity.ALLOC_VAR);
-				assertTrue( alloc_var.equals("var1") || alloc_var.equals("var2") );
 			}
 		}
 		
 		assertEquals(2, nbAlloc);
-		assertEquals(2, nbDealloc);
+		assertEquals(2, nbDealloc);		
+	}
+
+	@Test
+	public void testAllocateArgs() {
+		String name;
+		IREntity parent;
+		Collection<IREntity>  vars = dico.allWithKind(IRKind.VARREF);
+		assertEquals(4, vars.size());
+
+		for (IREntity var : vars) {
+			name = var.getName();
+			parent = var.getParent();
+			assertNotNull(parent);
+			assertEquals(IRKind.SUBPRGCALL, parent.getKind());
+			
+			if (name.equals("var1")) {
+				assertEquals(IREntity.ALLOCATE_NAME, parent.getName());
+			}
+			else if (name.equals("var2")) {
+				assertEquals(IREntity.ALLOCATE_NAME, parent.getName());
+			}
+			else if (name.equals("var3")) {
+				assertEquals(IREntity.DEALLOCATE_NAME, parent.getName());
+			}
+			else if (name.equals("var4")) {
+				assertEquals(IREntity.DEALLOCATE_NAME, parent.getName());
+			}
+		}
+
 	}
 
 }

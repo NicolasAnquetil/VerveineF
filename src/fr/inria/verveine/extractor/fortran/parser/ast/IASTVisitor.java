@@ -44,7 +44,6 @@ public interface IASTVisitor {
 	public void visitASTEndSubroutineStmtNode(ASTEndSubroutineStmtNode node);
 	public void visitASTInterfaceBodyNode(ASTInterfaceBodyNode node);
 	public void visitASTCallStmtNode(ASTCallStmtNode node);
-	public void visitASTVarOrFnRefNode(ASTVarOrFnRefNode node);
 	public void visitASTAccessSpecNode(ASTAccessSpecNode node);
 	public void visitASTAccessStmtNode(ASTAccessStmtNode node);
 	public void visitASTIntentSpecNode(ASTIntentSpecNode node);
@@ -57,9 +56,11 @@ public interface IASTVisitor {
 	public void visitASTUseStmtNode(ASTUseStmtNode node);
 	public void visitASTTypeSpecNode(ASTTypeSpecNode node);
 	public void visitASTAssignmentStmtNode(ASTAssignmentStmtNode node);
-	public void visitASTVariableNameNode(ASTVariableNameNode node);
 	public void visitASTWaterExprNode(ASTWaterExprNode node);
 	public void visitASTAllocateStmtNode(ASTAllocateStmtNode node);
 	public void visitASTDeallocateStmtNode(ASTDeallocateStmtNode node);
+	public void visitASTAllocationNode(ASTAllocationNode node);
+	public void visitASTDataRefNode(ASTDataRefNode node);
+	public void visitASTVariableNode(ASTVariableNode node);
 
 }

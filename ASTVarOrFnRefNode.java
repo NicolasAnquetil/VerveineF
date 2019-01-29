@@ -18,7 +18,6 @@ import java.util.List;
 @SuppressWarnings("all")
 public class ASTVarOrFnRefNode extends ASTNode
 {
-    private static final int TOTAL_NBR_FIELDS = 1;  // only interest in the name
 	ASTToken name;
     ASTToken hiddenTLparen;
     //IASTListNode<ASTSectionSubscriptNode> primarySectionSubscriptList;
@@ -28,7 +27,7 @@ public class ASTVarOrFnRefNode extends ASTNode
     //ASTSubstringRangeNode substringRange;
     //ASTImageSelectorNode imageSelector;
     ASTToken hiddenHiddenPercent2;
-    //IASTListNode<ASTDataRefNode> derivedTypeComponentRef;
+    IASTListNode<ASTDataRefNode> derivedTypeComponentRef;
     ASTToken hiddenLparen2;
     //IASTListNode<ASTSectionSubscriptNode> componentSectionSubscriptList;
     ASTToken hiddenRparen2;
@@ -92,7 +91,7 @@ public class ASTVarOrFnRefNode extends ASTNode
         this.imageSelector = newValue;
         if (newValue != null) newValue.setParent(this);
     }
-
+*/
 
     public IASTListNode<ASTDataRefNode> getDerivedTypeComponentRef()
     {
@@ -105,7 +104,7 @@ public class ASTVarOrFnRefNode extends ASTNode
         if (newValue != null) newValue.setParent(this);
     }
 
-
+/*
     public IASTListNode<ASTSectionSubscriptNode> getComponentSectionSubscriptList()
     {
         return this.componentSectionSubscriptList;
@@ -141,7 +140,7 @@ public class ASTVarOrFnRefNode extends ASTNode
 
     @Override protected int getNumASTFields()
     {
-        return TOTAL_NBR_FIELDS;
+        return 14;
     }
 
     @Override protected IASTNode getASTField(int index)
@@ -150,18 +149,18 @@ public class ASTVarOrFnRefNode extends ASTNode
         {
         case 0:  return this.name;
         case 1:  return this.hiddenTLparen;
-        //case 2:  return this.primarySectionSubscriptList;
-        //case 3:  return this.functionArgList;
+        case 2:  return new ASTNullNode(); // this.primarySectionSubscriptList;
+        case 3:  return new ASTNullNode(); // this.functionArgList;
         case 4:  return this.hiddenTRparen;
         case 5:  return this.hiddenTPercent;
-        //case 6:  return this.substringRange;
-        //case 7:  return this.imageSelector;
+        case 6:  return new ASTNullNode(); // this.substringRange;
+        case 7:  return new ASTNullNode(); // this.imageSelector;
         case 8:  return this.hiddenHiddenPercent2;
-        //case 9:  return this.derivedTypeComponentRef;
+        case 9:  return this.derivedTypeComponentRef;
         case 10: return this.hiddenLparen2;
-        //case 11: return this.componentSectionSubscriptList;
+        case 11: return new ASTNullNode(); // this.componentSectionSubscriptList;
         case 12: return this.hiddenRparen2;
-        //case 13: return this.substringRange2;
+        case 13: return new ASTNullNode(); // this.substringRange2;
         default: throw new IllegalArgumentException("Invalid index");
         }
     }
@@ -172,18 +171,18 @@ public class ASTVarOrFnRefNode extends ASTNode
         {
         case 0:  this.name = (ASTToken)value; if (value != null) value.setParent(this); return;
         case 1:  this.hiddenTLparen = (ASTToken)value; if (value != null) value.setParent(this); return;
-        //case 2:  this.primarySectionSubscriptList = (IASTListNode<ASTSectionSubscriptNode>)value; if (value != null) value.setParent(this); return;
-        //case 3:  this.functionArgList = (IASTListNode<ASTFunctionArgListNode>)value; if (value != null) value.setParent(this); return;
+        case 2:  return; // this.primarySectionSubscriptList = (IASTListNode<ASTSectionSubscriptNode>)value; if (value != null) value.setParent(this); return;
+        case 3:  return; // this.functionArgList = (IASTListNode<ASTFunctionArgListNode>)value; if (value != null) value.setParent(this); return;
         case 4:  this.hiddenTRparen = (ASTToken)value; if (value != null) value.setParent(this); return;
         case 5:  this.hiddenTPercent = (ASTToken)value; if (value != null) value.setParent(this); return;
-        //case 6:  this.substringRange = (ASTSubstringRangeNode)value; if (value != null) value.setParent(this); return;
-        //case 7:  this.imageSelector = (ASTImageSelectorNode)value; if (value != null) value.setParent(this); return;
+        case 6:  return; // this.substringRange = (ASTSubstringRangeNode)value; if (value != null) value.setParent(this); return;
+        case 7:  return; // this.imageSelector = (ASTImageSelectorNode)value; if (value != null) value.setParent(this); return;
         case 8:  this.hiddenHiddenPercent2 = (ASTToken)value; if (value != null) value.setParent(this); return;
-        //case 9:  this.derivedTypeComponentRef = (IASTListNode<ASTDataRefNode>)value; if (value != null) value.setParent(this); return;
+        case 9:  this.derivedTypeComponentRef = (IASTListNode<ASTDataRefNode>)value; if (value != null) value.setParent(this); return;
         case 10: this.hiddenLparen2 = (ASTToken)value; if (value != null) value.setParent(this); return;
-        //case 11: this.componentSectionSubscriptList = (IASTListNode<ASTSectionSubscriptNode>)value; if (value != null) value.setParent(this); return;
+        case 11: return; // this.componentSectionSubscriptList = (IASTListNode<ASTSectionSubscriptNode>)value; if (value != null) value.setParent(this); return;
         case 12: this.hiddenRparen2 = (ASTToken)value; if (value != null) value.setParent(this); return;
-        //case 13: this.substringRange2 = (ASTSubstringRangeNode)value; if (value != null) value.setParent(this); return;
+        case 13: return; // this.substringRange2 = (ASTSubstringRangeNode)value; if (value != null) value.setParent(this); return;
         default: throw new IllegalArgumentException("Invalid index");
         }
     }

@@ -1,18 +1,12 @@
 package fr.inria.verveine.extractor.fortran.parser.ast;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import fr.inria.verveine.extractor.fortran.parser.ast.ASTCallStmtNode;
-import fr.inria.verveine.extractor.fortran.parser.ast.ASTFunctionSubprogramNode;
-import fr.inria.verveine.extractor.fortran.parser.ast.ASTSubroutineSubprogramNode;
-import fr.inria.verveine.extractor.fortran.parser.ast.ASTVarOrFnRefNode;
 
 public class SubprgTest extends AbstractASTTest {
 
@@ -70,11 +64,38 @@ public class SubprgTest extends AbstractASTTest {
 
 	@Test
 	public void testVarOrFunctionRef() {
-		Collection<ASTVarOrFnRefNode> calls = ast.findAll(ASTVarOrFnRefNode.class);
-		assertEquals(2, calls.size());
+		int nbI = 0;
+		int nbBlih = 0;
 
-		Iterator<ASTVarOrFnRefNode> iter = calls.iterator(); 
-		assertTrue( iter.next().getName().getText().equals("blih") || iter.next().getName().getText().equals("blih"));
+		Collection<ASTDataRefNode> refs = ast.findAll(ASTDataRefNode.class);
+		assertEquals(5, refs.size());
+
+		for (ASTDataRefNode ref : refs) {
+			if (ref.fortranNameToString().equals("i")) {
+				nbI++;
+			}
+			else if(ref.fortranNameToString().equals("blih")) {
+				nbBlih++;
+			}
+			else {
+				fail("Unknown DataRef name " + ref.fortranNameToString());
+			}
+		}
+		
+		assertEquals(4, nbI);
+		assertEquals(1, nbBlih);
+	}
+
+	@Test
+	public void testParents() {
+		for (IASTNode parent : ast.findAll(ASTNode.class)) {
+			for (IASTNode child : parent.getChildren()) {
+				if (! (child instanceof ASTNullNode)) {
+					assertEquals(parent, child.getParent());
+				}
+			}
+		}
+		
 	}
 
 }

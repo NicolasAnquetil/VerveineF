@@ -23,6 +23,9 @@ public class IREntity {
 	protected IREntity parent;
 	protected IRKind kind;
 	protected Map<String, Object> data;
+	public static final String ALLOCATE_NAME = "allocate";
+	public static final String DEALLOCATE_NAME = "deallocate";
+	public static final String ASSIGN_LHS = "assigntLHS";
 
 	public IREntity(IREntity parent, IRKind kind) {
 		this(parent, kind, /*key*/null);

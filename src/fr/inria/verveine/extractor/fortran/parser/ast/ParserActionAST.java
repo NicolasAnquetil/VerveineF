@@ -4,8 +4,6 @@ package fr.inria.verveine.extractor.fortran.parser.ast;
 import java.util.Collection;
 
 import org.antlr.runtime.Token;
-import org.antlr.stringtemplate.language.ASTExpr;
-import org.hamcrest.core.IsInstanceOf;
 
 import fortran.ofp.parser.java.FortranLexer;
 import fortran.ofp.parser.java.FortranParserActionNull;
@@ -322,7 +320,7 @@ public class ParserActionAST extends FortranParserActionNull {
 
 	@Override
 	public void data_stmt(Token label, Token keyword, Token eos, int count) {
-		parsingCtxt.popAllValueStack(new WhileTypeValidator(ASTVariableNameNode.class));
+		parsingCtxt.popAllValueStack(new WhileTypeValidator(ASTVariableNode.class));
 		parsingCtxt.pushValueStack(new ASTNullNode());  // counts as a declaration_construct in specification_part(...)
 	}
 
@@ -335,7 +333,7 @@ public class ParserActionAST extends FortranParserActionNull {
 	@Override
 	public void declaration_type_spec(Token udtKeyword, int type) {
 		IASTNode top = parsingCtxt.topValueStack();
-		if (top instanceof ASTVarOrFnRefNode) {
+		if (top instanceof ASTDataRefNode) {
 			parsingCtxt.popValueStack();
 		}
 	}
@@ -371,7 +369,7 @@ public class ParserActionAST extends FortranParserActionNull {
 	public void intrinsic_type_spec(Token keyword1, Token keyword2, int type, boolean hasKindSelector) {
 		ASTTypeSpecNode typeSpec = new ASTTypeSpecNode();
 		if (hasKindSelector) {
-			parsingCtxt.popAllValueStack(new WhileTypeValidator(ASTVarOrFnRefNode.class));
+			parsingCtxt.popAllValueStack(new WhileTypeValidator(ASTDataRefNode.class));
 		}
 		typeSpec.setTypeName(ASTToken.with(keyword1));
 		parsingCtxt.pushValueStack(typeSpec);
@@ -400,7 +398,7 @@ public class ParserActionAST extends FortranParserActionNull {
 	public void initialization(boolean hasExpr, boolean hasNullInit) {
 		// for now pruning expressions
 		if (hasExpr) {
-			parsingCtxt.popAllValueStack(new WhileTypeValidator(ASTVarOrFnRefNode.class));
+			parsingCtxt.popAllValueStack(new WhileTypeValidator(ASTDataRefNode.class));
 		}
 	}
 
@@ -500,13 +498,15 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 				parsingCtxt.popAllValueStack( new Validator() {
 					@Override
 					public boolean validate(IASTNode node) {
-						return (node instanceof ASTVarOrFnRefNode) ||
+						return (
 								(node instanceof ASTCallStmtNode) ||
 								(node instanceof ASTAllocateStmtNode) ||
 								(node instanceof ASTDeallocateStmtNode) ||
 								(node instanceof ASTToken) ||
-								(node instanceof ASTVariableNameNode) ||
-								(node instanceof ASTAssignmentStmtNode);
+								(node instanceof ASTVariableNode) ||
+								(node instanceof ASTDataRefNode) ||
+								(node instanceof ASTAssignmentStmtNode)
+								);
 					}
 				})
 			);
@@ -520,7 +520,7 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 		ASTEntityDeclNode entityDecl = new ASTEntityDeclNode();
 		entityDecl.setObjectName(ASTToken.with(id));
 		if (hasArraySpec) {
-			parsingCtxt.popAllValueStack( new WhileTypeValidator(ASTVarOrFnRefNode.class));
+			parsingCtxt.popAllValueStack( new WhileTypeValidator(ASTDataRefNode.class));
 		}
 		parsingCtxt.pushValueStack( entityDecl);
 	}
@@ -606,7 +606,7 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 				(type == IActionEnums.ArraySpecElement_expr_colon) ||
 				(type == IActionEnums.ArraySpecElement_expr_colon_expr) ||
 				(type == IActionEnums.ArraySpecElement_expr_colon_asterisk) ) {
-			parsingCtxt.popAllValueStack(new WhileTypeValidator(ASTVarOrFnRefNode.class));				
+			parsingCtxt.popAllValueStack(new WhileTypeValidator(ASTDataRefNode.class));				
 		}
 	}
 
@@ -628,7 +628,11 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 		
 		call.setLabel( ASTToken.with(label));
 		call.setASTField( ASTCallStmtNode.TCALL, ASTToken.with(callKeyword));
-		call.setSubroutineName( (ASTToken) parsingCtxt.popValueStack() );
+		// ofp grammar says procedure name can be a DataRef (thus can have TypeComponentSelector)
+		// but other grammars consider it can only be a token
+		// -> go with token for now
+		ASTDataRefNode procName = (ASTDataRefNode) parsingCtxt.popValueStack(); 
+		call.setSubroutineName( procName.getName() );
 		call.setASTField( ASTCallStmtNode.TEOS, ASTToken.with(eos));
 
 		parsingCtxt.pushValueStack(call);
@@ -642,26 +646,30 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 		alloc.setLabel( ASTToken.with(label));
 		alloc.setASTField( ASTAllocateStmtNode.TALLOC, ASTToken.with(allocateKeyword));
 		alloc.setASTField( ASTCallStmtNode.TEOS, ASTToken.with(eos));
-
+		if (hasAllocOptList) {
+			alloc.setStatusVariable((ASTVariableNode) parsingCtxt.popValueStack());
+		}
+		alloc.setAllocationList( (IASTListNode<ASTAllocationNode>) parsingCtxt.popValueStack());
+		
 		parsingCtxt.pushValueStack(alloc);
 	}
 
 	@Override
 	public void alloc_opt(Token allocOpt) {
-		// TODO Auto-generated method stub
-		super.alloc_opt(allocOpt);
+
 	}
 
 	@Override
 	public void alloc_opt_list__begin() {
-		// TODO Auto-generated method stub
-		super.alloc_opt_list__begin();
+		parsingCtxt.pushValueStack(new ASTWaterExprNode());
+		// used as a marker to delimit possible expression
+		// see void alloc_opt_list(int count)
 	}
 
 	@Override
 	public void alloc_opt_list(int count) {
-		// TODO Auto-generated method stub
-		super.alloc_opt_list(count);
+		IASTListNode<IASTNode> water = parsingCtxt.popAllValueStack(new UntilTypeValidator(ASTWaterExprNode.class));
+		((ASTWaterExprNode)parsingCtxt.topValueStack()).setExprMembers(water);
 	}
 
 	@Override
@@ -671,14 +679,7 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 	}
 
 	@Override
-	public void allocation_list__begin() {
-		// TODO Auto-generated method stub
-		super.allocation_list__begin();
-	}
-
-	@Override
 	public void allocation_list(int count) {
-		// TODO Auto-generated method stub
 		super.allocation_list(count);
 	}
 
@@ -715,45 +716,64 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 
 	@Override
 	public void designator_or_func_ref() {
-		ASTVarOrFnRefNode ref = new ASTVarOrFnRefNode();
+		//ASTDataRefNode ref = new ASTDataRefNode();
+		assert(parsingCtxt.topValueStack() instanceof ASTDataRefNode);
+		//ref.setName( (ASTToken) parsingCtxt.popValueStack());
 		
-		ref.setName( (ASTToken) parsingCtxt.popValueStack());
-		
-		parsingCtxt.pushValueStack(ref);
+		//parsingCtxt.pushValueStack(ref);
 	}
 	
+	@Override
+	public void data_ref(int numPartRefs) {
+		ASTDataRefNode dataRef = new ASTDataRefNode();
+		dataRef.setName((ASTToken) parsingCtxt.popValueStack());
+
+		for (int i=1; i < numPartRefs; i++) {
+			ASTDataRefNode fieldSelector = dataRef;
+			dataRef = new ASTDataRefNode();
+			dataRef.setName((ASTToken) parsingCtxt.popValueStack());
+			dataRef.setComponentName(fieldSelector);
+		}
+		parsingCtxt.pushValueStack(dataRef);
+	}
+
+
 	@Override
 	public void part_ref(Token id, boolean hasSectionSubscriptList, boolean hasImageSelector) {
 		parsingCtxt.pushValueStack(ASTToken.with(id));
 	}
 
+
 	@Override
 	public void variable() {
-		ASTVariableNameNode var = new ASTVariableNameNode();
-		var.setVariableName((ASTToken) parsingCtxt.popValueStack());
+		ASTVariableNode var = new ASTVariableNode();
+		var.setDataRef( (ASTDataRefNode) parsingCtxt.popValueStack());
 		parsingCtxt.pushValueStack(var);
 	}
+
 
 	@Override
 	public void assignment_stmt(Token label, Token eos) {
 		ASTAssignmentStmtNode assign = new ASTAssignmentStmtNode();
-		IASTListNode<IASTNode> members = parsingCtxt.popAllValueStack(new UntilTypeValidator(ASTVariableNameNode.class));
+		IASTListNode<IASTNode> members = parsingCtxt.popAllValueStack(new UntilTypeValidator(ASTVariableNode.class));
 		ASTWaterExprNode exprMembers = new ASTWaterExprNode();
 
+		assign.setLhsVariable((ASTVariableNode) parsingCtxt.popValueStack());
 		exprMembers.setExprMembers(members);
-		assign.setLhsVariable((ASTVariableNameNode) parsingCtxt.popValueStack());
 		assign.setRhs((IExpr) exprMembers);
+
 		parsingCtxt.pushValueStack(assign);
 	}
 
 	// UTILITIES ---
 
-/**
- * Pops the body of a subprogram/program and put it in a IASTListNode
- * <p>
- * If hasExecutionPart, then the stack contains ExecutionPart+SpecificationPart
- * otherwise, only SpecificationPart
- */
+
+	/**
+	 * Pops the body of a subprogram/program and put it in a IASTListNode
+	 * <p>
+	 * If hasExecutionPart, then the stack contains ExecutionPart+SpecificationPart
+	 * otherwise, only SpecificationPart
+	 */
 	protected IASTListNode<IBodyConstruct> popBodyAsList(boolean hasExecutionPart) {
 		IASTListNode<IBodyConstruct> specifications = (IASTListNode<IBodyConstruct>) parsingCtxt.popValueStack();
 		if (hasExecutionPart) {
@@ -761,6 +781,7 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 		}
 		return specifications;
 	}
+
 
 	/**
 	 * Trace error and try recovering by going back to previous Subprogram/Module/... entity
