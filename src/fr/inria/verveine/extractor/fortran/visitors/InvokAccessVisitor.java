@@ -124,7 +124,7 @@ public class InvokAccessVisitor extends AbstractDispatcherVisitor {
 
 	@Override
 	public void visitASTDataRefNode(ASTDataRefNode node) {
-		String name = node.getName().getText();
+		String name = node.fortranNameToString();
 
 		if ( FortranLanguage.isIntrinsicFunction(name) && (! options.withIntrinsics()))  {
 			return;
