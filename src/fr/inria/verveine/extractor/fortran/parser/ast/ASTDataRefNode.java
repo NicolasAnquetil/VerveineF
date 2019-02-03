@@ -20,7 +20,7 @@ public class ASTDataRefNode extends ASTNode
 {
     ASTToken hiddenTLparen;
     ASTToken name;
-    //IASTListNode<ASTSectionSubscriptNode> primarySectionSubscriptList;
+    IASTListNode<ASTDataRefNode> primarySectionSubscriptList;  // was: IASTListNode<ASTSectionSubscriptNode> primarySectionSubscriptList;
     ASTToken hiddenTRparen;
     //ASTImageSelectorNode imageSelector;
     ASTToken hasDerivedTypeComponentName;
@@ -41,19 +41,18 @@ public class ASTDataRefNode extends ASTNode
         if (newValue != null) newValue.setParent(this);
     }
 
-/*
-    public IASTListNode<ASTSectionSubscriptNode> getPrimarySectionSubscriptList()
+    public IASTListNode<ASTDataRefNode> getPrimarySectionSubscriptList()
     {
         return this.primarySectionSubscriptList;
     }
 
-    public void setPrimarySectionSubscriptList(IASTListNode<ASTSectionSubscriptNode> newValue)
+    public void setPrimarySectionSubscriptList(IASTListNode<ASTDataRefNode> newValue)
     {
         this.primarySectionSubscriptList = newValue;
         if (newValue != null) newValue.setParent(this);
     }
 
-
+/*
     public ASTImageSelectorNode getImageSelector()
     {
         return this.imageSelector;
@@ -107,7 +106,7 @@ public class ASTDataRefNode extends ASTNode
         {
         case 0:  return this.hiddenTLparen;
         case 1:  return this.name;
-        case 2:  return new ASTNullNode(); // this.primarySectionSubscriptList;
+        case 2:  return this.primarySectionSubscriptList;
         case 3:  return this.hiddenTRparen;
         case 4:  return new ASTNullNode(); // this.imageSelector;
         case 5:  return this.hasDerivedTypeComponentName;
@@ -122,7 +121,7 @@ public class ASTDataRefNode extends ASTNode
         {
         case 0:  this.hiddenTLparen = (ASTToken)value; if (value != null) value.setParent(this); return;
         case 1:  this.name = (ASTToken)value; if (value != null) value.setParent(this); return;
-        case 2:  return; // this.primarySectionSubscriptList = (IASTListNode<ASTSectionSubscriptNode>)value; if (value != null) value.setParent(this); return;
+        case 2:  this.primarySectionSubscriptList = (IASTListNode<ASTDataRefNode>)value; if (value != null) value.setParent(this); return;
         case 3:  this.hiddenTRparen = (ASTToken)value; if (value != null) value.setParent(this); return;
         case 4:  return; // this.imageSelector = (ASTImageSelectorNode)value; if (value != null) value.setParent(this); return;
         case 5:  this.hasDerivedTypeComponentName = (ASTToken)value; if (value != null) value.setParent(this); return;

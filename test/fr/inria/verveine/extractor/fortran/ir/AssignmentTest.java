@@ -23,7 +23,7 @@ public class AssignmentTest extends AbstractIrTest {
 		parseCode(SOURCE_CODE);
 
 		Collection<IREntity> refs = dico.allWithKind(IRKind.NAMEREF);
-		assertEquals(3, refs.size());
+		assertEquals(1, refs.size());
 
 
 		refs = dico.allWithKind(IRKind.VARREF);

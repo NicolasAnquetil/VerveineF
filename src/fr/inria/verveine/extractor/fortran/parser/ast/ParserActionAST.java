@@ -645,15 +645,19 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 		
 		alloc.setLabel( ASTToken.with(label));
 		alloc.setASTField( ASTAllocateStmtNode.TALLOC, ASTToken.with(allocateKeyword));
-		alloc.setASTField( ASTCallStmtNode.TEOS, ASTToken.with(eos));
-		
+		alloc.setASTField( ASTAllocateStmtNode.TEOS, ASTToken.with(eos));
+
 		if (hasAllocOptList) {
 			// ofp grammar says there can be a list of "IDENT = Expr" in allocate_stmt
 			// but other grammars consider it is only one "STAT= variable"
 			// -> go with variable
 			alloc.setStatusVariable((ASTDataRefNode) parsingCtxt.popValueStack());
 		}
-		alloc.setAllocationList( (IASTListNode<ASTAllocationNode>) parsingCtxt.popValueStack());
+		
+		// could pop allocated objects in void allocation_list(int count)
+		// not parameter to IASTListNode to avoid cast error in eclipse
+		IASTListNode allocatedVars = parsingCtxt.popAllValueStack(new WhileTypeValidator(ASTAllocationNode.class));
+		alloc.setAllocationList( (IASTListNode<ASTAllocationNode>) allocatedVars);
 		
 		parsingCtxt.pushValueStack(alloc);
 	}
@@ -666,20 +670,12 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 	}
 
 	@Override
-	public void allocation_list(int count) {
-		// could do all this in void allocate_stmt(...)
-		IASTListNode<IASTNode> allocs = parsingCtxt.popAllValueStack(new WhileTypeValidator(ASTAllocationNode.class));
-		parsingCtxt.pushValueStack(allocs);
-	}
-
-
-	@Override
 	public void deallocate_stmt(Token label, Token deallocateKeyword, Token eos, boolean hasDeallocOptList) {
 		ASTDeallocateStmtNode dealloc = new ASTDeallocateStmtNode();
 		
 		dealloc.setLabel( ASTToken.with(label));
 		dealloc.setASTField( ASTDeallocateStmtNode.TDEALLOC, ASTToken.with(deallocateKeyword));
-		dealloc.setASTField( ASTCallStmtNode.TEOS, ASTToken.with(eos));
+		dealloc.setASTField( ASTDeallocateStmtNode.TEOS, ASTToken.with(eos));
 		
 		if (hasDeallocOptList) {
 			// ofp grammar says there can be a list of "IDENT = Expr" in deallocate_stmt
@@ -687,47 +683,56 @@ System.out.println("data_component_def_stmt @"+eos.getLine()+":"+eos.getCharPosi
 			// -> go with variable
 			dealloc.setStatusVariable((ASTDataRefNode) parsingCtxt.popValueStack());
 		}
-		dealloc.setAllocateObjectList( (IASTListNode<ASTDataRefNode>) parsingCtxt.popValueStack());
+
+		// could do this in public void allocate_object_list(int arg0)
+		// not parameter to IASTListNode to avoid cast error in eclipse
+		IASTListNode deallocatedVars = parsingCtxt.popAllValueStack(new WhileTypeValidator(ASTDataRefNode.class));
+		dealloc.setAllocateObjectList( (IASTListNode<ASTDataRefNode>) deallocatedVars);
 		
 		parsingCtxt.pushValueStack(dealloc);
 	}
 
 	@Override
-	public void allocate_object_list(int arg0) {
-		// could do all this in void deallocate_stmt(...)
-		IASTListNode<IASTNode> allocs = parsingCtxt.popAllValueStack(new WhileTypeValidator(ASTDataRefNode.class));
-		parsingCtxt.pushValueStack(allocs);
-	}
-
-	@Override
-	public void designator_or_func_ref() {
-		//ASTDataRefNode ref = new ASTDataRefNode();
-		assert(parsingCtxt.topValueStack() instanceof ASTDataRefNode);
-		//ref.setName( (ASTToken) parsingCtxt.popValueStack());
-		
-		//parsingCtxt.pushValueStack(ref);
-	}
-	
-	@Override
 	public void data_ref(int numPartRefs) {
-		ASTDataRefNode dataRef = new ASTDataRefNode();
-		dataRef.setName((ASTToken) parsingCtxt.popValueStack());
+		ASTDataRefNode dataRef = (ASTDataRefNode) parsingCtxt.popValueStack();
 
 		for (int i=1; i < numPartRefs; i++) {
 			ASTDataRefNode fieldSelector = dataRef;
-			dataRef = new ASTDataRefNode();
-			dataRef.setName((ASTToken) parsingCtxt.popValueStack());
+			dataRef = (ASTDataRefNode) parsingCtxt.popValueStack();
 			dataRef.setComponentName(fieldSelector);
+		}
+
+		parsingCtxt.pushValueStack(dataRef);
+	}
+
+	@Override
+	public void part_ref(Token id, boolean hasSectionSubscriptList, boolean hasImageSelector) {
+		ASTDataRefNode dataRef = new ASTDataRefNode();
+		dataRef.setName( ASTToken.with(id));
+		if (hasSectionSubscriptList) {
+			dataRef.setPrimarySectionSubscriptList( (IASTListNode<ASTDataRefNode>) parsingCtxt.popValueStack());
 		}
 		parsingCtxt.pushValueStack(dataRef);
 	}
 
+/*
+	@Override
+	public void section_subscript(boolean hasLowerBounds, boolean hasUpperBounds, boolean hasStride, boolean isAmbiguous) {
+	}
+*/
 
 	@Override
-	public void part_ref(Token id, boolean hasSectionSubscriptList, boolean hasImageSelector) {
-		parsingCtxt.pushValueStack(ASTToken.with(id));
+	public void section_subscript_list(int count) {
+		ASTListNode<IASTNode> subscript = (ASTListNode<IASTNode>) parsingCtxt.popAllValueStack( new UntilTypeValidator( ASTNullNode.class));
+		parsingCtxt.popValueStack();  // popping out ASTNullNode marking the start of the list
+		parsingCtxt.pushValueStack(subscript);
 	}
 
+	@Override
+	public void section_subscript_list__begin() {
+		// used as marker of list start
+		parsingCtxt.pushValueStack( new ASTNullNode());
+	}
 
 	@Override
 	public void variable() {

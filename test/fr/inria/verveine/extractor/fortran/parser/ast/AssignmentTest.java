@@ -30,7 +30,7 @@ public class AssignmentTest extends AbstractASTTest {
 				assertEquals(0, ((ASTWaterExprNode)assg.getRhs()).getExprMembers().size());
 			}
 			else if ( varName.equals("anotherVar")) {
-				assertEquals(3, ((ASTWaterExprNode)assg.getRhs()).getExprMembers().size());
+				assertEquals(1, ((ASTWaterExprNode)assg.getRhs()).getExprMembers().size());
 			}
 			else {
 				fail("Wrong variable name: " + varName);

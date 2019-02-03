@@ -49,7 +49,7 @@ public class AllocateTest extends AbstractIrTest {
 	}
 
 	@Test
-	public void testAllocateArgs() {
+	public void testNameRefs() {
 		String name;
 		IREntity parent;
 		Collection<IREntity>  vars = dico.allWithKind(IRKind.NAMEREF);

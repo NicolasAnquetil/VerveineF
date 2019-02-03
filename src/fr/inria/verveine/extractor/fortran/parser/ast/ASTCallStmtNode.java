@@ -91,7 +91,7 @@ public class ASTCallStmtNode extends ASTNode implements IActionStmt
         case 4:  return new ASTNullNode();  // this.hiddenTLparen;
         case 5:  return new ASTNullNode();  // this.argList;
         case 6:  return new ASTNullNode();  // this.hiddenTRparen;
-        case 7:  return this.hiddenTEos;
+        case TEOS:  return this.hiddenTEos;
         default: throw new IllegalArgumentException("Invalid index");
         }
     }
